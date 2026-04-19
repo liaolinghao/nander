@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>wang.bigbird.domain</groupId>
+        <artifactId>bigbird-framework-server</artifactId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>bigbird-framework-server-core</artifactId>
+    <name>Bigbird Framework :: Server :: Core</name>
+    <description>鸟域开发框架 :: Server构件 :: 核心模块</description>
+
+</project>

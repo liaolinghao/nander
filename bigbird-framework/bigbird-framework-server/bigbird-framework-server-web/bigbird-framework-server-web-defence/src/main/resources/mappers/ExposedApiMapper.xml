@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="wang.bigbird.domain.framework.server.web.defence.dao.ExposedApiMapper">
+    <resultMap id="BaseResultMap" type="wang.bigbird.domain.framework.server.web.defence.domain.entity.ExposedApi">
+        <constructor>
+            <idArg column="id" jdbcType="BIGINT" javaType="java.lang.Long"/>
+            <arg column="api_code" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="api_name" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="api_url" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="api_type" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="ip_check_enable" jdbcType="BIT" javaType="java.lang.Boolean"/>
+            <arg column="sign_enable" jdbcType="BIT" javaType="java.lang.Boolean"/>
+            <arg column="anti_replay_enable" jdbcType="BIT" javaType="java.lang.Boolean"/>
+            <arg column="request_decrypt_enable" jdbcType="BIT" javaType="java.lang.Boolean"/>
+            <arg column="response_encrypt_enable" jdbcType="BIT" javaType="java.lang.Boolean"/>
+            <arg column="ip_white_list" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="ip_black_list" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="app_white_list" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="app_black_list" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+            <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+            <arg column="deleted" jdbcType="BIT" javaType="java.lang.Boolean"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, api_code, api_name, api_url, api_type, ip_check_enable, sign_enable,
+        anti_replay_enable, request_decrypt_enable, response_encrypt_enable,
+        ip_white_list, ip_black_list, app_white_list, app_black_list, create_time,
+        update_time, deleted
+    </sql>
+</mapper>

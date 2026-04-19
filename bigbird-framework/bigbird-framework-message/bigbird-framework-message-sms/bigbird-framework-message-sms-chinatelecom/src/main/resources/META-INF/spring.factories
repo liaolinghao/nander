@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+wang.bigbird.domain.framework.message.sms.chinatelecom.config.configuration.ChinatelecomSmsConfiguration

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="wang.bigbird.domain.framework.server.web.defence.dao.AppMapper">
+    <resultMap id="BaseResultMap" type="wang.bigbird.domain.framework.server.web.defence.domain.entity.App">
+        <constructor>
+            <idArg column="id" javaType="java.lang.Long" jdbcType="BIGINT"/>
+            <arg column="app_name" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="app_code" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="app_key" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="app_secret" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="app_type" javaType="java.lang.Byte" jdbcType="TINYINT"/>
+            <arg column="contacts" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="mobilephone" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="limit_ips" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="trusted" javaType="java.lang.Boolean" jdbcType="BIT"/>
+            <arg column="packaged" javaType="java.lang.Boolean" jdbcType="BIT"/>
+            <arg column="public_key" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="private_key" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="create_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="update_time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="deleted" javaType="java.lang.Boolean" jdbcType="BIT"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id
+        , app_name, app_code, app_key, app_secret, app_type, contacts, mobilephone, limit_ips, trusted, packaged, public_key, private_key, create_time, update_time, deleted
+    </sql>
+</mapper>

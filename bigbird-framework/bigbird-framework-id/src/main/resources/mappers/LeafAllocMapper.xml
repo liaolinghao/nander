@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="wang.bigbird.domain.framework.id.dao.LeafAllocMapper">
+    <resultMap id="BaseResultMap" type="wang.bigbird.domain.framework.id.domain.entity.LeafAlloc">
+        <constructor>
+            <idArg column="id" jdbcType="BIGINT" javaType="java.lang.Long"/>
+            <arg column="biz_tag" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="max_id" jdbcType="BIGINT" javaType="java.lang.Long"/>
+            <arg column="step" jdbcType="INTEGER" javaType="java.lang.Integer"/>
+            <arg column="description" jdbcType="VARCHAR" javaType="java.lang.String"/>
+            <arg column="create_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+            <arg column="update_time" jdbcType="TIMESTAMP" javaType="java.util.Date"/>
+            <arg column="deleted" jdbcType="BIT" javaType="java.lang.Boolean"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id
+        , biz_tag, max_id, step, description, create_time, update_time, deleted
+    </sql>
+    <update id="updateMaxId" parameterType="java.lang.String">
+        update td_leaf_alloc
+        set max_id = max_id + step
+        where biz_tag = #{bizTag,jdbcType=VARCHAR}
+    </update>
+    <update id="updateMaxIdByCustomStep">
+        update td_leaf_alloc
+        set max_id = max_id + #{step}
+        where biz_tag = #{bizTag}
+    </update>
+</mapper>

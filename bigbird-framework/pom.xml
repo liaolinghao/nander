@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>wang.bigbird.domain</groupId>
+    <artifactId>bigbird-framework</artifactId>
+    <packaging>pom</packaging>
+    <version>${revision}</version>
+    <name>Bigbird Framework</name>
+    <description>鸟域开发框架，提供微服务开发的各类通用功能模块</description>
+
+    <modules>
+        <module>bigbird-framework-dependencies</module>
+        <module>bigbird-framework-parent</module>
+        <module>bigbird-framework-common</module>
+        <module>bigbird-framework-data</module>
+        <module>bigbird-framework-core</module>
+        <module>bigbird-framework-distributedlock</module>
+        <module>bigbird-framework-cache</module>
+        <module>bigbird-framework-id</module>
+        <module>bigbird-framework-document</module>
+        <module>bigbird-framework-message</module>
+        <module>bigbird-framework-plugin</module>
+        <module>bigbird-framework-server</module>
+    </modules>
+
+    <!--SCM(Source Control Management)标签配置代码库，供Maven web站点和其它插件使用。-->
+    <scm>
+        <!--SCM的URL,该URL描述了版本库和如何连接到版本库，该连接只读。-->
+        <connection>
+            scm:git:https://gitee.com/bigbird-wang/bigbird.git
+        </connection>
+        <!--给开发者使用的，类似connection元素，该连接不仅仅只读-->
+        <developerConnection>
+            scm:git:https://gitee.com/bigbird-wang/bigbird.git
+        </developerConnection>
+        <!--当前代码的标签，在开发阶段默认为HEAD-->
+        <tag>HEAD</tag>
+        <!--指向项目的可浏览SCM库的URL。-->
+        <url>https://gitee.com/bigbird-wang/bigbird</url>
+    </scm>
+
+    <!-- 定义snapshots仓库和releases仓库的地址，用于mvn deploy发布 -->
+    <distributionManagement>
+        <repository>
+            <id>bigbird-central</id>
+            <name>libs-releases</name>
+            <url>http://artifactory.bigbird.wang/libs-releases-local</url>
+        </repository>
+        <snapshotRepository>
+            <id>bigbird-snapshots</id>
+            <name>libs-snapshots</name>
+            <url>http://artifactory.bigbird.wang/libs-snapshots-local</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <!-- 定义当前项目下载依赖的maven仓库地址 -->
+    <repositories>
+        <repository>
+            <id>aliyun</id>
+            <name>aliyun</name>
+            <url>https://maven.aliyun.com/nexus/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>huawei</id>
+            <name>huawei</name>
+            <url>https://repo.huaweicloud.com/repository/maven/huaweicloudsdk/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>nexus2</id>
+            <name>nexus2</name>
+            <url>https://repo1.maven.org/maven2/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>dcm4che</id>
+            <name>dcm4che</name>
+            <url>https://www.dcm4che.org/maven2/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>osgeo-release</id>
+            <name>OSGeo Release Repository</name>
+            <url>https://repo.osgeo.org/repository/release/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+        <repository>
+            <id>osgeo-snapshot</id>
+            <name>OSGeo Snapshot Repository</name>
+            <url>https://repo.osgeo.org/repository/snapshot/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
+    <!-- 定义当前项目所用插件的下载仓库-->
+    <pluginRepositories>
+        <pluginRepository>
+            <id>aliyun</id>
+            <name>aliyun</name>
+            <url>https://maven.aliyun.com/nexus/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>nexus2</id>
+            <name>nexus2</name>
+            <url>https://repo1.maven.org/maven2/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <!-- 统一环境设置 -->
+    <properties>
+        <!-- 全局版本控制，如果要修改版本号，修改此处即可-->
+        <revision>1.0.0-Xia-Yu</revision>
+        <!-- JAVA版本控制 -->
+        <java.version>11</java.version>
+        <!-- 关键配置：统一源码和编译编码为UTF-8 -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <!-- 配合sonar-maven-plugin，SonarQube服务可访问地址 -->
+        <sonar.host.url>http://sonarqube.smart-urban.cn/</sonar.host.url>
+        <!-- 配合sonar-maven-plugin，sonar扫描排除测试代码 -->
+        <sonar.test.exclusions>**/test/**/*</sonar.test.exclusions>
+        <!-- 配合sonar-maven-plugin，SonarQube服务登录token -->
+        <sonar.login></sonar.login>
+        <!-- 配合maven-javadoc-plugin，指定当发生javadoc编译错误时继续执行，忽略javadoc错误 -->
+        <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
+    </properties>
+
+    <!-- 开发者信息 -->
+    <developers>
+        <developer>
+            <id>bigbird</id>
+            <name>大鸟</name>
+            <email>26089183@qq.com</email>
+            <url>http://domain.bigbird.wang</url>
+        </developer>
+    </developers>
+
+    <build>
+        <plugins>
+            <!-- 制作项目的SDK文档包，版本不能变，否则文档不是合并效果 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <aggregate>true</aggregate>
+                    <reportOutputDirectory>javadoc</reportOutputDirectory>
+                </configuration>
+            </plugin>
+            <!-- 统一版本管理 -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>1.1.0</version>
+                <configuration>
+                    <!-- 是否更新pom文件，此处还有更高级的用法 -->
+                    <updatePomFile>true</updatePomFile>
+                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>flatten.clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

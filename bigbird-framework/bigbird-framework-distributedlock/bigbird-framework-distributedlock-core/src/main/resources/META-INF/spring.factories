@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+wang.bigbird.domain.framework.distributedlock.core.config.configuration.LockCoreConfiguration

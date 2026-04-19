@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+wang.bigbird.domain.framework.message.wechat.config.configuration.WechatConfiguration

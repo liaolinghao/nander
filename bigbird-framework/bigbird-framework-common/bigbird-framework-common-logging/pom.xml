@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>wang.bigbird.domain</groupId>
+        <artifactId>bigbird-framework-common</artifactId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>bigbird-framework-common-logging</artifactId>
+    <packaging>pom</packaging>
+    <name>Bigbird Framework :: Common :: Logging</name>
+    <description>鸟域开发框架 :: 通用组件 :: 日志组件</description>
+
+    <modules>
+        <module>bigbird-framework-common-logging-core</module>
+        <module>bigbird-framework-common-logging-web</module>
+        <module>bigbird-framework-common-logging-cloud</module>
+    </modules>
+
+</project>

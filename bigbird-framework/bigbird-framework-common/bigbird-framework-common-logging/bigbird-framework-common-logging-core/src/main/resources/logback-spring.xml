@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 日志级别从低到高分为TRACE < DEBUG < INFO < WARN < ERROR < FATAL，如果设置为WARN，则低于WARN的信息都不会输出 -->
+<!-- scan:当此属性设置为true时，配置文件如果发生改变，将会被重新加载，默认值为true -->
+<!-- scanPeriod:设置监测配置文件是否有修改的时间间隔，如果没有给出时间单位，默认单位是毫秒。当scan为true时，此属性生效。默认的时间间隔为1分钟。 -->
+<!-- debug:当此属性设置为true时，将打印出logback内部日志信息，实时查看logback运行状态。默认值为false。 -->
+<configuration scan="true" scanPeriod="60000" debug="false">
+
+    <!-- name的值是变量的名称，value的值是变量定义的值。通过定义的值会被插入到上下文中。
+    定义后，可以使“${}”来使用变量。Spring的yml配置文件配置项，说明如下： -->
+
+    <!-- logback.logDir：日志存放路径，默认是当前logs目录下 -->
+    <!-- logback.logLevel：日志打印等级，默认info -->
+    <!-- logback.historyDays：最大日志保留时间（天），默认180天 -->
+    <!-- logback.logSize：日志文件分割大小 ，默认200MB -->
+    <springProperty scope="context" name="LOG_DIR" source="logback.logDir" defaultValue="./logs"/>
+    <springProperty scope="context" name="LOG_LEVEL" source="logback.logLevel" defaultValue="INFO"/>
+    <springProperty scope="context" name="LOG_HISTORY" source="logback.historyDays" defaultValue="180"/>
+    <springProperty scope="context" name="LOG_SIZE" source="logback.logSize" defaultValue="200MB"/>
+
+    <!-- logback异常邮件发送时的邮箱服务器配置 -->
+    <!-- spring.mail.host：邮箱服务器 -->
+    <!-- spring.mail.port：邮箱服务端口 -->
+    <!-- spring.mail.username：邮箱服务用户名 -->
+    <!-- spring.mail.password：邮箱服务密码 -->
+    <!-- spring.mail.error.subject：邮件主题 -->
+    <!-- spring.mail.error.to：邮件接收人 -->
+    <springProperty scope="context" name="MAIL_HOST" source="spring.mail.host"/>
+    <springProperty scope="context" name="MAIL_PORT" source="spring.mail.port" defaultValue="465"/>
+    <springProperty scope="context" name="MAIL_USERNAME" source="spring.mail.username"/>
+    <springProperty scope="context" name="MAIL_PASSWORD" source="spring.mail.password"/>
+    <springProperty scope="context" name="MAIL_SUBJECT" source="spring.mail.error.subject"/>
+    <springProperty scope="context" name="MAIL_TO" source="spring.mail.error.to"/>
+
+    <!-- %yellow：黄色修饰日期信息段 -->
+    <!-- %d{yyyy-MM-dd HH:mm:ss.SSS}：日期 -->
+    <!-- %highlight()：颜色，info为蓝色，warn为浅红，error为加粗红，debug为黑色 -->
+    <!-- %t：线程名称 -->
+    <!-- %X{tid}：链路追踪ID -->
+    <!-- %cyan：蓝绿色修饰日志内容 -->
+    <!-- %m：日志输出内容 -->
+    <!-- %n：换行符 -->
+    <!-- 日志打印输出格式 -->
+    <property name="OUT_PATTERN"
+              value="%yellow(%d{yyyy-MM-dd HH:mm:ss.SSS})|%X{traceId}|%X{tid}|%white(%thread)|%highlight(%-5level)|%blue(%c.%M):%green(%L)|%cyan(%m%n)"/>
+    <!-- 日志文件格式，不要改动样式，关系到后续日志处理 -->
+    <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS}|%X{traceId}|%X{tid}|%thread|%-5level|%c.%M:%L|%m%n"/>
+
+    <!-- 控制台日志输出 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- 负责控制输出日志的格式 -->
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <!-- 引入链路追踪id，在原有的logback打印中加入[%tid] -->
+            <layout class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.mdc.TraceIdMDCPatternLogbackLayout">
+                <pattern>${OUT_PATTERN}</pattern>
+            </layout>
+        </encoder>
+    </appender>
+    <!-- 全量日志输出，不区分日志级别 -->
+    <appender name="SYSTEM_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 日志存放文件位置 -->
+        <file>${LOG_DIR}/all.log</file>
+        <!-- 按日期归档文件，同时限制每个日志文件的大小，基于时间和日志文件大小的翻滚策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/archive/all.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
+            <maxHistory>${LOG_HISTORY}</maxHistory>
+            <maxFileSize>${LOG_SIZE}</maxFileSize>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+        <!-- 负责控制输出日志的格式 -->
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <!-- 引入链路追踪id，在原有的logback打印中加入[%tid] -->
+            <layout class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.mdc.TraceIdMDCPatternLogbackLayout">
+                <pattern>${LOG_PATTERN}</pattern>
+            </layout>
+        </encoder>
+    </appender>
+    <!-- ERROR日志输出 -->
+    <appender name="ERROR_LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 日志存放文件位置 -->
+        <file>${LOG_DIR}/error.log</file>
+        <!-- 过滤低于指定阈值的事件-->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <!-- 按日期归档文件，同时限制每个日志文件的大小，基于时间和日志文件大小的翻滚策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/archive/error.%d{yyyy-MM-dd}.%i.gz</fileNamePattern>
+            <maxHistory>${LOG_HISTORY}</maxHistory>
+            <maxFileSize>${LOG_SIZE}</maxFileSize>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+        <!-- 负责控制输出日志的格式 -->
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <!-- 引入链路追踪id，在原有的logback打印中加入[%tid] -->
+            <layout class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.mdc.TraceIdMDCPatternLogbackLayout">
+                <pattern>${LOG_PATTERN}</pattern>
+            </layout>
+        </encoder>
+    </appender>
+    <!-- 邮箱日志输出 -->
+    <appender name="MAIL_LOG" class="ch.qos.logback.classic.net.SMTPAppender">
+        <smtpHost>${MAIL_HOST}</smtpHost>
+        <smtpPort>${MAIL_PORT}</smtpPort>
+        <username>${MAIL_USERNAME}</username>
+        <password>${MAIL_PASSWORD}</password>
+        <SSL>true</SSL>
+        <asynchronousSending>true</asynchronousSending>
+        <from>${MAIL_USERNAME}</from>
+        <to>${MAIL_TO}</to>
+        <subject>${MAIL_SUBJECT}: %logger{0}</subject>
+        <charsetEncoding>UTF-8</charsetEncoding>
+        <!-- 过滤低于指定阈值的事件 -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <cyclicBufferTracker class="ch.qos.logback.core.spi.CyclicBufferTracker">
+            <!-- 每封电子邮件发送的日志条目 -->
+            <bufferSize>5</bufferSize>
+        </cyclicBufferTracker>
+        <!--HTML展示-->
+        <layout class="ch.qos.logback.classic.html.HTMLLayout">
+            <pattern>${LOG_PATTERN}</pattern>
+        </layout>
+    </appender>
+    <!-- 异步记录日志-->
+    <appender name="ASYNC_SYSTEM_LOG" class="ch.qos.logback.classic.AsyncAppender">
+        <!-- 默认情况下，当阻塞队列剩余20%的容量时，它将丢弃级别跟踪、调试和信息事件，
+        只保留级别警告和错误事件。要保留所有事件，请将discardingThreshold设置为0。建议使用默认值20或者设置大于0。
+        如果设置discardingThreshold＝0，表示queue满了，不丢弃，block线程。 -->
+        <discardingThreshold>20</discardingThreshold>
+        <!-- 阻塞队列的最大容量。默认情况下，queueSize设置为256。
+        queueSize建议值计算 example：假设IO影响30s，日志和qps比例是1:1，
+        单容器压测值1500 qps则可以推算出queue size的值，queueSize的设置公式：30 ＊1500=45000。-->
+        <queueSize>45000</queueSize>
+        <!-- 如果为false（默认值），则追加程序将阻止追加到完整队列，而不是丢失消息。
+        设置为true时，附加程序只会丢弃消息，不会阻止您的应用程序。建议值：true-->
+        <neverBlock>true</neverBlock>
+        <!-- 异步记录仅充当事件分派器，必须引用另一个appender才能执行任何有用的操作-->
+        <appender-ref ref="SYSTEM_LOG"/>
+    </appender>
+    <!-- 异步记录日志-->
+    <appender name="ASYNC_ERROR_LOG" class="ch.qos.logback.classic.AsyncAppender">
+        <!-- 默认情况下，当阻塞队列剩余20%的容量时，它将丢弃级别跟踪、调试和信息事件，
+        只保留级别警告和错误事件。要保留所有事件，请将discardingThreshold设置为0。建议使用默认值20或者设置大于0。
+        如果设置discardingThreshold＝0，表示queue满了，不丢弃，block线程。 -->
+        <discardingThreshold>0</discardingThreshold>
+        <!-- 阻塞队列的最大容量。默认情况下，queueSize设置为256。
+        queueSize建议值计算 example：假设IO影响30s，日志和qps比例是1:1，
+        单容器压测值1500 qps则可以推算出queue size的值，queueSize的设置公式：30 ＊1500=45000。-->
+        <queueSize>45000</queueSize>
+        <!-- 如果为false（默认值），则追加程序将阻止追加到完整队列，而不是丢失消息。
+        设置为true时，附加程序只会丢弃消息，不会阻止您的应用程序。建议值：true-->
+        <neverBlock>false</neverBlock>
+        <!-- 异步记录仅充当事件分派器，必须引用另一个appender才能执行任何有用的操作-->
+        <appender-ref ref="ERROR_LOG"/>
+    </appender>
+    <!-- 部署Skywalking需要在日志中加入该项 -->
+    <appender name="grpc-log" class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.log.GRPCLogClientAppender">
+        <!-- 负责控制输出日志的格式 -->
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.mdc.TraceIdMDCPatternLogbackLayout">
+                <Pattern>${LOG_PATTERN}</Pattern>
+            </layout>
+        </encoder>
+    </appender>
+    <!-- 根记录器，属于记录器的顶层配置 -->
+    <!-- 如果其他记录器logger未设置level，则先从层次结构中的较高级别logger继承 -->
+    <!-- 如果层次结构中的较高级别logger也未设置level，则继承root设置的level -->
+    <root level="${LOG_LEVEL}">
+        <appender-ref ref="ASYNC_SYSTEM_LOG"/>
+        <appender-ref ref="ASYNC_ERROR_LOG"/>
+        <appender-ref ref="MAIL_LOG"/>
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="grpc-log"/>
+    </root>
+</configuration>

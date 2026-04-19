@@ -1,0 +1,51 @@
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+*.ids
+
+# Eclipse
+.project
+.classpath
+.settings/
+.factorypath
+
+# VS Code
+.vscode/
+
+# Maven构建输出
+target/
+!**/src/main/**/target/
+!**/src/test/**/target/
+dependency-reduced-pom.xml
+mvnw
+mvnw.cmd
+.mvn
+
+# Gradle构建输出
+.gradle/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# 所有模块的日志
+logs/
+!**/src/main/**/logs/
+!**/src/test/**/logs/
+*.log
+*.log.*
+
+# 通用临时文件
+*.tmp
+*.bak
+*.swp
+*.swo
+*.orig
+
+# 操作系统缓存
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+.flattened-pom.xml

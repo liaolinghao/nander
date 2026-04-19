@@ -1,0 +1,130 @@
+/*
+ * Copyright (c) 2026 廖凌浩 / 鸟域
+ *
+ * Licensed under the Mulan PSL v2.
+ * You can use this software according to the terms and conditions of the Mulan PSL v2.
+ * You may obtain a copy of Mulan PSL v2 at:
+ *          http://license.coscl.org.cn/MulanPSL2
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PSL v2 for more details.
+ */
+package wang.bigbird.domain.framework.server.web.ws.support.handler;
+
+import lombok.extern.slf4j.Slf4j;
+import org.java_websocket.client.WebSocketClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.handler.TextWebSocketHandler;
+import wang.bigbird.domain.framework.core.base.util.StringUtils;
+import wang.bigbird.domain.framework.core.base.util.url.UrlUtils;
+import wang.bigbird.domain.framework.server.web.ws.base.constant.WsConstants;
+import wang.bigbird.domain.framework.server.web.ws.config.property.WsProperties;
+import wang.bigbird.domain.framework.server.web.ws.service.base.ITargetWsAuthService;
+import wang.bigbird.domain.framework.server.web.ws.service.base.ITokenService;
+import wang.bigbird.domain.framework.server.web.ws.support.client.TargetWsClient;
+
+import java.net.URI;
+import java.util.concurrent.ConcurrentHashMap;
+
+/**
+ * 通用 WS 透传服务
+ * 客户端请求：ws://ip:port/xx/xxx → 透传：ws://targetIp:targetPort/xx/xxx
+ * 通过路由器实现中转
+ *
+ * @author Bigbird
+ */
+@Component
+@Slf4j
+public class WsRelayHandler extends TextWebSocketHandler {
+
+    @Autowired
+    private WsProperties wsProperties;
+    @Autowired(required = false)
+    private ITokenService tokenService;
+    @Autowired(required = false)
+    private ITargetWsAuthService targetWsAuthService;
+
+    /**
+     * 会话映射：前端Session → 目标WS客户端
+     */
+    private final ConcurrentHashMap<WebSocketSession, WebSocketClient> clientMap = new ConcurrentHashMap<>();
+
+    @Override
+    public void afterConnectionEstablished(WebSocketSession session) {
+        // 获取当前请求路径
+        URI uri = session.getUri();
+        String url = uri.toString();
+        String requestPath = uri.getPath();
+        log.info("New connection: path={}", requestPath);
+        String appKey = session.getHandshakeHeaders().getFirst(WsConstants.APPKEY_HEADER_CODE);
+        if (StringUtils.isBlank(appKey)) {
+            appKey = UrlUtils.getParameter(url, WsConstants.APPKEY_PARAM_CODE, "");
+        }
+        String token = session.getHandshakeHeaders().getFirst(WsConstants.TOKEN_HEADER_CODE);
+        if (StringUtils.isBlank(token)) {
+            token = UrlUtils.getParameter(url, WsConstants.TOKEN_PARAM_CODE, "");
+        }
+        // 2. 鉴权
+        if (tokenService != null && !tokenService.verifyToken(appKey, token)) {
+            closeSession(session, "Authentication failed");
+            return;
+        }
+        log.info("Authentication passed: appKey={}", appKey);
+        // 3. 拼接目标地址（核心通用逻辑）
+        String targetUrl = wsProperties.getTarget() + requestPath;
+        // 4. 连接目标服务
+        try {
+            TargetWsClient targetClient = new TargetWsClient(new URI(targetUrl), null, session);
+            if (targetWsAuthService != null) {
+                targetWsAuthService.addAuthHeaders(targetClient);
+            }
+            targetClient.connect();
+            clientMap.put(session, targetClient);
+            log.info("Relay established: {} → {}", requestPath, targetUrl);
+        } catch (Exception e) {
+            log.error("Failed to connect to target WS service: {}", e.getMessage(), e);
+            closeSession(session, "Target service unavailable");
+        }
+    }
+
+    @Override
+    protected void handleTextMessage(WebSocketSession session, TextMessage message) {
+        WebSocketClient client = clientMap.get(session);
+        if (client == null || !client.isOpen()) {
+            return;
+        }
+        try {
+            client.send(message.getPayload());
+            log.info("Relaying message: {}", message.getPayload());
+        } catch (Exception e) {
+            log.error("Failed to send message: {}", e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
+        WebSocketClient client = clientMap.remove(session);
+        if (client != null && client.isOpen()) {
+            client.close();
+        }
+        log.info("Connection closed, resources cleaned up");
+    }
+
+    @Override
+    public void handleTransportError(WebSocketSession session, Throwable error) {
+        log.error("Service exception: {}", error.getMessage(), error);
+    }
+
+    private void closeSession(WebSocketSession session, String reason) {
+        try {
+            session.close(CloseStatus.POLICY_VIOLATION.withReason(reason));
+        } catch (Exception e) {
+        }
+    }
+
+}

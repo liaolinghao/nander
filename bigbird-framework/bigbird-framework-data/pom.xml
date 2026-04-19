@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>wang.bigbird.domain</groupId>
+        <artifactId>bigbird-framework-parent</artifactId>
+        <version>${revision}</version>
+        <relativePath>../bigbird-framework-parent/pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>bigbird-framework-data</artifactId>
+    <packaging>pom</packaging>
+    <name>Bigbird Framework :: Data</name>
+    <description>鸟域开发框架 :: 数据持久化构件</description>
+
+    <modules>
+        <module>bigbird-framework-data-elasticsearch</module>
+        <module>bigbird-framework-data-kafka</module>
+        <module>bigbird-framework-data-redis</module>
+        <module>bigbird-framework-data-zookeeper</module>
+        <module>bigbird-framework-data-mongodb</module>
+        <module>bigbird-framework-data-rabbitmq</module>
+        <module>bigbird-framework-data-rocketmq</module>
+        <module>bigbird-framework-data-mybatisplus</module>
+        <module>bigbird-framework-data-oss</module>
+    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>bigbird-framework-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>bigbird-framework-common-logging-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+        </dependency>
+        <!-- 增加web依赖是为了单元测试依赖的SpringBoot Application能够正常启动 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+
+</project>
