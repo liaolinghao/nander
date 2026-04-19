@@ -60,3 +60,16 @@ Java microservice component library covering various technologies involved in Ja
 [🎬 Video](https://player.bilibili.com/player.html?bvid=BV1Kw411T7Rz)
 
 -------------------------------------------------------------------------------
+
+
+## 🏗️ Other
+
+### 🎋 Branch Description
+
+Java microservice component library's source code is divided into two branches:
+
+| branch | description                                               |
+|-----------|---------------------------------------------------------------|
+| master    | PR (Pull Request) refers to a code merge request submitted by developers, which can only be merged into protected branches after being reviewed and approved by project maintainers.|
+| develop   | Development integration branch for iteration of all new features.|
+|           | All submissions must be made via Pull Request and can only be merged after review and approval.|
