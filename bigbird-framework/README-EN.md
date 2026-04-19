@@ -28,21 +28,11 @@
 
 ## 📚 Introduction
 
-Nander is a Java microservice component library covering various technologies involved in Java microservice architecture. It categorizes common functions required in microservice development into three dimensions by complexity, and organizes them separately according to functional categories.
-
-### 🍺 Nander Paper
-
-👉 <a href="https://literature.bigbird.wang/started/poem/nander"> Nander </a> 👈
-
-👉 <a href="https://literature.bigbird.wang/started/prose/nander%20%E4%B9%8B%E9%81%93"> Nander's Principles</a> 👈
-
-👉 <a href="https://literature.bigbird.wang/started/prose/%E5%86%AC%E4%B9%8Bnander"> Winter of Nander</a> 👈
-
-👉 <a href="https://literature.bigbird.wang/started/prose/%E6%98%A5%E4%B9%8Bnander"> Spring of Nander</a> 👈
+Java microservice component library covering various technologies involved in Java microservice architecture. It categorizes common functions required in microservice development into three dimensions by complexity, and organizes them separately according to functional categories.
 
 -------------------------------------------------------------------------------
 
-## 🛠️ Nander Module
+## 🛠️ Module
 
 | Module                |     Description                                                                          |
 |--------------------|---------------------------------------------------------------------------------- |

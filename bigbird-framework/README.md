@@ -28,21 +28,11 @@
 
 ## 📚简介
 
-Nander是一套JAVA微服务构件库，涵盖了JAVA微服务架构中涉及的各类技术，它将微服务研发过程中涉及的公共功能按照复杂度划分为不同的三个维度并按照功能类别分别予以组织。
-
-### 🍺 Nander相关文章
-
-👉 <a href="https://literature.bigbird.wang/started/poem/nander"> Nander </a> 👈
-
-👉 <a href="https://literature.bigbird.wang/started/prose/nander%20%E4%B9%8B%E9%81%93"> Nander 之道</a> 👈
-
-👉 <a href="https://literature.bigbird.wang/started/prose/%E5%86%AC%E4%B9%8Bnander"> 冬之 Nander</a> 👈
-
-👉 <a href="https://literature.bigbird.wang/started/prose/%E6%98%A5%E4%B9%8Bnander"> 春之 Nander</a> 👈
+JAVA微服务构件库，涵盖了JAVA微服务架构中涉及的各类技术，它将微服务研发过程中涉及的公共功能按照复杂度划分为不同的三个维度并按照功能类别分别予以组织。
 
 -------------------------------------------------------------------------------
 
-## 🛠️ Nander成员
+## 🛠️ 成员
 
 | 模块                |     介绍                                                                          |
 |--------------------|---------------------------------------------------------------------------------- |
