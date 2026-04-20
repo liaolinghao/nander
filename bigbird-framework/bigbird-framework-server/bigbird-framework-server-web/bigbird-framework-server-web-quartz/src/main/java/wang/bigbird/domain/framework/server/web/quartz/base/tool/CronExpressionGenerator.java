@@ -12,6 +12,9 @@
  */
 package wang.bigbird.domain.framework.server.web.quartz.base.tool;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 /**
  * Cron表达式生成工具类
  *
@@ -35,6 +38,21 @@ public class CronExpressionGenerator {
      * 最大秒数
      */
     private static final int max_second = 59;
+    /**
+     * 精确执行一次的cron表达式格式
+     */
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ss mm HH dd MM ? yyyy");
+
+    /**
+     * 根据LocalDateTime构造表示精确执行一次的cron表达式
+     * 生成的表达式格式为：ss mm HH dd MM ? yyyy
+     *
+     * @param dateTime 时间
+     * @return 对应的cron表达式
+     */
+    public static String generateCron(LocalDateTime dateTime) {
+        return dateTime.format(formatter);
+    }
 
     /**
      * 根据时分秒构造cron表达式
