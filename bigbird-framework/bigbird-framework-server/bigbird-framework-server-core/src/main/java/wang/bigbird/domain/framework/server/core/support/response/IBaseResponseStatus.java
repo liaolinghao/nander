@@ -120,6 +120,7 @@ public interface IBaseResponseStatus {
 
     ResponseStatus CUT_IMAGE_ERROR = new ResponseStatus(50000, "图像剪裁发生错误");
     ResponseStatus IMPORT_DATA_ERROR = new ResponseStatus(50001, "数据导入发生错误");
+    ResponseStatus JOB_SCHEDULING_ERROR = new ResponseStatus(50002, "作业调度发生错误");
 
     ResponseStatus THIRD_SYSTEM_BUSINESS_FAILED = new ResponseStatus(60000, "第三方系统业务失败");
     ResponseStatus THIRD_SYSTEM_BUSINESS_REFUSE = new ResponseStatus(60001, "第三方系统拒绝业务");
