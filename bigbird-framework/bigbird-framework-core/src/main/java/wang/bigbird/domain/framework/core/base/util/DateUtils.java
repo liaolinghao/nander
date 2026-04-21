@@ -607,4 +607,27 @@ public class DateUtils {
         return ChronoUnit.MILLIS.between(now, midnight);
     }
 
+    /**
+     * LocalDateTime 转 long 毫秒时间戳
+     *
+     * @param dateTime 日期
+     * @return 毫秒时间戳
+     */
+    public static long localDateTimeToLong(LocalDateTime dateTime) {
+        return dateTime.atZone(zoneId).toInstant().toEpochMilli();
+    }
+
+    /**
+     * long 毫秒时间戳 转 LocalDateTime
+     *
+     * @param timestamp 毫秒时间戳
+     * @return 日期
+     */
+    public static LocalDateTime longToLocalDateTime(long timestamp) {
+        return LocalDateTime.ofInstant(
+                Instant.ofEpochMilli(timestamp),
+                zoneId
+        );
+    }
+
 }
