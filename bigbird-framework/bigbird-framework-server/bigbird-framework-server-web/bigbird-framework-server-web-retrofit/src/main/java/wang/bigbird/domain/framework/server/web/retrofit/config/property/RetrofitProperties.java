@@ -1,0 +1,44 @@
+/*
+ * Copyright (c) 2026 廖凌浩 / 鸟域
+ *
+ * Licensed under the Mulan PSL v2.
+ * You can use this software according to the terms and conditions of the Mulan PSL v2.
+ * You may obtain a copy of Mulan PSL v2 at:
+ *          http://license.coscl.org.cn/MulanPSL2
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PSL v2 for more details.
+ */
+package wang.bigbird.domain.framework.server.web.retrofit.config.property;
+
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
+/**
+ * 网络配置
+ *
+ * @author Bigbird
+ */
+@Data
+@Component
+@ConfigurationProperties(prefix = "bigbird.server.web.retrofit")
+public class RetrofitProperties {
+
+    /**
+     * 连接超时时间（毫秒）
+     */
+    private Long connectTimeoutMs = 30000L;
+
+    /**
+     * 读取超时时间（毫秒）
+     */
+    private Long readTimeoutMs = 30000L;
+
+    /**
+     * 写入超时时间（毫秒）
+     */
+    private Long writeTimeoutMs = 30000L;
+
+}

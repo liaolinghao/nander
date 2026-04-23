@@ -15,9 +15,11 @@ package wang.bigbird.domain.framework.server.web.retrofit.config.configuration;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import wang.bigbird.domain.framework.server.web.retrofit.config.property.RetrofitProperties;
 
 import javax.annotation.PostConstruct;
 import javax.net.ssl.SSLContext;
@@ -27,6 +29,7 @@ import javax.net.ssl.X509TrustManager;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.concurrent.TimeUnit;
 
 /**
  * WEB框架配置
@@ -37,6 +40,9 @@ import java.security.SecureRandom;
 @ComponentScan("wang.bigbird.domain.framework.server.web.retrofit")
 @Configuration
 public class WebRetrofitConfiguration {
+
+    @Autowired
+    private RetrofitProperties retrofitProperties;
 
     @PostConstruct
     public void init() {
@@ -62,6 +68,9 @@ public class WebRetrofitConfiguration {
     @Bean
     public OkHttpClient okHttpClient() throws NoSuchAlgorithmException, KeyManagementException {
         OkHttpClient.Builder okhttpClient = new OkHttpClient().newBuilder();
+        okhttpClient.connectTimeout(retrofitProperties.getConnectTimeoutMs(), TimeUnit.MILLISECONDS)
+                .readTimeout(retrofitProperties.getReadTimeoutMs(), TimeUnit.MILLISECONDS)
+                .writeTimeout(retrofitProperties.getWriteTimeoutMs(), TimeUnit.MILLISECONDS);
         //信任所有服务器地址
         okhttpClient.hostnameVerifier((s, sslSession) -> true);
         //创建管理器

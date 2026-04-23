@@ -55,6 +55,17 @@ asyncTaskExecutor.execute(() -> {
 ### 网络请求公共配置
 
 ```
+bigbird:
+  server:
+    web:
+      retrofit:
+        # 连接超时时间，毫秒为单位，推荐 30~60 秒
+        connect-timeout-ms: 30000
+        # 读取超时时间，毫秒为单位，推荐 30~60 秒
+        read-timeout-ms: 30000
+        # 写入超时时间，毫秒为单位，推荐 30~60 秒
+        write-timeout-ms: 30000
+
 retrofit:
   enable-response-call-adapter: true
   # 全局转换器
