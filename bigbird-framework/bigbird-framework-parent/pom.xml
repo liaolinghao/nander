@@ -358,6 +358,34 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>apple-silicon</id>
+            <activation>
+                <os>
+                    <!-- 当在 Apple Silicon 芯片上运行时触发 -->
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <!-- 直接覆盖protobuf-maven-plugin的classifier配置 -->
+                    <plugin>
+                        <groupId>io.github.ascopes</groupId>
+                        <artifactId>protobuf-maven-plugin</artifactId>
+                        <configuration>
+                            <binaryMavenPlugins>
+                                <binaryMavenPlugin>
+                                    <groupId>io.grpc</groupId>
+                                    <artifactId>protoc-gen-grpc-java</artifactId>
+                                    <!-- 强制将分类器设置为 osx-x86_64，让 Maven 下载 Intel 版本 gRPC 插件，通过 Rosetta 运行兼容旧版 gRPC -->
+                                    <classifier>osx-x86_64</classifier>
+                                </binaryMavenPlugin>
+                            </binaryMavenPlugins>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
 </project>
