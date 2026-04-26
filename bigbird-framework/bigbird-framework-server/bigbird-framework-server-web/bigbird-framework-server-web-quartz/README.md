@@ -4,7 +4,7 @@
 
 1、提供任务调度服务，可用于各种定时任务管理场景。
 
-2、需要在项目的resources目录中放置quartz.properties配置文件，并修改其中的数据源配置。
+2、需要在项目的resources目录中放置quartz.properties配置文件，并修改其中的调度策略。
 
 ## 任务调度服务
 

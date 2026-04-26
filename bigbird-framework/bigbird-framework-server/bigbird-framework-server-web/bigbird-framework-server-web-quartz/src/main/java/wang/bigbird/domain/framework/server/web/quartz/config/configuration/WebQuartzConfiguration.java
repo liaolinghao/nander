@@ -24,6 +24,7 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import wang.bigbird.domain.framework.server.web.quartz.support.factory.AutowiringSpringBeanJobFactory;
 
 import javax.annotation.PostConstruct;
+import javax.sql.DataSource;
 
 /**
  * WEB框架配置
@@ -41,10 +42,12 @@ public class WebQuartzConfiguration {
     }
 
     @Bean
-    public SchedulerFactoryBean schedulerFactory(ApplicationContext applicationContext) throws SchedulerException {
+    public SchedulerFactoryBean schedulerFactory(ApplicationContext applicationContext, DataSource dataSource) throws SchedulerException {
         SchedulerFactoryBean factory = new SchedulerFactoryBean();
         // 设置Quartz配置文件位置，从类路径下加载quartz.properties
         factory.setConfigLocation(new ClassPathResource("quartz.properties"));
+        // 关键：强制使用 Spring 的数据源，彻底抛弃 quartz.properties 里的数据库配置
+        factory.setDataSource(dataSource);
         // 配置Spring管理Job的工厂（如需依赖注入）
         AutowiringSpringBeanJobFactory jobFactory = new AutowiringSpringBeanJobFactory();
         jobFactory.setApplicationContext(applicationContext);
@@ -53,8 +56,8 @@ public class WebQuartzConfiguration {
     }
 
     @Bean
-    public Scheduler scheduler(ApplicationContext applicationContext) throws SchedulerException {
-        return schedulerFactory(applicationContext).getScheduler();
+    public Scheduler scheduler(ApplicationContext applicationContext, DataSource dataSource) throws SchedulerException {
+        return schedulerFactory(applicationContext, dataSource).getScheduler();
     }
 
 }
