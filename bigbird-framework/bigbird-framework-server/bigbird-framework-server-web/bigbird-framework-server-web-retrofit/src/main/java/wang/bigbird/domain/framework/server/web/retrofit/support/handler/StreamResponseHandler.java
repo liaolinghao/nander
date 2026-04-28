@@ -2,6 +2,7 @@ package wang.bigbird.domain.framework.server.web.retrofit.support.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.ResponseBody;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import retrofit2.Call;
 import wang.bigbird.domain.framework.core.base.util.StringUtils;
 import wang.bigbird.domain.framework.server.web.retrofit.exception.StreamResponseException;
@@ -25,9 +26,12 @@ public class StreamResponseHandler {
 
     private IStreamCallbacker streamCallbacker;
 
-    public StreamResponseHandler(Call<ResponseBody> call, IStreamCallbacker streamCallback) {
+    private SseEmitter emitter;
+
+    public StreamResponseHandler(Call<ResponseBody> call, IStreamCallbacker streamCallback, SseEmitter emitter) {
         this.call = call;
         this.streamCallbacker = streamCallback;
+        this.emitter = emitter;
     }
 
     public void handleResponse() {
@@ -45,6 +49,9 @@ public class StreamResponseHandler {
                 // 逐行读取，直到流结束
                 while ((line = reader.readLine()) != null) {
                     log.debug("Read line:{}", line);
+                    if (emitter != null) {
+                        emitter.send(line);
+                    }
                     result.append(line).append(StringUtils.getLineSeparator());
                 }
                 // 全部读取完成 → 才回调业务

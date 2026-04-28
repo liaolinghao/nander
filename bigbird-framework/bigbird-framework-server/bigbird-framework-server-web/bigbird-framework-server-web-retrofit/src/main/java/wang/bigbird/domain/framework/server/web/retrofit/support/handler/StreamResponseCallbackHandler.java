@@ -2,6 +2,7 @@ package wang.bigbird.domain.framework.server.web.retrofit.support.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.ResponseBody;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -18,13 +19,16 @@ public class StreamResponseCallbackHandler implements Callback<ResponseBody> {
 
     private IStreamCallbacker streamCallbacker;
 
-    public StreamResponseCallbackHandler(IStreamCallbacker streamCallback) {
+    private SseEmitter emitter;
+
+    public StreamResponseCallbackHandler(IStreamCallbacker streamCallback, SseEmitter emitter) {
         this.streamCallbacker = streamCallback;
+        this.emitter = emitter;
     }
 
     @Override
     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-        StreamResponseHandler streamResponseHandler = new StreamResponseHandler(call, streamCallbacker);
+        StreamResponseHandler streamResponseHandler = new StreamResponseHandler(call, streamCallbacker, emitter);
         streamResponseHandler.handleResponse();
     }
 
