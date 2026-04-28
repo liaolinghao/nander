@@ -38,7 +38,11 @@ public class StreamResponseHandler {
         try (ResponseBody body = call.execute().body()) {
             if (body == null) {
                 // 请求失败
-                streamCallbacker.onFailed(new StreamResponseException("The response body is null"));
+                StreamResponseException e = new StreamResponseException("The response body is null");
+                if (emitter != null) {
+                    emitter.completeWithError(e);
+                }
+                streamCallbacker.onFailed(e);
                 return;
             }
             // 读取完整的流数据，直到全部读完
@@ -54,13 +58,23 @@ public class StreamResponseHandler {
                     }
                     result.append(line).append(StringUtils.getLineSeparator());
                 }
+                if (emitter != null) {
+                    emitter.complete();
+                }
                 // 全部读取完成 → 才回调业务
                 streamCallbacker.onSuccess(result.toString());
             } catch (IOException e) {
+                log.error("Error occurred while executing the request:{}", e.getMessage(), e);
+                if (emitter != null) {
+                    emitter.completeWithError(e);
+                }
                 streamCallbacker.onFailed(e);
             }
         } catch (Exception e) {
             log.error("Error occurred while executing the request:{}", e.getMessage(), e);
+            if (emitter != null) {
+                emitter.completeWithError(e);
+            }
             streamCallbacker.onFailed(e);
         }
     }
