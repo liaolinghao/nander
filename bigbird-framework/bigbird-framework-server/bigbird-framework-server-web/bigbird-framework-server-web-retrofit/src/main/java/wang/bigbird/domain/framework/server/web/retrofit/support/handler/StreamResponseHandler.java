@@ -52,11 +52,13 @@ public class StreamResponseHandler {
                 String line;
                 // 逐行读取，直到流结束
                 while ((line = reader.readLine()) != null) {
-                    log.debug("Read line:{}", line);
-                    if (emitter != null) {
-                        emitter.send(line);
+                    if (StringUtils.isNotBlank(line)) {
+                        log.debug("Read line:{}", line);
+                        if (emitter != null) {
+                            emitter.send(line);
+                        }
+                        result.append(line).append(StringUtils.getLineSeparator());
                     }
-                    result.append(line).append(StringUtils.getLineSeparator());
                 }
                 if (emitter != null) {
                     emitter.complete();
