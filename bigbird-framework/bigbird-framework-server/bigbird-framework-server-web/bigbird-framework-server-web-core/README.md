@@ -248,7 +248,7 @@ bigbird:
 <table>
 <tr>
 <td>地址</td>
-<td colspan="5">/common/loadServerTimeStamp</td>
+<td colspan="5">/common/load-server-time-stamp</td>
 </tr>
 <tr>
 <td>请求方式</td>
@@ -297,7 +297,7 @@ bigbird:
 <table>
 <tr>
 <td>地址</td>
-<td colspan="5">/common/getFromSession/{key}</td>
+<td colspan="5">/common/get-from-session/{key}</td>
 </tr>
 <tr>
 <td>请求方式</td>
@@ -346,7 +346,7 @@ bigbird:
 <table>
 <tr>
 <td>地址</td>
-<td colspan="5">/common/saveInSession</td>
+<td colspan="5">/common/save-in-session</td>
 </tr>
 <tr>
 <td>请求方式</td>
@@ -398,7 +398,7 @@ bigbird:
 <table>
 <tr>
 <td>地址</td>
-<td colspan="5">/common/removeFromSession/{keyInfo}</td>
+<td colspan="5">/common/remove-from-session/{keyInfo}</td>
 </tr>
 <tr>
 <td>请求方式</td>
@@ -446,7 +446,7 @@ bigbird:
 <table>
 <tr>
 <td>地址</td>
-<td colspan="5">/common/cancelProcess/{processId}</td>
+<td colspan="5">/common/cancel-process/{processId}</td>
 </tr>
 <tr>
 <td>请求方式</td>
@@ -494,7 +494,7 @@ bigbird:
 <table>
 <tr>
 <td>地址</td>
-<td colspan="5">/common/getProcess/{processId}</td>
+<td colspan="5">/common/get-process/{processId}</td>
 </tr>
 <tr>
 <td>请求方式</td>
@@ -543,7 +543,7 @@ bigbird:
 <table>
 <tr>
 <td>地址</td>
-<td colspan="5">/common/uploadFile?currentAttachName=xxx&supportSuffix=xxx</td>
+<td colspan="5">/common/file/upload?currentAttachName=xxx&supportSuffix=xxx</td>
 </tr>
 <tr>
 <td>请求方式</td>
@@ -625,7 +625,7 @@ doc,docx,xls,xlsx,ppt,pptx,pdf,txt,md,xml
 <table>
 <tr>
 <td>地址</td>
-<td colspan="5">/common/deleteFile?filePath=xxx</td>
+<td colspan="5">/common/file/delete?filePath=xxx</td>
 </tr>
 <tr>
 <td>请求方式</td>
@@ -674,7 +674,7 @@ doc,docx,xls,xlsx,ppt,pptx,pdf,txt,md,xml
 <table>
 <tr>
 <td>地址</td>
-<td colspan="5">/common/downloadFile?filePath=xxx&fileName=xxx</td>
+<td colspan="5">/common/file/download?filePath=xxx&fileName=xxx</td>
 </tr>
 <tr>
 <td>请求方式</td>

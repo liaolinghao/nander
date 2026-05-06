@@ -62,7 +62,7 @@ public class CommonController {
      *
      * @return 服务器时间戳
      */
-    @GetMapping(value = "/loadServerTimeStamp")
+    @GetMapping(value = "/load-server-time-stamp")
     public RespResult<Long> loadServerTimeStamp() {
         return RespResult.ok(System.currentTimeMillis());
     }
@@ -74,7 +74,7 @@ public class CommonController {
      * @param session session
      * @return 指定键值
      */
-    @GetMapping(value = "/getFromSession/{key}")
+    @GetMapping(value = "/get-from-session/{key}")
     public RespResult<String> getFromSession(@PathVariable(value = "key") String key, HttpSession session) {
         String value = (String) session.getAttribute(key);
         return RespResult.ok(StringUtils.processNullStr(value));
@@ -87,7 +87,7 @@ public class CommonController {
      * @param session session
      * @return 保存结果
      */
-    @PutMapping(value = "/saveInSession")
+    @PutMapping(value = "/save-in-session")
     public RespResult<Void> saveInSession(@RequestBody Map<String, String> map, HttpSession session) {
         Set<Map.Entry<String, String>> entrys = map.entrySet();
         for (Map.Entry<String, String> entry : entrys) {
@@ -103,7 +103,7 @@ public class CommonController {
      * @param session session
      * @return 删除结果
      */
-    @DeleteMapping(value = "/removeFromSession/{keyInfo}")
+    @DeleteMapping(value = "/remove-from-session/{keyInfo}")
     public RespResult<Void> removeFromSession(@PathVariable(value = "keyInfo") String keyInfo, HttpSession session) {
         String[] keys = keyInfo.split(CommonConstants.COMMA);
         for (int i = 0; i < keys.length; i++) {
@@ -120,7 +120,7 @@ public class CommonController {
      * @param session   session
      * @return 取消结果
      */
-    @PutMapping(value = "/cancelProcess/{processId}")
+    @PutMapping(value = "/cancel-process/{processId}")
     public RespResult<Void> cancelProcess(@PathVariable(value = "processId") String processId, HttpSession session) {
         session.setAttribute(
                 WebCoreConstants.CANCEL_PROGRESS + CommonConstants.DOLLAR + processId, true);
@@ -134,7 +134,7 @@ public class CommonController {
      * @param session   session
      * @return 当前处理过程状态
      */
-    @GetMapping(value = "/getProcess/{processId}")
+    @GetMapping(value = "/get-process/{processId}")
     public RespResult<String> getProcess(@PathVariable(value = "processId") String processId, HttpSession session) {
         String process = StringUtils.processNullStr((String) session.getAttribute(
                 WebCoreConstants.CURRENT_PROGRESS + CommonConstants.DOLLAR + processId));
@@ -157,7 +157,7 @@ public class CommonController {
      * @return 上传文件信息
      * @throws IOException
      */
-    @PostMapping(value = "/uploadFile")
+    @PostMapping(value = "/file/upload")
     public RespResult<Map<String, Object>> uploadFile(@RequestParam(value = "currentAttachName", required = false) String currentAttachName,
                                                       @RequestParam(value = "supportSuffix", required = false) String supportSuffix,
                                                       @RequestParam("file") MultipartFile file, HttpSession session) throws IOException {
@@ -176,7 +176,7 @@ public class CommonController {
      * @param filePath 待解密的文件路径
      * @return 删除结果
      */
-    @DeleteMapping(value = "/deleteFile")
+    @DeleteMapping(value = "/file/delete")
     public RespResult<Boolean> deleteFile(@RequestParam(value = "filePath") String filePath) throws FileNotFoundException, UnsupportedEncodingException {
         Assert.isTrue(StringUtils.isNotBlank(filePath), "The file path is null.");
         File file = new File(WebUtils.getAppDir(), decrypt(filePath));
@@ -193,7 +193,7 @@ public class CommonController {
      * @param response 响应对象
      * @throws IOException 可能抛出该异常
      */
-    @GetMapping(value = "/downloadFile")
+    @GetMapping(value = "/file/download")
     public void downloadFile(@RequestParam(value = "filePath") String filePath,
                              @RequestParam(value = "fileName", required = false) String fileName,
                              HttpServletRequest request,
