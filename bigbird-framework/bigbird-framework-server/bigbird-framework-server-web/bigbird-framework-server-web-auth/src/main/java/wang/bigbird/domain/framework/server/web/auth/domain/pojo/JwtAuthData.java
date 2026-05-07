@@ -15,6 +15,7 @@ package wang.bigbird.domain.framework.server.web.auth.domain.pojo;
 import lombok.Data;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import wang.bigbird.domain.framework.server.web.core.base.enums.ChannelEnum;
+import wang.bigbird.domain.framework.server.web.core.base.enums.DeviceScreenTypeEnum;
 
 import java.io.Serializable;
 import java.util.List;
@@ -67,6 +68,11 @@ public class JwtAuthData implements Serializable {
      * 认证对象访问渠道
      */
     private ChannelEnum channel;
+
+    /**
+     * 认证对象访问设备屏幕类型
+     */
+    private DeviceScreenTypeEnum deviceScreenType;
 
     /**
      * 认证对象类型，比如：

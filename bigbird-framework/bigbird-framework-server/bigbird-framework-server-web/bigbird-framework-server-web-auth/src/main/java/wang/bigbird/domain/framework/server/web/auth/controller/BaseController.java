@@ -27,6 +27,7 @@ import wang.bigbird.domain.framework.server.web.auth.domain.pojo.user.JwtRole;
 import wang.bigbird.domain.framework.server.web.auth.domain.pojo.user.JwtUser;
 import wang.bigbird.domain.framework.server.web.auth.support.processor.JwtSecurityProcessor;
 import wang.bigbird.domain.framework.server.web.core.base.enums.ChannelEnum;
+import wang.bigbird.domain.framework.server.web.core.base.enums.DeviceScreenTypeEnum;
 
 import java.util.Collection;
 import java.util.List;
@@ -172,6 +173,27 @@ public class BaseController {
             String authObject = (String) authentication.getPrincipal();
             JwtUser jwtUser = JsonUtils.json2Object(authObject, JwtUser.class);
             return jwtUser.getChannel();
+        }
+        throw BusinessException.of(IBaseResponseStatus.FORBIDDEN_TO_OPERATION);
+    }
+
+    /**
+     * 获取登录用户设备屏幕类型
+     *
+     * @return
+     */
+    protected DeviceScreenTypeEnum loadLoginUserDeviceScreenType() {
+        if (!jwtSecurityProcessor.isEnableJwtSecurity()) {
+            return null;
+        }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication instanceof AnonymousAuthenticationToken) {
+            throw BusinessException.of(IBaseResponseStatus.USER_NOT_LOGIN);
+        }
+        if (authentication instanceof UsernamePasswordAuthenticationToken) {
+            String authObject = (String) authentication.getPrincipal();
+            JwtUser jwtUser = JsonUtils.json2Object(authObject, JwtUser.class);
+            return jwtUser.getDeviceScreenType();
         }
         throw BusinessException.of(IBaseResponseStatus.FORBIDDEN_TO_OPERATION);
     }
