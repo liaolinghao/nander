@@ -22,6 +22,7 @@ import wang.bigbird.domain.framework.core.base.constant.CommonConstants;
 import wang.bigbird.domain.framework.core.base.util.JsonUtils;
 import wang.bigbird.domain.framework.server.core.exception.BusinessException;
 import wang.bigbird.domain.framework.server.core.support.response.IBaseResponseStatus;
+import wang.bigbird.domain.framework.server.web.auth.domain.pojo.JwtAuthData;
 import wang.bigbird.domain.framework.server.web.auth.domain.pojo.user.JwtOrg;
 import wang.bigbird.domain.framework.server.web.auth.domain.pojo.user.JwtRole;
 import wang.bigbird.domain.framework.server.web.auth.domain.pojo.user.JwtUser;
@@ -194,6 +195,26 @@ public class BaseController {
             String authObject = (String) authentication.getPrincipal();
             JwtUser jwtUser = JsonUtils.json2Object(authObject, JwtUser.class);
             return jwtUser.getDeviceScreenType();
+        }
+        throw BusinessException.of(IBaseResponseStatus.FORBIDDEN_TO_OPERATION);
+    }
+
+    /**
+     * 获取登录用户信息实体
+     *
+     * @return
+     */
+    protected JwtAuthData loadLoginUserJwtAuthData() {
+        if (!jwtSecurityProcessor.isEnableJwtSecurity()) {
+            return null;
+        }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication instanceof AnonymousAuthenticationToken) {
+            throw BusinessException.of(IBaseResponseStatus.USER_NOT_LOGIN);
+        }
+        if (authentication instanceof UsernamePasswordAuthenticationToken) {
+            String authObject = (String) authentication.getPrincipal();
+            return JsonUtils.json2Object(authObject, JwtAuthData.class);
         }
         throw BusinessException.of(IBaseResponseStatus.FORBIDDEN_TO_OPERATION);
     }
