@@ -95,14 +95,18 @@ public class OssConfiguration {
         // 设置客户端配置信息
         ObsConfiguration config = new ObsConfiguration();
         config.setEndPoint(ossProperties.getHuawei().getEndpoint());
-        config.setHttpsOnly(true);
-        // 设置鉴权方式，当设置SignatString为"v4"时采用v4鉴权，其他取值均为v2鉴权，并默认使用v2鉴权
-        config.setSignatString("v4");
-        // HTTPS请求对应的端口，如果使用HTTP请求，端口号为80
-        config.setEndpointHttpPort(443);
-        config.setDisableDnsBucket(true);
-        // 开启CA证书认证，建议开启
-        config.setValidateCertificate(true);
+        if (ossProperties.getHuawei().getProtocol().equalsIgnoreCase(Protocol.HTTPS.toString())) {
+            config.setHttpsOnly(true);
+            // 设置鉴权方式，当设置SignatString为"v4"时采用v4鉴权，其他取值均为v2鉴权，并默认使用v2鉴权
+            config.setSignatString("v4");
+            // HTTPS请求对应的端口，如果使用HTTP请求，端口号为80
+            config.setEndpointHttpPort(config.getEndpointHttpsPort());
+            config.setDisableDnsBucket(true);
+            // 开启CA证书认证，建议开启
+            config.setValidateCertificate(true);
+        } else {
+            config.setHttpsOnly(false);
+        }
         return new ObsClient(CryptUtils.decrypt(ossProperties.getHuawei().getAk(), ossProperties.getKey()),
                 CryptUtils.decrypt(ossProperties.getHuawei().getSk(), ossProperties.getKey()), config);
     }

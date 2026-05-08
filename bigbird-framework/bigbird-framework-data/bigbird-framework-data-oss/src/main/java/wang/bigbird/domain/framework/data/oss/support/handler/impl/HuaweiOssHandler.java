@@ -14,10 +14,7 @@ package wang.bigbird.domain.framework.data.oss.support.handler.impl;
 
 import com.obs.services.ObsClient;
 import com.obs.services.exception.ObsException;
-import com.obs.services.model.ObjectMetadata;
-import com.obs.services.model.PutObjectRequest;
-import com.obs.services.model.S3Bucket;
-import com.obs.services.model.S3Object;
+import com.obs.services.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -56,8 +53,12 @@ public class HuaweiOssHandler extends AbstractOssHandler {
 
     @Override
     public String doGeneratePresignedUrl(String bucketName, String remotePath, int expireSeconds) {
-        // TODO
-        return null;
+        TemporarySignatureRequest request = new TemporarySignatureRequest();
+        request.setBucketName(bucketName);
+        request.setObjectKey(remotePath);
+        request.setExpires(expireSeconds);
+        TemporarySignatureResponse response = obsClient.createTemporarySignature(request);
+        return response.getSignedUrl();
     }
 
     @Override
@@ -97,14 +98,24 @@ public class HuaweiOssHandler extends AbstractOssHandler {
         request.setObjectKey(remotePath);
         // 调用putObject接口上传对象
         obsClient.putObject(request);
-        return StringUtils.joinStr(CommonConstants.HTTPS_PROTOCOL, CommonConstants.PROTOCOL_DELIMITER, ossProperties.getHuawei().getEndpoint(), CommonConstants.SLASH
+        return StringUtils.joinStr(ossProperties.getHuawei().getProtocol(), CommonConstants.PROTOCOL_DELIMITER, ossProperties.getHuawei().getEndpoint(), CommonConstants.SLASH
                 , bucketName, CommonConstants.SLASH, remotePath);
     }
 
     @Override
     protected String uploadStreamToRemote(String bucketName, String remotePath, InputStream inputStream, String fileName, long fileSize) {
-        // TODO
-        return null;
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.addUserMetadata("name", fileName);
+        metadata.addUserMetadata("size", String.valueOf(fileSize));
+        metadata.setContentLength(fileSize);
+        PutObjectRequest putObjectRequest = new PutObjectRequest();
+        putObjectRequest.setBucketName(bucketName);
+        putObjectRequest.setObjectKey(remotePath);
+        putObjectRequest.setInput(inputStream);
+        putObjectRequest.setMetadata(metadata);
+        obsClient.putObject(putObjectRequest);
+        return StringUtils.joinStr(ossProperties.getHuawei().getProtocol(), CommonConstants.PROTOCOL_DELIMITER, ossProperties.getHuawei().getEndpoint(), CommonConstants.SLASH
+                , bucketName, CommonConstants.SLASH, remotePath);
     }
 
     @Override
@@ -117,7 +128,8 @@ public class HuaweiOssHandler extends AbstractOssHandler {
 
     @Override
     public void doCopyFile(String sourceBucketName, String sourceKey, String destinationBucketName, String destinationKey) {
-        // TODO
+        CopyObjectRequest copyObjectRequest = new CopyObjectRequest(sourceBucketName, sourceKey, destinationBucketName, destinationKey);
+        obsClient.copyObject(copyObjectRequest);
     }
 
     @Override
@@ -128,7 +140,7 @@ public class HuaweiOssHandler extends AbstractOssHandler {
         info.put("size", metadata.getContentLength());
         info.put("etag", metadata.getEtag());
         info.put("lastModified", metadata.getLastModified());
-        info.put("access_url", StringUtils.joinStr(CommonConstants.HTTPS_PROTOCOL, CommonConstants.PROTOCOL_DELIMITER, ossProperties.getHuawei().getEndpoint(), CommonConstants.SLASH
+        info.put("access_url", StringUtils.joinStr(ossProperties.getHuawei().getProtocol(), CommonConstants.PROTOCOL_DELIMITER, ossProperties.getHuawei().getEndpoint(), CommonConstants.SLASH
                 , bucketName, CommonConstants.SLASH, remotePath));
     }
 

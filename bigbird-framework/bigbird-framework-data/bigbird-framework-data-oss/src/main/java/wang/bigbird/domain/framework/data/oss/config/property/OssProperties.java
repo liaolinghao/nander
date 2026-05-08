@@ -106,6 +106,8 @@ public class OssProperties {
 
         private String sk;
 
+        private String protocol = "http";
+
     }
 
     /**

@@ -64,6 +64,7 @@ bigbird:
         endpoint: 
         ak: 
         sk: 
+        protocol: # 链接协议，http或者https
 ```
 
 ## 基于天翼云的云对象存储
