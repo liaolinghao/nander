@@ -27,6 +27,13 @@ public interface IStreamCallbacker {
     void onSuccess(String fullData);
 
     /**
+     * 流式返回中间过程处理
+     *
+     * @param data 流式中间过程数据
+     */
+    void onProcess(String data);
+
+    /**
      * 流式返回失败业务处理
      *
      * @param throwable 异常

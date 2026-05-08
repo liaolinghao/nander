@@ -71,6 +71,7 @@ public class StreamResponseHandler {
                                 if (emitter != null) {
                                     emitter.send(line);
                                 }
+                                streamCallbacker.onProcess(line);
                                 result.append(line).append(StringUtils.getLineSeparator());
                             }
                         }
