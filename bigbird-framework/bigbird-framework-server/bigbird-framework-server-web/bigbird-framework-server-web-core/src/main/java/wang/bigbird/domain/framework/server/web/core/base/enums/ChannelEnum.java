@@ -73,7 +73,7 @@ public enum ChannelEnum implements ValuedEnum<String> {
 
     @Override
     public String value() {
-        return channel;
+        return name();
     }
 
     /**
