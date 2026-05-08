@@ -21,6 +21,8 @@ import wang.bigbird.domain.framework.core.base.util.BeanMapperUtils;
 import wang.bigbird.domain.framework.core.base.util.DataUtils;
 import wang.bigbird.domain.framework.core.base.util.StringUtils;
 import wang.bigbird.domain.framework.data.redis.service.base.IRedisService;
+import wang.bigbird.domain.framework.server.common.frequency.exception.ExceedMaxTimesOneDayException;
+import wang.bigbird.domain.framework.server.common.frequency.service.base.IFrequencyCheckerService;
 import wang.bigbird.domain.framework.server.core.exception.BusinessException;
 import wang.bigbird.domain.framework.server.core.support.response.IBaseResponseStatus;
 import wang.bigbird.domain.framework.server.web.captcha.base.tool.SliderGenerator;
@@ -30,8 +32,6 @@ import wang.bigbird.domain.framework.server.web.captcha.domain.pojo.Slider;
 import wang.bigbird.domain.framework.server.web.captcha.exception.BackGroundImageIsEmptyException;
 import wang.bigbird.domain.framework.server.web.captcha.exception.BackGroundImageNotFoundException;
 import wang.bigbird.domain.framework.server.web.captcha.service.base.ICaptchaService;
-import wang.bigbird.domain.framework.server.web.frequency.exception.ExceedMaxTimesOneDayException;
-import wang.bigbird.domain.framework.server.web.frequency.service.base.IFrequencyCheckerService;
 
 import javax.annotation.PostConstruct;
 import java.awt.image.BufferedImage;

@@ -346,15 +346,26 @@
                 <artifactId>bigbird-framework-server-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <!--bigbird-framework-server-web-->
+            <!--bigbird-framework-server-common-->
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>bigbird-framework-server-web-core</artifactId>
+                <artifactId>bigbird-framework-server-common-retrofit</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>bigbird-framework-server-web-retrofit</artifactId>
+                <artifactId>bigbird-framework-server-common-frequency</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>bigbird-framework-server-common-quartz</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <!--bigbird-framework-server-web-->
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>bigbird-framework-server-web-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -369,22 +380,17 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>bigbird-framework-server-web-frequency</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>bigbird-framework-server-web-quartz</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
                 <artifactId>bigbird-framework-server-web-captcha</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>bigbird-framework-server-web-auth</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>bigbird-framework-server-web-ws</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!--spring boot 全家桶版本控制-->

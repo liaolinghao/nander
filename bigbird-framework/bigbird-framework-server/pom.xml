@@ -19,6 +19,7 @@
         <module>bigbird-framework-server-core</module>
         <module>bigbird-framework-server-web</module>
         <module>bigbird-framework-server-rpc</module>
+        <module>bigbird-framework-server-common</module>
     </modules>
 
     <dependencies>

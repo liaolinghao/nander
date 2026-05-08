@@ -15,7 +15,7 @@ package wang.bigbird.domain.framework.server.web.defence.support.security.judge.
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import wang.bigbird.domain.framework.core.base.util.StringUtils;
-import wang.bigbird.domain.framework.server.web.core.base.util.SignatureUtils;
+import wang.bigbird.domain.framework.server.core.base.util.SignatureUtils;
 import wang.bigbird.domain.framework.server.web.defence.domain.pojo.ApiSecurityItem;
 import wang.bigbird.domain.framework.server.web.defence.domain.pojo.CallerItem;
 import wang.bigbird.domain.framework.server.web.defence.exception.BadRequestDataException;

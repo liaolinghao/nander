@@ -20,6 +20,7 @@ import wang.bigbird.domain.framework.core.base.constant.CommonConstants;
 import wang.bigbird.domain.framework.core.base.tool.Assert;
 import wang.bigbird.domain.framework.core.base.util.BeanMapperUtils;
 import wang.bigbird.domain.framework.core.base.util.StringUtils;
+import wang.bigbird.domain.framework.server.common.frequency.service.base.IFrequencyCheckerService;
 import wang.bigbird.domain.framework.server.core.support.response.RespResult;
 import wang.bigbird.domain.framework.server.web.captcha.base.enums.CaptchaTypeEnum;
 import wang.bigbird.domain.framework.server.web.captcha.config.property.CaptchaProperties;
@@ -33,7 +34,6 @@ import wang.bigbird.domain.framework.server.web.captcha.service.base.IEmailServi
 import wang.bigbird.domain.framework.server.web.captcha.service.base.ISmsService;
 import wang.bigbird.domain.framework.server.web.core.base.constant.WebCoreConstants;
 import wang.bigbird.domain.framework.server.web.core.support.annotation.Decrypt;
-import wang.bigbird.domain.framework.server.web.frequency.service.base.IFrequencyCheckerService;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
