@@ -1,2 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-wang.bigbird.domain.framework.server.web.frequency.config.configuration.WebFrequencyConfiguration

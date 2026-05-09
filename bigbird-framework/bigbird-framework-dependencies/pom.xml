@@ -161,7 +161,7 @@
         <flyway-maven-plugin.version>5.2.4</flyway-maven-plugin.version>
         <os-maven-plugin.version>1.7.0</os-maven-plugin.version>
         <build-helper-maven-plugin.version>3.4.0</build-helper-maven-plugin.version>
-        <protobuf-maven-plugin.version>0.6.1</protobuf-maven-plugin.version>
+        <protobuf-maven-plugin.version>2.2.3</protobuf-maven-plugin.version>
     </properties>
 
     <!--添加依赖顺序，先添加自研模块依赖，再添加Spring依赖，再添加公共的三方依赖，最后添加其他第三方依赖-->
@@ -346,15 +346,26 @@
                 <artifactId>bigbird-framework-server-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <!--bigbird-framework-server-web-->
+            <!--bigbird-framework-server-common-->
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>bigbird-framework-server-web-core</artifactId>
+                <artifactId>bigbird-framework-server-common-retrofit</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>bigbird-framework-server-web-retrofit</artifactId>
+                <artifactId>bigbird-framework-server-common-frequency</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>bigbird-framework-server-common-quartz</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <!--bigbird-framework-server-web-->
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>bigbird-framework-server-web-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -369,22 +380,17 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>bigbird-framework-server-web-frequency</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>bigbird-framework-server-web-quartz</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
                 <artifactId>bigbird-framework-server-web-captcha</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>bigbird-framework-server-web-auth</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>bigbird-framework-server-web-ws</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!--spring boot 全家桶版本控制-->
@@ -1540,49 +1546,36 @@
                 </plugin>
                 <!-- Protocol Buffer 编译插件 -->
                 <plugin>
-                    <groupId>org.xolstice.maven.plugins</groupId>
+                    <groupId>io.github.ascopes</groupId>
                     <artifactId>protobuf-maven-plugin</artifactId>
                     <version>${protobuf-maven-plugin.version}</version>
                     <configuration>
                         <!-- 指定.proto文件存放目录 -->
-                        <protoSourceRoot>${project.basedir}/src/main/proto</protoSourceRoot>
-                        <!-- 指定生成源码的输出目录 -->
-                        <outputDirectory>
-                            ${project.build.directory}/generated-sources/protobuf
-                        </outputDirectory>
-                        <clearOutputDirectory>true</clearOutputDirectory>
+                        <sourceDirectories>
+                            <sourceDirectory>${project.basedir}/src/main/proto</sourceDirectory>
+                        </sourceDirectories>
+                        <!-- protoc版本 -->
+                        <protocVersion>${protobuf.version}</protocVersion>
+                        <!-- gRPC二进制插件配置 -->
+                        <binaryMavenPlugins>
+                            <binaryMavenPlugin>
+                                <groupId>io.grpc</groupId>
+                                <artifactId>protoc-gen-grpc-java</artifactId>
+                                <version>${grpc.version}</version>
+                                <!-- 动态解析系统分类器 -->
+                                <classifier>${os.detected.classifier}</classifier>
+                            </binaryMavenPlugin>
+                        </binaryMavenPlugins>
+                        <!-- 输出目录配置（规范路径） -->
+                        <outputDirectory>${project.build.directory}/generated-sources/protobuf</outputDirectory>
                     </configuration>
                     <executions>
-                        <!-- 1. 生成 Protobuf 消息类 -->
                         <execution>
-                            <id>protobuf-java</id>
+                            <id>generate-protobuf</id>
+                            <phase>generate-sources</phase>
                             <goals>
-                                <goal>compile</goal>
+                                <goal>generate</goal>
                             </goals>
-                            <configuration>
-                                <protocArtifact>
-                                    com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}
-                                </protocArtifact>
-                            </configuration>
-                        </execution>
-                        <!-- 2. 生成 gRPC 服务类（ServiceGrpc.java 等） -->
-                        <execution>
-                            <id>grpc-java</id>
-                            <goals>
-                                <goal>compile-custom</goal>
-                            </goals>
-                            <configuration>
-                                <protocArtifact>
-                                    com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}
-                                </protocArtifact>
-                                <pluginId>grpc-java</pluginId>
-                                <pluginArtifact>
-                                    io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}
-                                </pluginArtifact>
-                                <outputDirectory>
-                                    ${project.build.directory}/generated-sources/protobuf/grpc
-                                </outputDirectory>
-                            </configuration>
                         </execution>
                     </executions>
                 </plugin>

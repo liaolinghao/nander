@@ -17,13 +17,10 @@
 
     <modules>
         <module>bigbird-framework-server-web-core</module>
-        <module>bigbird-framework-server-web-retrofit</module>
         <module>bigbird-framework-server-web-dao</module>
         <module>bigbird-framework-server-web-captcha</module>
         <module>bigbird-framework-server-web-auth</module>
         <module>bigbird-framework-server-web-defence</module>
-        <module>bigbird-framework-server-web-frequency</module>
-        <module>bigbird-framework-server-web-quartz</module>
         <module>bigbird-framework-server-web-ws</module>
     </modules>
 

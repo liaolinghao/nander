@@ -21,7 +21,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>bigbird-framework-server-web-frequency</artifactId>
+            <artifactId>bigbird-framework-server-common-frequency</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
