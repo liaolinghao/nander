@@ -25,6 +25,8 @@ public interface ISmsService {
      * @param mobilePhone 接收手机号
      * @param number      验证码
      * @param templateId  短信模板ID
+     * @throws InterruptedException
      */
-    void send(String mobilePhone, String number, String templateId) throws InterruptedException;
+    void sendSmsByTemplate(String mobilePhone, String number, String templateId) throws InterruptedException;
+
 }

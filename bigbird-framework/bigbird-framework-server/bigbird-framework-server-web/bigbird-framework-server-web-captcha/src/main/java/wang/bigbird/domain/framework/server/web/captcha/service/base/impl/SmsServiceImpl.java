@@ -37,7 +37,7 @@ public class SmsServiceImpl implements ISmsService {
     private IMessageSenderService chinatelecomSmsMessageSenderService;
 
     @Override
-    public void send(String mobilePhone, String number, String templateId) throws InterruptedException {
+    public void sendSmsByTemplate(String mobilePhone, String number, String templateId) throws InterruptedException {
         Map<String, String> params = new LinkedHashMap<>();
         params.put("captcha", number);
         params.put("ttl", String.valueOf(captchaProperties.getTtl() / 60));

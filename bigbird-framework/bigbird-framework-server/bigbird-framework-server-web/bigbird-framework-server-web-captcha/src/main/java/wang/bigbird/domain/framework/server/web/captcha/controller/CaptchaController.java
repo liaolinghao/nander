@@ -160,7 +160,7 @@ public class CaptchaController {
         String number = RandomStringUtils.randomNumeric(6);
         String cacheKey = WebCoreConstants.CAPTCHA_SMS_KEY_PRE + smsCaptchaParam.getMobilephone() + CommonConstants.COLON + smsCaptchaParam.getScene();
         captchaService.saveCaptchaValue(cacheKey, number);
-        smsService.send(smsCaptchaParam.getMobilephone(), number, templateId);
+        smsService.sendSmsByTemplate(smsCaptchaParam.getMobilephone(), number, templateId);
         return RespResult.ok();
     }
 
