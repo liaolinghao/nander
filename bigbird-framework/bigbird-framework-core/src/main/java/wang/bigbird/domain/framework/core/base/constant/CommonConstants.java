@@ -71,6 +71,12 @@ public class CommonConstants {
 
     public static final String IGNORE = "ignore";
 
+    public static final int ONE = 1;
+
+    public static final int ONE_THOUSAND = 1000;
+
+    public static final int ONE_HUNDRED_THOUSAND = 100000;
+
     public static class ActionType {
 
         private ActionType() {

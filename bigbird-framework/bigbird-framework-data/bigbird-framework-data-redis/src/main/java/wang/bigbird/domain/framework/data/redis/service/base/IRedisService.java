@@ -12,6 +12,7 @@
  */
 package wang.bigbird.domain.framework.data.redis.service.base;
 
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -174,4 +175,18 @@ public interface IRedisService {
      * @return 返回是否存在
      */
     boolean exists(String key);
+
+    /**
+     * SCANKEYS - 安全扫描匹配模式的键
+     * <p>
+     * 允许完全自定义SCAN行为，提供最大的灵活性
+     *
+     * @param pattern    匹配模式，支持通配符
+     * @param count      每次迭代返回的key数量，范围1-1000
+     * @param maxResults 最大返回结果数量，范围1-100000
+     * @return 匹配的键集合，最多返回maxResults个key
+     * @throws IllegalArgumentException 当pattern不安全或参数不合法时抛出
+     */
+    Set<String> scanKeys(String pattern, int count, int maxResults);
+
 }

@@ -15,13 +15,19 @@ package wang.bigbird.domain.framework.data.redis.service.base.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RAtomicLong;
 import org.redisson.api.RBucket;
+import org.redisson.api.RKeys;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import wang.bigbird.domain.framework.core.base.util.JsonUtils;
+import wang.bigbird.domain.framework.core.base.util.StringUtils;
 import wang.bigbird.domain.framework.data.redis.service.base.IRedisService;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import static wang.bigbird.domain.framework.core.base.constant.CommonConstants.*;
 
 /**
  * redis 基础服务
@@ -121,6 +127,59 @@ public class RedisServiceImpl implements IRedisService {
     public boolean exists(String key) {
         RBucket<String> bucket = getBucket(key);
         return bucket.isExists();
+    }
+
+    @Override
+    public Set<String> scanKeys(String pattern, int count, int maxResults) {
+        if (count < ONE || count > ONE_THOUSAND) {
+            count = ONE_THOUSAND;
+        }
+        if (maxResults < ONE || maxResults > ONE_HUNDRED_THOUSAND) {
+            maxResults = ONE_HUNDRED_THOUSAND;
+        }
+        // 验证 pattern:* 只能在末尾使用
+        validatePattern(pattern);
+        Set<String> keys = new HashSet<>();
+        RKeys rKeys = redissonClient.getKeys();
+        Iterable<String> keysIterable = rKeys.getKeysByPattern(pattern, count);
+        for (String key : keysIterable) {
+            // 达到最大返回数量，提前终止迭代
+            if (keys.size() >= maxResults) {
+                break;
+            }
+            keys.add(key);
+        }
+        return keys;
+    }
+
+    /**
+     * 验证 pattern 格式，确保 * 只能在末尾使用
+     *
+     * @param pattern 匹配模式
+     * @throws IllegalArgumentException 当 pattern 格式不合法时抛出
+     */
+    private void validatePattern(String pattern) {
+        if (StringUtils.isBlank(pattern)) {
+            throw new IllegalArgumentException("Pattern cannot be null or blank");
+        }
+        int wildcardIndex = pattern.indexOf('*');
+        // 无通配符，直接通过
+        if (wildcardIndex == -1) {
+            return;
+        }
+        // 优化：先校验数量，再校验位置
+        // 规则1：仅允许一个 *
+        if (pattern.lastIndexOf('*') != wildcardIndex) {
+            throw new IllegalArgumentException(
+                    "Only one wildcard '*' is allowed. Pattern: " + pattern
+            );
+        }
+        // 规则2：* 必须在末尾
+        if (wildcardIndex != pattern.length() - 1) {
+            throw new IllegalArgumentException(
+                    "Wildcard '*' can only be at the end. Pattern: " + pattern
+            );
+        }
     }
 
     private RBucket<String> getBucket(String key) {
