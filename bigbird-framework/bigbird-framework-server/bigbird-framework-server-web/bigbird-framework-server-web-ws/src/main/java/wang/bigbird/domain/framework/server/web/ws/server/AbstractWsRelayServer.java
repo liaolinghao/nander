@@ -17,6 +17,7 @@ import org.java_websocket.client.WebSocketClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import wang.bigbird.domain.framework.server.web.ws.base.constant.WsConstants;
 import wang.bigbird.domain.framework.server.web.ws.config.property.WsProperties;
+import wang.bigbird.domain.framework.server.web.ws.service.base.IDataProcessService;
 import wang.bigbird.domain.framework.server.web.ws.service.base.ITargetWsAuthService;
 import wang.bigbird.domain.framework.server.web.ws.service.base.ITokenService;
 import wang.bigbird.domain.framework.server.web.ws.support.client.TargetWsClient;
@@ -39,6 +40,7 @@ public abstract class AbstractWsRelayServer {
     private static WsProperties wsProperties;
     private static ITokenService tokenService;
     private static ITargetWsAuthService targetWsAuthService;
+    private static IDataProcessService dataProcessService;
 
     @Autowired
     public void setWsProperties(WsProperties wsProperties) {
@@ -53,6 +55,11 @@ public abstract class AbstractWsRelayServer {
     @Autowired(required = false)
     public void setTargetWsAuthService(ITargetWsAuthService targetWsAuthService) {
         AbstractWsRelayServer.targetWsAuthService = targetWsAuthService;
+    }
+
+    @Autowired(required = false)
+    public static void setDataProcessService(IDataProcessService dataProcessService) {
+        AbstractWsRelayServer.dataProcessService = dataProcessService;
     }
 
     /**
@@ -103,7 +110,13 @@ public abstract class AbstractWsRelayServer {
             return;
         }
         try {
-            client.send(message);
+            String appKey = (String) session.getUserProperties().get(WsConstants.APPKEY_PARAM_CODE);
+            String token = (String) session.getUserProperties().get(WsConstants.TOKEN_PARAM_CODE);
+            String msg = message;
+            if (dataProcessService != null) {
+                msg = dataProcessService.processData(appKey, token, msg);
+            }
+            client.send(msg);
             log.info("Relaying message: {}", message);
         } catch (Exception e) {
             log.error("Failed to send message: {}", e.getMessage(), e);

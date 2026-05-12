@@ -24,6 +24,7 @@ import wang.bigbird.domain.framework.core.base.util.StringUtils;
 import wang.bigbird.domain.framework.core.base.util.url.UrlUtils;
 import wang.bigbird.domain.framework.server.web.ws.base.constant.WsConstants;
 import wang.bigbird.domain.framework.server.web.ws.config.property.WsProperties;
+import wang.bigbird.domain.framework.server.web.ws.service.base.IDataProcessService;
 import wang.bigbird.domain.framework.server.web.ws.service.base.ITargetWsAuthService;
 import wang.bigbird.domain.framework.server.web.ws.service.base.ITokenService;
 import wang.bigbird.domain.framework.server.web.ws.support.client.TargetWsClient;
@@ -48,6 +49,8 @@ public class WsRelayHandler extends TextWebSocketHandler {
     private ITokenService tokenService;
     @Autowired(required = false)
     private ITargetWsAuthService targetWsAuthService;
+    @Autowired(required = false)
+    private IDataProcessService dataProcessService;
 
     /**
      * 会话映射：前端Session → 目标WS客户端
@@ -74,6 +77,8 @@ public class WsRelayHandler extends TextWebSocketHandler {
             closeSession(session, "Authentication failed");
             return;
         }
+        session.getAttributes().put(WsConstants.APPKEY_PARAM_CODE, appKey);
+        session.getAttributes().put(WsConstants.TOKEN_PARAM_CODE, token);
         log.info("Authentication passed: appKey={}", appKey);
         // 3. 拼接目标地址（核心通用逻辑）
         String targetUrl = wsProperties.getTarget() + requestPath;
@@ -99,7 +104,13 @@ public class WsRelayHandler extends TextWebSocketHandler {
             return;
         }
         try {
-            client.send(message.getPayload());
+            String appKey = (String) session.getAttributes().get(WsConstants.APPKEY_PARAM_CODE);
+            String token = (String) session.getAttributes().get(WsConstants.TOKEN_PARAM_CODE);
+            String msg = message.getPayload();
+            if (dataProcessService != null) {
+                msg = dataProcessService.processData(appKey, token, msg);
+            }
+            client.send(msg);
             log.info("Relaying message: {}", message.getPayload());
         } catch (Exception e) {
             log.error("Failed to send message: {}", e.getMessage(), e);
