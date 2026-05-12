@@ -58,7 +58,7 @@ public abstract class AbstractWsRelayServer {
     }
 
     @Autowired(required = false)
-    public static void setDataProcessService(IDataProcessService dataProcessService) {
+    public void setDataProcessService(IDataProcessService dataProcessService) {
         AbstractWsRelayServer.dataProcessService = dataProcessService;
     }
 
