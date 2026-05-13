@@ -39,11 +39,11 @@ import wang.bigbird.domain.framework.server.core.support.response.IBaseResponseS
 import wang.bigbird.domain.framework.server.web.auth.base.enums.MutexTypeEnum;
 import wang.bigbird.domain.framework.server.web.auth.base.tool.SimpleGrantedAuthorityDeserializer;
 import wang.bigbird.domain.framework.server.web.auth.config.property.JwtSecurityProperties;
-import wang.bigbird.domain.framework.server.web.auth.exception.DisposedJwtException;
-import wang.bigbird.domain.framework.server.web.auth.domain.pojo.JwtToken;
 import wang.bigbird.domain.framework.server.web.auth.domain.pojo.AccessTokenAuthData;
 import wang.bigbird.domain.framework.server.web.auth.domain.pojo.JwtAuthData;
+import wang.bigbird.domain.framework.server.web.auth.domain.pojo.JwtToken;
 import wang.bigbird.domain.framework.server.web.auth.domain.pojo.user.JwtUser;
+import wang.bigbird.domain.framework.server.web.auth.exception.DisposedJwtException;
 import wang.bigbird.domain.framework.server.web.auth.service.base.IAppKeyAndSecretLoaderService;
 import wang.bigbird.domain.framework.server.web.auth.service.base.IAppSecretLoaderService;
 import wang.bigbird.domain.framework.server.web.auth.service.base.INonStandardJwtParserService;
@@ -242,11 +242,13 @@ public class JwtSecurityProcessor implements InitializingBean {
                 .compressWith(CompressionCodecs.DEFLATE)
                 .signWith(loadSigningKey(appKeyAndSecret), SignatureAlgorithm.HS512)
                 .compact();
+        Boolean kickPreviousLogin = false;
         String awardRefreshTokenIdsKey = getAwardRefreshTokenIdsKey(appKey, jwtAuthData.getType(), jwtAuthData.getId());
         if (mutexTypeEnum.isBackProtected()) {
             if (StringUtils.isNotBlank(oldRefreshTokenId)) {
                 // 删除旧的refresh token记录
                 removeRefreshToken(appKey, channel, jwtAuthData.getType(), jwtAuthData.getId(), oldRefreshTokenId);
+                kickPreviousLogin = true;
             }
         }
         long expire = DateUtils.secondsBetween(date, expiration);
@@ -261,7 +263,7 @@ public class JwtSecurityProcessor implements InitializingBean {
         // 将每个认证对象在每个应用颁发的refresh token进行记录，以方便后续踢下线
         redisSortedSetService.zadd(awardRefreshTokenIdsKey, date.getTime(), newRefreshTokenId);
         redisService.set(getRefreshTokenId2ValueKey(newRefreshTokenId), rtk, expire, TimeUnit.SECONDS);
-        return new JwtToken(newRefreshTokenId, rtk, expiration.getTime());
+        return new JwtToken(newRefreshTokenId, rtk, expiration.getTime(), kickPreviousLogin);
     }
 
     /**
@@ -421,7 +423,7 @@ public class JwtSecurityProcessor implements InitializingBean {
                 .signWith(loadSigningKey(appKeyAndSecret), SignatureAlgorithm.HS512)
                 .compact();
         recordToken(refreshTokenId, id, tk, tokenValidityInSeconds);
-        return new JwtToken(id, tk, expiration.getTime());
+        return new JwtToken(id, tk, expiration.getTime(), false);
     }
 
     /**

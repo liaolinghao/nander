@@ -43,4 +43,9 @@ public class JwtToken implements Serializable {
      */
     private Long expires;
 
+    /**
+     * 是否踢掉该账号之前的登录 / 连接状态
+     */
+    private Boolean kickPreviousLogin;
+
 }
