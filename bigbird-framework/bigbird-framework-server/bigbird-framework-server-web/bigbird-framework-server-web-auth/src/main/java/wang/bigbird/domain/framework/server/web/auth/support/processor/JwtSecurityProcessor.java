@@ -202,7 +202,7 @@ public class JwtSecurityProcessor implements InitializingBean {
         }
         ChannelEnum channel = jwtAuthData.getChannel();
         if (mutexTypeEnum.equals(MutexTypeEnum.front_all) || mutexTypeEnum.equals(MutexTypeEnum.back_all)) {
-            // 不考虑渠道，那么把渠道值修正为全部，以便统一标识
+            // 不考虑渠道，那么把渠道值修正为忽略，以便统一标识
             channel = ChannelEnum.IGNORE;
         }
         String appKey = StringUtils.isBlank(appKeyAndSecret) ? DEFAULT_APP : appKeyAndSecret.substring(0, appKeyAndSecret.indexOf(CommonConstants.COLON));
@@ -243,27 +243,32 @@ public class JwtSecurityProcessor implements InitializingBean {
                 .signWith(loadSigningKey(appKeyAndSecret), SignatureAlgorithm.HS512)
                 .compact();
         Boolean kickPreviousLogin = false;
+        String kickDeviceId = "";
         String awardRefreshTokenIdsKey = getAwardRefreshTokenIdsKey(appKey, jwtAuthData.getType(), jwtAuthData.getId());
         if (mutexTypeEnum.isBackProtected()) {
             if (StringUtils.isNotBlank(oldRefreshTokenId)) {
+                String credentialLoginId = redisService.get(getRefreshTokenId2CredentialKey(oldRefreshTokenId));
                 // 删除旧的refresh token记录
                 removeRefreshToken(appKey, channel, jwtAuthData.getType(), jwtAuthData.getId(), oldRefreshTokenId);
                 kickPreviousLogin = true;
+                if (StringUtils.isNotBlank(credentialLoginId)) {
+                    kickDeviceId = loadDeviceIdByCredentialLoginId(credentialLoginId);
+                }
             }
         }
         long expire = DateUtils.secondsBetween(date, expiration);
         if (!mutexTypeEnum.equals(MutexTypeEnum.none)) {
             // 只有需要考虑互斥，才需要记录每个渠道登录对应的refresh token id
             redisService.set(awardRefreshTokenIdKey, newRefreshTokenId, expire, TimeUnit.SECONDS);
-            if (StringUtils.isNotBlank(deviceId) && mutexTypeEnum.isFrontProtected()) {
-                // 只有保护先登录的场景下需要记录refresh token id对应的认证标识
+            if (StringUtils.isNotBlank(deviceId)) {
+                // 记录refresh token id对应的认证标识
                 redisService.set(getRefreshTokenId2CredentialKey(newRefreshTokenId), getCredentialLoginId(appKey, channel, jwtAuthData.getType(), jwtAuthData.getId(), deviceId), expire, TimeUnit.SECONDS);
             }
         }
         // 将每个认证对象在每个应用颁发的refresh token进行记录，以方便后续踢下线
         redisSortedSetService.zadd(awardRefreshTokenIdsKey, date.getTime(), newRefreshTokenId);
         redisService.set(getRefreshTokenId2ValueKey(newRefreshTokenId), rtk, expire, TimeUnit.SECONDS);
-        return new JwtToken(newRefreshTokenId, rtk, expiration.getTime(), kickPreviousLogin);
+        return new JwtToken(newRefreshTokenId, rtk, expiration.getTime(), kickPreviousLogin, kickDeviceId);
     }
 
     /**
@@ -423,7 +428,7 @@ public class JwtSecurityProcessor implements InitializingBean {
                 .signWith(loadSigningKey(appKeyAndSecret), SignatureAlgorithm.HS512)
                 .compact();
         recordToken(refreshTokenId, id, tk, tokenValidityInSeconds);
-        return new JwtToken(id, tk, expiration.getTime(), false);
+        return new JwtToken(id, tk, expiration.getTime(), false, "");
     }
 
     /**
@@ -569,6 +574,16 @@ public class JwtSecurityProcessor implements InitializingBean {
     }
 
     /**
+     * 从认证标识中提取登录设备ID
+     *
+     * @param credentialLoginId 认证标识
+     * @return 登录设备ID
+     */
+    private String loadDeviceIdByCredentialLoginId(String credentialLoginId) {
+        return credentialLoginId.split(CommonConstants.DASHED)[2];
+    }
+
+    /**
      * 表示认证实体通过哪个设备哪个请求渠道登录哪个应用的认证标识
      * {type}-{id}-{deviceId}-{channel}-{appKey}
      *
@@ -579,7 +594,7 @@ public class JwtSecurityProcessor implements InitializingBean {
      * @param deviceId 登录设备ID
      * @return {type}-{id}-{deviceId}-{channel}-{appKey}
      */
-    public static String getCredentialLoginId(String appKey, ChannelEnum channel, String type, Long id, String deviceId) {
+    private String getCredentialLoginId(String appKey, ChannelEnum channel, String type, Long id, String deviceId) {
         if (channel == null) {
             channel = ChannelEnum.UNSPECIFIED;
         }
@@ -607,7 +622,7 @@ public class JwtSecurityProcessor implements InitializingBean {
      * @param id      认证对象ID
      * @return 认证对象某次登录与refreshToken之间映射关系的键
      */
-    public static String getAwardRefreshTokenIdKey(String appKey, ChannelEnum channel, String type, Long id) {
+    private String getAwardRefreshTokenIdKey(String appKey, ChannelEnum channel, String type, Long id) {
         if (channel == null) {
             channel = ChannelEnum.UNSPECIFIED;
         }

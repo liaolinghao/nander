@@ -22,6 +22,7 @@ import wang.bigbird.domain.framework.core.base.constant.CommonConstants;
 import wang.bigbird.domain.framework.core.base.util.JsonUtils;
 import wang.bigbird.domain.framework.server.core.exception.BusinessException;
 import wang.bigbird.domain.framework.server.core.support.response.IBaseResponseStatus;
+import wang.bigbird.domain.framework.server.web.auth.base.enums.MutexTypeEnum;
 import wang.bigbird.domain.framework.server.web.auth.domain.pojo.JwtAuthData;
 import wang.bigbird.domain.framework.server.web.auth.domain.pojo.user.JwtOrg;
 import wang.bigbird.domain.framework.server.web.auth.domain.pojo.user.JwtRole;
@@ -223,8 +224,9 @@ public class BaseController {
      * 从指定应用注销
      *
      * @param appKey 应用键
+     * @param mutexTypeEnum 登录互斥类型
      */
-    protected void logout(String appKey) {
+    protected void logout(String appKey, MutexTypeEnum mutexTypeEnum) {
         if (jwtSecurityProcessor.isEnableJwtSecurity()) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             if (authentication instanceof UsernamePasswordAuthenticationToken) {
@@ -232,7 +234,12 @@ public class BaseController {
                 JwtUser jwtUser = JsonUtils.json2Object(authObject, JwtUser.class);
                 String credentials = (String) authentication.getCredentials();
                 String accessTokenId = credentials.split(CommonConstants.SEPARATOR)[0];
-                jwtSecurityProcessor.logout(appKey, jwtUser.getChannel(), jwtUser.getType(), jwtUser.getId(), accessTokenId);
+                ChannelEnum channel = jwtUser.getChannel();
+                if (MutexTypeEnum.front_all.equals(mutexTypeEnum) || MutexTypeEnum.back_all.equals(mutexTypeEnum)) {
+                    // 不考虑渠道，那么把渠道值修正为忽略，以便统一标识
+                    channel = ChannelEnum.IGNORE;
+                }
+                jwtSecurityProcessor.logout(appKey, channel, jwtUser.getType(), jwtUser.getId(), accessTokenId);
             }
         }
         SecurityContextHolder.clearContext();

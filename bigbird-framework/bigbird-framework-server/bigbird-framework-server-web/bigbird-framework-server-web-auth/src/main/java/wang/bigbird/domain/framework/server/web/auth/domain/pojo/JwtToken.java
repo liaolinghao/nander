@@ -48,4 +48,9 @@ public class JwtToken implements Serializable {
      */
     private Boolean kickPreviousLogin;
 
+    /**
+     * 被踢掉线的登录 / 连接状态的设备ID
+     */
+    private String kickDeviceId;
+
 }
