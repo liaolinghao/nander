@@ -250,9 +250,18 @@ public class JwtSecurityProcessor implements InitializingBean {
                 String credentialLoginId = redisService.get(getRefreshTokenId2CredentialKey(oldRefreshTokenId));
                 // 删除旧的refresh token记录
                 removeRefreshToken(appKey, channel, jwtAuthData.getType(), jwtAuthData.getId(), oldRefreshTokenId);
-                kickPreviousLogin = true;
-                if (StringUtils.isNotBlank(credentialLoginId)) {
-                    kickDeviceId = loadDeviceIdByCredentialLoginId(credentialLoginId);
+                boolean sameDevice = false;
+                if (StringUtils.isNotBlank(credentialLoginId) && StringUtils.isNotBlank(deviceId)) {
+                    if (getCredentialLoginId(appKey, channel, jwtAuthData.getType(), jwtAuthData.getId(), deviceId).equals(credentialLoginId)) {
+                        sameDevice = true;
+                    }
+                }
+                if (!sameDevice) {
+                    // 不是相同设备才提示踢掉线
+                    kickPreviousLogin = true;
+                    if (StringUtils.isNotBlank(credentialLoginId)) {
+                        kickDeviceId = loadDeviceIdByCredentialLoginId(credentialLoginId);
+                    }
                 }
             }
         }
