@@ -167,10 +167,10 @@ bigbird:
           token-start-with: Bearer
           # 使用Base64对该令牌进行编码，chinatelecom_intelligent-business-enterprise-platform_bigbird-dribgib_mroftalp-esirpretne-ssenisub-tnegilletni_moceletanihc
           base64-secret: Y2hpbmF0ZWxlY29tX2ludGVsbGlnZW50LWJ1c2luZXNzLWVudGVycHJpc2UtcGxhdGZvcm1fYmlnYmlyZC1kcmliZ2liX21yb2Z0YWxwLWVzaXJwcmV0bmUtc3NlbmlzdWItdG5lZ2lsbGV0bmlfbW9jZWxldGFuaWhj
-          # 令牌过期时间 此处单位：秒 一般设置30分钟
-          token-validity-in-seconds: 1800
-          # 刷新令牌过期时间 此处单位：天 一般设置为7天
-          refresh-token-validity-in-days: 7
+          # 令牌过期时间，此处单位：分钟
+          token-validity-in-minutes: 10
+          # 刷新令牌过期时间，此处单位：分钟
+          refresh-token-validity-in-minutes: 30
           # 配置不需要认证的接口
           without-api: /auth/**,/error/**,/health/**,/common/**,/open/**
           # token签发者，比如：后端管理员操作系统~administer，后端客户操作系统~customer

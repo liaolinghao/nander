@@ -47,14 +47,14 @@ public class JwtSecurityProperties {
     private String base64Secret;
 
     /**
-     * 令牌有效时间 此处单位：秒
+     * 令牌有效时间 此处单位：分钟
      */
-    private Integer tokenValidityInSeconds;
+    private Integer tokenValidityInMinutes;
 
     /**
-     * 刷新令牌有效时间 此处单位：天
+     * 刷新令牌有效时间 此处单位：分钟
      */
-    private Integer refreshTokenValidityInDays;
+    private Integer refreshTokenValidityInMinutes;
 
     /**
      * 不需要认证的接口，以逗号分隔

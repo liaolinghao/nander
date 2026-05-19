@@ -186,16 +186,35 @@ public class JwtSecurityProcessor implements InitializingBean {
     }
 
     /**
+     * 通过refreshToken置换出新的refreshToken
+     *
+     * @param deviceId                      登录设备ID，用于同设备反复登录不被限制
+     * @param refreshToken                  旧的refresh token
+     * @param refreshTokenValidityInMinutes refreshToken有效期，以分钟为单位
+     * @param mutexTypeEnum                 登录互斥类型
+     * @param appKeyAndSecret               组成格式：appKey:appSecret，为空则采用默认密钥生成签名key
+     * @return 新的refresh token
+     */
+    public JwtToken loadNewRefreshTokenByRefreshToken(String deviceId, String refreshToken, Integer refreshTokenValidityInMinutes, MutexTypeEnum mutexTypeEnum, String appKeyAndSecret) {
+        refreshToken = convert2RefreshTokenValue(refreshToken);
+        Jws<Claims> jwt = getJwtFromToken(refreshToken, appKeyAndSecret);
+        Claims claims = jwt.getBody();
+        String authObject = getJwtAuthDataFromToken(claims, REFRESH_TOKEN_SUBJECT);
+        JwtAuthData jwtAuthData = JsonUtils.json2Object(authObject, JwtAuthData.class, objectMapper);
+        return createRefreshToken(deviceId, jwtAuthData, refreshTokenValidityInMinutes, mutexTypeEnum, appKeyAndSecret);
+    }
+
+    /**
      * 创建jwt refresh token
      *
-     * @param deviceId                   登录设备ID，用于同设备反复登录不被限制
-     * @param jwtAuthData                JWT认证权限数据
-     * @param refreshTokenValidityInDays refreshToken有效期，以天为单位
-     * @param mutexTypeEnum              登录互斥类型
-     * @param appKeyAndSecret            组成格式：appKey:appSecret，为空则采用默认密钥生成签名key
+     * @param deviceId                      登录设备ID，用于同设备反复登录不被限制
+     * @param jwtAuthData                   JWT认证权限数据
+     * @param refreshTokenValidityInMinutes refreshToken有效期，以分钟为单位
+     * @param mutexTypeEnum                 登录互斥类型
+     * @param appKeyAndSecret               组成格式：appKey:appSecret，为空则采用默认密钥生成签名key
      * @return refresh token
      */
-    public JwtToken createRefreshToken(String deviceId, JwtAuthData jwtAuthData, Integer refreshTokenValidityInDays, MutexTypeEnum mutexTypeEnum, String appKeyAndSecret) {
+    public JwtToken createRefreshToken(String deviceId, JwtAuthData jwtAuthData, Integer refreshTokenValidityInMinutes, MutexTypeEnum mutexTypeEnum, String appKeyAndSecret) {
         if (mutexTypeEnum == null) {
             // 为空，就不做互斥限制
             mutexTypeEnum = MutexTypeEnum.none;
@@ -226,7 +245,7 @@ public class JwtSecurityProcessor implements InitializingBean {
         // token ID 每次采用一个唯一ID，以便后期通过该ID对相关token执行失效处理
         String newRefreshTokenId = StringUtils.getUuid();
         Date date = new Date();
-        Date expiration = DateUtils.addDays(date, refreshTokenValidityInDays != null ? refreshTokenValidityInDays : jwtSecurityProperty.getRefreshTokenValidityInDays());
+        Date expiration = DateUtils.addMinutes(date, refreshTokenValidityInMinutes != null ? refreshTokenValidityInMinutes : jwtSecurityProperty.getRefreshTokenValidityInMinutes());
         String rtk = Jwts.builder()
                 // token ID
                 .setId(newRefreshTokenId)
@@ -284,11 +303,11 @@ public class JwtSecurityProcessor implements InitializingBean {
      * 通过refresh token换取access token
      *
      * @param refreshToken           refresh token
-     * @param tokenValidityInSeconds accessToken有效期，以秒为单位
+     * @param tokenValidityInMinutes accessToken有效期，以分钟为单位
      * @param appKeyAndSecret        组成格式：appKey:appSecret，为空则采用默认密钥生成签名key
      * @return access token
      */
-    public JwtToken loadTokenByRefreshToken(String refreshToken, Integer tokenValidityInSeconds, String appKeyAndSecret) {
+    public JwtToken loadTokenByRefreshToken(String refreshToken, Integer tokenValidityInMinutes, String appKeyAndSecret) {
         refreshToken = convert2RefreshTokenValue(refreshToken);
         Jws<Claims> jwt = getJwtFromToken(refreshToken, appKeyAndSecret);
         Claims claims = jwt.getBody();
@@ -300,7 +319,7 @@ public class JwtSecurityProcessor implements InitializingBean {
             // 从token中解析权限数据已经验证了有效期，所以这里只有可能强制下线会导致token不存在
             throw new DisposedJwtException("The jwt has been disposed.");
         }
-        return createToken(id, authObject, tokenValidityInSeconds, appKeyAndSecret);
+        return createToken(id, authObject, tokenValidityInMinutes, appKeyAndSecret);
     }
 
     /**
@@ -412,15 +431,15 @@ public class JwtSecurityProcessor implements InitializingBean {
      *
      * @param refreshTokenId         refresh token id
      * @param authObject             认证对象
-     * @param tokenValidityInSeconds accessToken有效期，以秒为单位
+     * @param tokenValidityInMinutes accessToken有效期，以分钟为单位
      * @param appKeyAndSecret        组成格式：appKey:appSecret，为空则采用默认密钥生成签名key
      * @return token
      */
-    private JwtToken createToken(String refreshTokenId, String authObject, Integer tokenValidityInSeconds, String appKeyAndSecret) {
+    private JwtToken createToken(String refreshTokenId, String authObject, Integer tokenValidityInMinutes, String appKeyAndSecret) {
         // token ID 每次采用一个唯一ID，以便后期通过该ID对相关token执行失效处理
         String id = StringUtils.getUuid();
         Date date = new Date();
-        Date expiration = DateUtils.addSeconds(date, tokenValidityInSeconds != null ? tokenValidityInSeconds : jwtSecurityProperty.getTokenValidityInSeconds());
+        Date expiration = DateUtils.addMinutes(date, tokenValidityInMinutes != null ? tokenValidityInMinutes : jwtSecurityProperty.getTokenValidityInMinutes());
         String tk = Jwts.builder()
                 // token ID
                 .setId(id)
@@ -436,7 +455,7 @@ public class JwtSecurityProcessor implements InitializingBean {
                 .compressWith(CompressionCodecs.DEFLATE)
                 .signWith(loadSigningKey(appKeyAndSecret), SignatureAlgorithm.HS512)
                 .compact();
-        recordToken(refreshTokenId, id, tk, tokenValidityInSeconds);
+        recordToken(refreshTokenId, id, tk, tokenValidityInMinutes);
         return new JwtToken(id, tk, expiration.getTime(), false, "");
     }
 
@@ -561,12 +580,12 @@ public class JwtSecurityProcessor implements InitializingBean {
      * @param refreshTokenId         refresh token ID
      * @param id                     access token ID
      * @param tk                     access token Value
-     * @param tokenValidityInSeconds accessToken有效期，以秒为单位
+     * @param tokenValidityInMinutes accessToken有效期，以秒为单位
      */
-    private void recordToken(String refreshTokenId, String id, String tk, Integer tokenValidityInSeconds) {
-        long expire = tokenValidityInSeconds != null ? tokenValidityInSeconds : jwtSecurityProperty.getTokenValidityInSeconds();
-        redisService.set(getAccessTokenIdToRefreshTokenIdKey(id), refreshTokenId, expire, TimeUnit.SECONDS);
-        redisService.set(getAccessTokenId2ValueKey(id), tk, expire, TimeUnit.SECONDS);
+    private void recordToken(String refreshTokenId, String id, String tk, Integer tokenValidityInMinutes) {
+        long expire = tokenValidityInMinutes != null ? tokenValidityInMinutes : jwtSecurityProperty.getTokenValidityInMinutes();
+        redisService.set(getAccessTokenIdToRefreshTokenIdKey(id), refreshTokenId, expire, TimeUnit.MINUTES);
+        redisService.set(getAccessTokenId2ValueKey(id), tk, expire, TimeUnit.MINUTES);
     }
 
     /**
