@@ -608,7 +608,7 @@ public class JwtSecurityProcessor implements InitializingBean {
      * @return 登录设备ID
      */
     private String loadDeviceIdByCredentialLoginId(String credentialLoginId) {
-        return credentialLoginId.split(CommonConstants.DASHED)[2];
+        return credentialLoginId.split(CommonConstants.SEPARATOR)[2];
     }
 
     /**
@@ -618,25 +618,25 @@ public class JwtSecurityProcessor implements InitializingBean {
      * @return 登录渠道
      */
     private String loadChannelByCredentialLoginId(String credentialLoginId) {
-        return credentialLoginId.split(CommonConstants.DASHED)[3];
+        return credentialLoginId.split(CommonConstants.SEPARATOR)[3];
     }
 
     /**
      * 表示认证实体通过哪个设备哪个请求渠道登录哪个应用的认证标识
-     * {type}-{id}-{deviceId}-{channel}-{appKey}
+     * {type}~{id}~{deviceId}~{channel}~{appKey}
      *
      * @param appKey   应用键
      * @param channel  请求渠道，比如：PC，APP，WEB
      * @param type     认证对象类型
      * @param id       认证对象ID
      * @param deviceId 登录设备ID
-     * @return {type}-{id}-{deviceId}-{channel}-{appKey}
+     * @return {type}~{id}~{deviceId}~{channel}~{appKey}
      */
     private String getCredentialLoginId(String appKey, ChannelEnum channel, String type, Long id, String deviceId) {
         if (channel == null) {
             channel = ChannelEnum.UNSPECIFIED;
         }
-        return StringUtils.joinStr(type, CommonConstants.DASHED, id, CommonConstants.DASHED, deviceId, CommonConstants.DASHED, channel.name(), CommonConstants.DASHED, appKey);
+        return StringUtils.joinStr(type, CommonConstants.SEPARATOR, id, CommonConstants.SEPARATOR, deviceId, CommonConstants.SEPARATOR, channel.name(), CommonConstants.SEPARATOR, appKey);
     }
 
     /**
@@ -652,7 +652,7 @@ public class JwtSecurityProcessor implements InitializingBean {
 
     /**
      * 获取记录某一个认证对象通过某个渠道在某个应用登录获得的refresh token id的键格式：
-     * tk:refresh:credentials:{type}-{id}-{channel}-{appKey} -> xx
+     * tk:refresh:credentials:{type}~{id}~{channel}~{appKey} -> xx
      *
      * @param appKey  应用键
      * @param channel 请求渠道，比如：PC，APP，WEB
@@ -664,12 +664,12 @@ public class JwtSecurityProcessor implements InitializingBean {
         if (channel == null) {
             channel = ChannelEnum.UNSPECIFIED;
         }
-        return StringUtils.joinStr(REFRESH_TOKEN_CREDENTIAL_ID_KEY_MARK, type, CommonConstants.DASHED, id, CommonConstants.DASHED, channel.name(), CommonConstants.DASHED, appKey);
+        return StringUtils.joinStr(REFRESH_TOKEN_CREDENTIAL_ID_KEY_MARK, type, CommonConstants.SEPARATOR, id, CommonConstants.SEPARATOR, channel.name(), CommonConstants.SEPARATOR, appKey);
     }
 
     /**
      * 获取记录某一个认证对象在某个应用获得的所有refresh token id的键格式：
-     * tk:refresh:credentials:{type}-{id}-{appKey} -> xx,xx,xx
+     * tk:refresh:credentials:{type}~{id}~{appKey} -> xx,xx,xx
      *
      * @param appKey 应用键
      * @param type   认证对象类型
@@ -677,7 +677,7 @@ public class JwtSecurityProcessor implements InitializingBean {
      * @return 认证对象与refreshToken之间映射关系的键
      */
     private String getAwardRefreshTokenIdsKey(String appKey, String type, Long id) {
-        return StringUtils.joinStr(REFRESH_TOKEN_CREDENTIAL_IDS_KEY_MARK, type, CommonConstants.DASHED, id, CommonConstants.DASHED, appKey);
+        return StringUtils.joinStr(REFRESH_TOKEN_CREDENTIAL_IDS_KEY_MARK, type, CommonConstants.SEPARATOR, id, CommonConstants.SEPARATOR, appKey);
     }
 
     /**
