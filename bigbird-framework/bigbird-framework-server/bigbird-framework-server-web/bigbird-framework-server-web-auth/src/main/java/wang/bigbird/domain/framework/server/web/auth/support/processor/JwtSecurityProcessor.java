@@ -612,6 +612,16 @@ public class JwtSecurityProcessor implements InitializingBean {
     }
 
     /**
+     * 从认证标识中提取登录渠道
+     *
+     * @param credentialLoginId 认证标识
+     * @return 登录渠道
+     */
+    private String loadChannelByCredentialLoginId(String credentialLoginId) {
+        return credentialLoginId.split(CommonConstants.DASHED)[3];
+    }
+
+    /**
      * 表示认证实体通过哪个设备哪个请求渠道登录哪个应用的认证标识
      * {type}-{id}-{deviceId}-{channel}-{appKey}
      *
@@ -770,20 +780,24 @@ public class JwtSecurityProcessor implements InitializingBean {
     }
 
     /**
-     * 强制认证对象在某个应用下线
+     * 强制认证对象在某个应用通过某种渠道获得的登录状态下线
      *
-     * @param appKey 应用键
-     * @param type   认证对象类型
-     * @param id     认证对象标识
+     * @param appKey  应用键
+     * @param channel 登录渠道，为空表示踢下线认证对象通过所有渠道在该应用获得的登录状态
+     * @param type    认证对象类型
+     * @param id      认证对象标识
      */
-    public void kickedOffline(String appKey, String type, Long id) {
+    public void kickedOffline(String appKey, ChannelEnum channel, String type, Long id) {
         // 将对应应用给用户颁发的refreshToken从容器中移除，使登录失效
         String awardRefreshTokenIdsKey = getAwardRefreshTokenIdsKey(appKey, type, id);
         List<String> tokenIds = redisSortedSetService.zrange(awardRefreshTokenIdsKey, 0, -1, String.class);
         for (String tokenId : tokenIds) {
-            // 删除每个渠道登录对应的refresh token id记录，防止影响下一次登录
-            for (ChannelEnum channel : ChannelEnum.values()) {
-                removeRefreshToken(appKey, channel, type, id, tokenId);
+            String credentialLoginId = getRefreshTokenId2CredentialKey(tokenId);
+            ChannelEnum ce = ChannelEnum.getInstanceByCode(loadChannelByCredentialLoginId(credentialLoginId));
+            if (channel == null) {
+                removeRefreshToken(appKey, ce, type, id, tokenId);
+            } else if (channel == ce) {
+                removeRefreshToken(appKey, ce, type, id, tokenId);
             }
         }
     }
