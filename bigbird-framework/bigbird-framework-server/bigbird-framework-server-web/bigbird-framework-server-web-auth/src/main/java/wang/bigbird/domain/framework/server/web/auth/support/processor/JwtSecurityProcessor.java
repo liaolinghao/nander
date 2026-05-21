@@ -792,7 +792,10 @@ public class JwtSecurityProcessor implements InitializingBean {
         String awardRefreshTokenIdsKey = getAwardRefreshTokenIdsKey(appKey, type, id);
         List<String> tokenIds = redisSortedSetService.zrange(awardRefreshTokenIdsKey, 0, -1, String.class);
         for (String tokenId : tokenIds) {
-            String credentialLoginId = getRefreshTokenId2CredentialKey(tokenId);
+            String credentialLoginId = redisService.get(getRefreshTokenId2CredentialKey(tokenId));
+            if (StringUtils.isBlank(credentialLoginId)) {
+                continue;
+            }
             ChannelEnum ce = ChannelEnum.getInstanceByCode(loadChannelByCredentialLoginId(credentialLoginId));
             if (channel == null) {
                 removeRefreshToken(appKey, ce, type, id, tokenId);
