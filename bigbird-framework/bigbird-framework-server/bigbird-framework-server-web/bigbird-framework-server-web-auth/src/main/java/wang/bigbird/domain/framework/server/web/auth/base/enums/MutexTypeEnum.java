@@ -85,7 +85,7 @@ public enum MutexTypeEnum implements ValuedEnum<Byte> {
      * @return 是否优先保证先登录有效
      */
     public boolean isFrontProtected() {
-        return this.equals(MutexTypeEnum.front_channel) || this.equals(MutexTypeEnum.front_all);
+        return this == MutexTypeEnum.front_channel || this == MutexTypeEnum.front_all;
     }
 
     /**
@@ -94,7 +94,16 @@ public enum MutexTypeEnum implements ValuedEnum<Byte> {
      * @return 是否优先保证后登录有效
      */
     public boolean isBackProtected() {
-        return this.equals(MutexTypeEnum.back_channel) || this.equals(MutexTypeEnum.back_all);
+        return this == MutexTypeEnum.back_channel || this == MutexTypeEnum.back_all;
+    }
+
+    /**
+     * 是否忽略登录渠道
+     *
+     * @return 是否忽略登录渠道
+     */
+    public boolean isIgnoreChannel() {
+        return this == MutexTypeEnum.front_all || this == MutexTypeEnum.back_all;
     }
 
 }

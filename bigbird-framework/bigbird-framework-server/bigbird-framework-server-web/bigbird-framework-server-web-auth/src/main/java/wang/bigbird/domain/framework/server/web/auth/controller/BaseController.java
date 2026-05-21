@@ -235,7 +235,7 @@ public class BaseController {
                 String credentials = (String) authentication.getCredentials();
                 String accessTokenId = credentials.split(CommonConstants.SEPARATOR)[0];
                 ChannelEnum channel = jwtUser.getChannel();
-                if (MutexTypeEnum.front_all.equals(mutexTypeEnum) || MutexTypeEnum.back_all.equals(mutexTypeEnum)) {
+                if (mutexTypeEnum.isIgnoreChannel()) {
                     // 不考虑渠道，那么把渠道值修正为忽略，以便统一标识
                     channel = ChannelEnum.IGNORE;
                 }

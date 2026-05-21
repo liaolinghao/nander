@@ -220,7 +220,7 @@ public class JwtSecurityProcessor implements InitializingBean {
             mutexTypeEnum = MutexTypeEnum.none;
         }
         ChannelEnum channel = jwtAuthData.getChannel();
-        if (mutexTypeEnum.equals(MutexTypeEnum.front_all) || mutexTypeEnum.equals(MutexTypeEnum.back_all)) {
+        if (mutexTypeEnum.isIgnoreChannel()) {
             // 不考虑渠道，那么把渠道值修正为忽略，以便统一标识
             channel = ChannelEnum.IGNORE;
         }
