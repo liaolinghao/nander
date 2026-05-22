@@ -201,6 +201,15 @@ public class JwtSecurityProcessor implements InitializingBean {
         Claims claims = jwt.getBody();
         String authObject = getJwtAuthDataFromToken(claims, REFRESH_TOKEN_SUBJECT);
         JwtAuthData jwtAuthData = JsonUtils.json2Object(authObject, JwtAuthData.class, objectMapper);
+        switch (jwtAuthData.getType()) {
+            case JwtAuthData.USER:
+                jwtAuthData = JsonUtils.json2Object(authObject, JwtUser.class, objectMapper);
+                break;
+            case JwtAuthData.DEVICE:
+            case JwtAuthData.CLIENT:
+                break;
+            default:
+        }
         return createRefreshToken(deviceId, jwtAuthData, refreshTokenValidityInMinutes, mutexTypeEnum, appKeyAndSecret);
     }
 
