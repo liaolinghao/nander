@@ -215,6 +215,10 @@ public class JwtSecurityProcessor implements InitializingBean {
      * @return refresh token
      */
     public JwtToken createRefreshToken(String deviceId, JwtAuthData jwtAuthData, Integer refreshTokenValidityInMinutes, MutexTypeEnum mutexTypeEnum, String appKeyAndSecret) {
+        if (StringUtils.isNotBlank(deviceId) && deviceId.contains(CommonConstants.SEPARATOR)) {
+            // 统一去除设备ID中的~符号，防止影响后续键处理
+            deviceId = deviceId.replace(CommonConstants.SEPARATOR, "");
+        }
         if (mutexTypeEnum == null) {
             // 为空，就不做互斥限制
             mutexTypeEnum = MutexTypeEnum.none;
@@ -727,6 +731,7 @@ public class JwtSecurityProcessor implements InitializingBean {
             if (StringUtils.isNotBlank(value)) {
                 return value;
             }
+            throw new ExpiredJwtException(null, null, "The jwt has been expired.");
         }
         return accessToken;
     }
@@ -745,6 +750,7 @@ public class JwtSecurityProcessor implements InitializingBean {
             if (StringUtils.isNotBlank(value)) {
                 return value;
             }
+            throw new ExpiredJwtException(null, null, "The jwt has been expired.");
         }
         return refreshToken;
     }

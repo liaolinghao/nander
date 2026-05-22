@@ -84,6 +84,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                 log.debug("Set Authentication to security context for '{}', uri: {}.", authentication.getName(), requestUri);
             } catch (Exception e) {
                 // JWT不合格，http状态码统一修正为400
+                log.error("Invalid token:{},{}", token, e.getMessage(), e);
                 httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 httpServletResponse.setContentType("application/json;charset=utf-8");
                 if (e instanceof io.jsonwebtoken.security.SecurityException || e instanceof MalformedJwtException) {
