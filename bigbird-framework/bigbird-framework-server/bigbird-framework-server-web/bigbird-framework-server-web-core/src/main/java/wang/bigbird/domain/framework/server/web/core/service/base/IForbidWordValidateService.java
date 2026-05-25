@@ -15,19 +15,19 @@ package wang.bigbird.domain.framework.server.web.core.service.base;
 import java.util.List;
 
 /**
- * 敏感词校验服务
+ * 禁用词校验服务
  *
  * @author Bigbird
  */
-public interface ISensitiveWordValidateService {
+public interface IForbidWordValidateService {
 
     /**
-     * 判断文本是否包含敏感词
+     * 判断文本是否包含禁用词
      *
      * @param value 文本
-     * @return 是否包含敏感词
+     * @return 是否包含禁用词
      */
-    boolean containsSensitiveWord(String value);
+    boolean containsForbidWord(String value);
 
     /**
      * 文本包含的禁用词列表

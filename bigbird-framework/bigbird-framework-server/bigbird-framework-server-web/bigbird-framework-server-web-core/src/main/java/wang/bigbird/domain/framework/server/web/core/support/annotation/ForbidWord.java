@@ -12,29 +12,29 @@
  */
 package wang.bigbird.domain.framework.server.web.core.support.annotation;
 
-import wang.bigbird.domain.framework.server.web.core.support.validator.SensitiveWordValidator;
+import wang.bigbird.domain.framework.server.web.core.support.validator.ForbidWordValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.*;
 
 /**
- * 敏感词校验注解
+ * 禁用词校验注解
  *
  * @author Bigbird
  */
 @Documented
-@Constraint(validatedBy = SensitiveWordValidator.class)
+@Constraint(validatedBy = ForbidWordValidator.class)
 @Target({ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface SensitiveWord {
+public @interface ForbidWord {
 
     /**
      * 默认提示语
      *
      * @return
      */
-    String message() default "内容包含敏感词，请修改后重试";
+    String message() default "内容包含禁用词，请修改后重试";
 
     /**
      * 校验分组（JSR标准）

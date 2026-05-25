@@ -17,31 +17,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import wang.bigbird.domain.framework.core.base.util.CollectionUtils;
 import wang.bigbird.domain.framework.core.base.util.StringUtils;
-import wang.bigbird.domain.framework.server.web.core.service.base.ISensitiveWordValidateService;
-import wang.bigbird.domain.framework.server.web.core.support.annotation.SensitiveWord;
+import wang.bigbird.domain.framework.server.web.core.service.base.IForbidWordValidateService;
+import wang.bigbird.domain.framework.server.web.core.support.annotation.ForbidWord;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.List;
 
 /**
- * 敏感词校验器
+ * 禁用词校验器
  *
  * @author Bigbird
  */
 @Slf4j
 @Component
-public class SensitiveWordValidator implements ConstraintValidator<SensitiveWord, String> {
+public class ForbidWordValidator implements ConstraintValidator<ForbidWord, String> {
 
     private boolean enable;
 
     private boolean disableDefaultMessage;
 
     @Autowired(required = false)
-    private ISensitiveWordValidateService sensitiveWordValidateService;
+    private IForbidWordValidateService forbidWordValidateService;
 
     @Override
-    public void initialize(SensitiveWord annotation) {
+    public void initialize(ForbidWord annotation) {
         this.enable = annotation.enable();
         this.disableDefaultMessage = annotation.disableDefaultMessage();
     }
@@ -49,11 +49,11 @@ public class SensitiveWordValidator implements ConstraintValidator<SensitiveWord
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
         // 关闭校验 或 内容为空，直接通过
-        if (sensitiveWordValidateService == null || !enable || StringUtils.isEmpty(value)) {
+        if (forbidWordValidateService == null || !enable || StringUtils.isEmpty(value)) {
             return true;
         }
         if (disableDefaultMessage) {
-            List<String> forbidWords = sensitiveWordValidateService.forbidWordList(value);
+            List<String> forbidWords = forbidWordValidateService.forbidWordList(value);
             if (CollectionUtils.isNotEmpty(forbidWords)) {
                 // 关闭默认错误提示
                 context.disableDefaultConstraintViolation();
@@ -64,7 +64,7 @@ public class SensitiveWordValidator implements ConstraintValidator<SensitiveWord
             }
             return true;
         } else {
-            return !sensitiveWordValidateService.containsSensitiveWord(value);
+            return !forbidWordValidateService.containsForbidWord(value);
         }
     }
 
