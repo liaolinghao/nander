@@ -10,7 +10,7 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-package wang.bigbird.domain.framework.server.web.core.support.pwd;
+package wang.bigbird.domain.framework.server.web.core.support.validator.pwd;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
