@@ -15,6 +15,7 @@ package wang.bigbird.domain.framework.common.forbidden.support.core;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
+import wang.bigbird.domain.framework.core.base.util.JsonUtils;
 import wang.bigbird.domain.framework.core.base.util.StringUtils;
 
 import java.util.Iterator;
@@ -65,7 +66,24 @@ public class MemoryMapDfaImpl implements Dfa {
             }
             count++;
         }
-        log.info("Load a total of {} forbidden words.", count);
+        log.debug("Load a total of {} forbidden words.", count);
+        log.debug("Dfa: {}", JsonUtils.object2Json(dfaMap));
+    }
+
+    @Override
+    public void removeWord(Iterator<String> words) {
+        if (words == null) {
+            return;
+        }
+        // 迭代keyWordSet
+        while (words.hasNext()) {
+            String word = words.next();
+            if (StringUtils.isBlank(word)) {
+                continue;
+            }
+            removeSingleWord(word);
+        }
+        log.debug("Dfa: {}", JsonUtils.object2Json(dfaMap));
     }
 
     @Override
@@ -104,4 +122,40 @@ public class MemoryMapDfaImpl implements Dfa {
         fi.setIndex(index);
         return fi;
     }
+
+    private void removeSingleWord(String word) {
+        List<Map> path = Lists.newArrayList();
+        Map current = dfaMap;
+        // 第一步：沿着字符路径走一遍，记录每一层节点
+        for (char c : word.toCharArray()) {
+            Map next = (Map) current.get(c);
+            if (next == null) {
+                // 不存在，直接返回
+                return;
+            }
+            path.add(current);
+            current = next;
+        }
+        // 检查是否真的是一个结束标记
+        boolean isEnd = "true".equals(current.get(END_OF_WORD));
+        if (!isEnd) {
+            return;
+        }
+        // 第二步：删除结束标记（最干净、不影响其他词）
+        current.remove(END_OF_WORD);
+        // 第三步：从后往前清理空节点（可选，优化内存）
+        for (int i = path.size() - 1; i >= 0; i--) {
+            Map parent = path.get(i);
+            char keyChar = word.charAt(i);
+            Map child = (Map) parent.get(keyChar);
+            // 如果子节点是空的，直接删掉
+            if (child != null && (child.isEmpty() || (child.containsKey(END_OF_WORD) && child.size() == 1))) {
+                parent.remove(keyChar);
+            } else {
+                // 只要有一个节点不为空，前面的都不能删
+                break;
+            }
+        }
+    }
+
 }

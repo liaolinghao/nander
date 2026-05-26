@@ -16,6 +16,7 @@ import cn.hutool.core.thread.ThreadFactoryBuilder;
 import lombok.extern.slf4j.Slf4j;
 import wang.bigbird.domain.framework.common.forbidden.support.core.Dfa;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.concurrent.*;
 
@@ -38,7 +39,7 @@ public abstract class AbstractForbidWordRepository {
     /**
      * 传入一个空的DFA实例
      *
-     * @param dfa the dfa
+     * @param dfa DFA实例
      */
     protected AbstractForbidWordRepository(Dfa dfa) {
         this.dfa = dfa;
@@ -56,7 +57,7 @@ public abstract class AbstractForbidWordRepository {
     /**
      * 加载禁用词
      *
-     * @return the iterator
+     * @return 禁用词迭代器
      */
     protected abstract Iterator<String> loadForbidWords();
 
@@ -82,21 +83,23 @@ public abstract class AbstractForbidWordRepository {
     /**
      * 增加禁用词，通常基于文件的禁用词库不支持持久化，基于数据库的可以支持
      *
-     * @param words the words
+     * @param words 禁用词列表
      * @return 是否成功
      */
     public boolean addForbidWord(String... words) {
-        return false;
+        dfa.addWord(Arrays.asList(words).iterator());
+        return true;
     }
 
     /**
      * 删除禁用词，通常基于文件的禁用词库不支持持久化，基于数据库的可以支持
      *
-     * @param words the words
+     * @param words 禁用词列表
      * @return 是否成功
      */
     public boolean removeForbidWord(String... words) {
-        return false;
+        dfa.removeWord(Arrays.asList(words).iterator());
+        return true;
     }
 
 }

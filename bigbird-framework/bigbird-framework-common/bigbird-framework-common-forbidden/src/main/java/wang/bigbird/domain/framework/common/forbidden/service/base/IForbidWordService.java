@@ -24,41 +24,41 @@ public interface IForbidWordService {
     /**
      * 文本是否包含禁用词
      *
-     * @param text the text
-     * @return the boolean
+     * @param text 检测文本
+     * @return 是否包含禁用词
      */
-    boolean include(final String text);
+    boolean include(String text);
 
     /**
      * 文本包含的禁用词数量
      *
-     * @param text the text
-     * @return the int
+     * @param text 检测文本
+     * @return 禁用词数量
      */
-    int forbidWordCount(final String text);
+    int forbidWordCount(String text);
 
     /**
      * 文本包含的禁用词列表
      *
-     * @param text the text
-     * @return the list
+     * @param text 检测文本
+     * @return 禁用词列表
      */
-    List<String> forbidWordList(final String text);
+    List<String> forbidWordList(String text);
 
     /**
      * 将文本中包含的禁用词的每个字符以指定符号代替
      *
-     * @param text   the text
-     * @param symbol the symbol
-     * @return the string
+     * @param text   检测文本
+     * @param symbol 替换符号
+     * @return 文本处理结果
      */
-    String replace(final String text, final char symbol);
+    String replace(String text, char symbol);
 
     /**
      * 增加禁用词，通常基于文件的禁用词库不支持持久化，基于数据库的可以支持
      *
      * @param refreshNow 成功后是否立即刷新
-     * @param words      the words
+     * @param words      禁用词列表
      * @return 是否成功
      */
     boolean addForbidWord(boolean refreshNow, String... words);
@@ -67,7 +67,7 @@ public interface IForbidWordService {
      * 删除禁用词，通常基于文件的禁用词库不支持持久化，基于数据库的可以支持
      *
      * @param refreshNow 成功后是否立即刷新
-     * @param words      the words
+     * @param words      禁用词列表
      * @return 是否成功
      */
     boolean removeForbidWord(boolean refreshNow, String... words);

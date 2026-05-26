@@ -22,6 +22,7 @@
         <module>bigbird-framework-server-web-auth</module>
         <module>bigbird-framework-server-web-defence</module>
         <module>bigbird-framework-server-web-ws</module>
+        <module>bigbird-framework-server-web-ban</module>
     </modules>
 
     <dependencies>

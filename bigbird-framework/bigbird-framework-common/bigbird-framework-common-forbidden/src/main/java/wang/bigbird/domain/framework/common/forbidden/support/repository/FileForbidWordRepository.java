@@ -28,9 +28,9 @@ public class FileForbidWordRepository extends AbstractInputStreamForbidWordRepos
     private final String filePath;
 
     /**
-     * Instantiates a new Forbid word repository.
+     * 传入一个空的DFA实例
      *
-     * @param dfa the dfa
+     * @param dfa DFA实例
      */
     public FileForbidWordRepository(Dfa dfa, String filePath) {
         super(dfa);

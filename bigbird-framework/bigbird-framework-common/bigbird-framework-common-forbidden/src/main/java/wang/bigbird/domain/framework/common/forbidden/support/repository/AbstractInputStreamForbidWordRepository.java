@@ -13,8 +13,8 @@
 package wang.bigbird.domain.framework.common.forbidden.support.repository;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 import wang.bigbird.domain.framework.common.forbidden.support.core.Dfa;
+import wang.bigbird.domain.framework.core.base.util.StreamUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -34,7 +34,7 @@ public abstract class AbstractInputStreamForbidWordRepository extends AbstractFo
     /**
      * 传入一个空的DFA实例
      *
-     * @param dfa the dfa
+     * @param dfa DFA实例
      */
     protected AbstractInputStreamForbidWordRepository(Dfa dfa) {
         super(dfa);
@@ -75,7 +75,7 @@ public abstract class AbstractInputStreamForbidWordRepository extends AbstractFo
             try {
                 hasNext = reader != null && (buf = reader.readLine()) != null;
                 if (!hasNext) {
-                    IOUtils.closeQuietly(reader);
+                    StreamUtils.close(reader);
                     reader = null;
                 }
             } catch (Exception e) {

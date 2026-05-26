@@ -215,6 +215,11 @@
                 <artifactId>bigbird-framework-common-sensitive</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>bigbird-framework-common-similarity</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <!--bigbird-framework-data-->
             <dependency>
                 <groupId>${project.groupId}</groupId>
@@ -391,6 +396,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>bigbird-framework-server-web-ws</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>bigbird-framework-server-web-ban</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!--spring boot 全家桶版本控制-->

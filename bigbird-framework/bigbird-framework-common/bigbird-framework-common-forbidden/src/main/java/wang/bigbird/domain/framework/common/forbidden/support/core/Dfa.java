@@ -30,23 +30,31 @@ public interface Dfa {
     /**
      * 将词加到DFA的数据结构中
      *
-     * @param words the words
+     * @param words 禁用词
      */
     void addWord(Iterator<String> words);
 
     /**
+     * 将词从DFA的数据结构中删除
+     *
+     * @param words 禁用词
+     */
+    void removeWord(Iterator<String> words);
+
+    /**
      * 新建一个空的实例
      *
-     * @return the dfa
+     * @return DFA数据结构容器
      */
     Dfa createNewEmpty();
 
     /**
      * 检测禁用词，从文本指定位置开始，检测到符合要求的第一个禁用词就结束检测
      *
-     * @param text  the text
-     * @param begin the begin
-     * @return the flag index
+     * @param text  检测文本
+     * @param begin 检测起始位置
+     * @return 禁用词位置索引
      */
-    FlagIndex getFlagIndex(final String text, final int begin);
+    FlagIndex getFlagIndex(String text, int begin);
+
 }

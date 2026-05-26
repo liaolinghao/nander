@@ -21,6 +21,7 @@
         <module>bigbird-framework-common-forbidden</module>
         <module>bigbird-framework-common-gis</module>
         <module>bigbird-framework-common-logging</module>
+        <module>bigbird-framework-common-similarity</module>
     </modules>
 
     <dependencies>
