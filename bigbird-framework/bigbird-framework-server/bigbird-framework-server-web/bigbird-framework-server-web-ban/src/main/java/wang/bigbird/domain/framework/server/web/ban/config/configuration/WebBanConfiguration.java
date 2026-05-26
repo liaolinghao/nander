@@ -13,6 +13,7 @@
 package wang.bigbird.domain.framework.server.web.ban.config.configuration;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +21,9 @@ import wang.bigbird.domain.framework.common.forbidden.service.base.IForbidWordSe
 import wang.bigbird.domain.framework.common.forbidden.service.base.impl.ForbidWordServiceImpl;
 import wang.bigbird.domain.framework.common.forbidden.support.core.Dfa;
 import wang.bigbird.domain.framework.common.forbidden.support.core.MemoryMapDfaImpl;
+import wang.bigbird.domain.framework.data.redis.service.base.IRedisPubSubService;
 import wang.bigbird.domain.framework.data.redis.service.base.IRedisSetService;
+import wang.bigbird.domain.framework.server.web.ban.config.property.BanProperties;
 import wang.bigbird.domain.framework.server.web.ban.support.repository.RedisForbidWordRepository;
 
 import javax.annotation.PostConstruct;
@@ -35,6 +38,13 @@ import javax.annotation.PostConstruct;
 @Configuration
 public class WebBanConfiguration {
 
+    @Autowired
+    private BanProperties banProperties;
+    @Autowired
+    private IRedisSetService redisSetService;
+    @Autowired
+    private IRedisPubSubService redisPubSubService;
+
     @PostConstruct
     public void init() {
         log.info("Init ban web framework.");
@@ -46,8 +56,8 @@ public class WebBanConfiguration {
     }
 
     @Bean
-    public RedisForbidWordRepository sensitiveWordRepository(Dfa dfa, IRedisSetService redisSetService) {
-        return new RedisForbidWordRepository(dfa, redisSetService);
+    public RedisForbidWordRepository sensitiveWordRepository(Dfa dfa) {
+        return new RedisForbidWordRepository(dfa, banProperties.getForbidWordPoolKey(), banProperties.getForbidWordRefreshEventTopic(), redisSetService, redisPubSubService);
     }
 
     @Bean

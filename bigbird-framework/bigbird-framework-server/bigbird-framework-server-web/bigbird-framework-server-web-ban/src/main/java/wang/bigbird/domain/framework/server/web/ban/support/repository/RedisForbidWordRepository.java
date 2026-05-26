@@ -16,7 +16,10 @@ import lombok.extern.slf4j.Slf4j;
 import wang.bigbird.domain.framework.common.forbidden.support.core.Dfa;
 import wang.bigbird.domain.framework.common.forbidden.support.repository.AbstractForbidWordRepository;
 import wang.bigbird.domain.framework.core.base.util.CollectionUtils;
+import wang.bigbird.domain.framework.core.base.util.JsonUtils;
+import wang.bigbird.domain.framework.data.redis.service.base.IRedisPubSubService;
 import wang.bigbird.domain.framework.data.redis.service.base.IRedisSetService;
+import wang.bigbird.domain.framework.server.web.ban.domain.pojo.msg.ForbidWordRefreshEvent;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -30,24 +33,42 @@ import java.util.Set;
 @Slf4j
 public class RedisForbidWordRepository extends AbstractForbidWordRepository {
 
-    private static final String FORBID_WORD_KEY = "word:forbid";
+    private String forbidWordPoolKey;
+    private String forbidWordRefreshEventTopic;
 
-    private final IRedisSetService redisSetService;
+    private IRedisSetService redisSetService;
+    private IRedisPubSubService redisPubSubService;
 
     /**
      * 传入一个空的DFA实例
      *
      * @param dfa DFA实例
      */
-    public RedisForbidWordRepository(Dfa dfa, IRedisSetService redisSetService) {
+    public RedisForbidWordRepository(Dfa dfa, String forbidWordPoolKey, String forbidWordRefreshEventTopic, IRedisSetService redisSetService, IRedisPubSubService redisPubSubService) {
         super(dfa);
+        this.forbidWordPoolKey = forbidWordPoolKey;
+        this.forbidWordRefreshEventTopic = forbidWordRefreshEventTopic;
         this.redisSetService = redisSetService;
+        this.redisPubSubService = redisPubSubService;
         refresh(false);
+        redisPubSubService.subscribe(forbidWordRefreshEventTopic, (pattern, channel, msg) -> {
+            ForbidWordRefreshEvent forbidWordRefreshEvent = JsonUtils.json2Object(msg, ForbidWordRefreshEvent.class);
+            switch (forbidWordRefreshEvent.getRefreshType()) {
+                case add:
+                    dfa.addWord(forbidWordRefreshEvent.getWords().iterator());
+                    break;
+                case delete:
+                    dfa.removeWord(forbidWordRefreshEvent.getWords().iterator());
+                    break;
+                default:
+                    break;
+            }
+        });
     }
 
     @Override
     protected Iterator<String> loadForbidWords() {
-        Set<String> words = redisSetService.smembers(FORBID_WORD_KEY, String.class);
+        Set<String> words = redisSetService.smembers(forbidWordPoolKey, String.class);
         if (CollectionUtils.isEmpty(words)) {
             log.warn("No forbid words found.");
             return Collections.emptyIterator();
