@@ -5,29 +5,32 @@
 ```
 // redis 基础服务
 @Autowired
-private RedisService redisService;
+private IRedisService redisService;
 
 // redis set 服务
 @Autowired
-private RedisSetService redisSetService;
+private IRedisSetService redisSetService;
 
 // redis 有序set 服务
 @Autowired
-private RedisSortedSetService redisSortedSetService;
+private IRedisSortedSetService redisSortedSetService;
 
 // redis hash 服务
 @Autowired
-private RedisHashService redisHashService;
+private IRedisHashService redisHashService;
 
 // redis list 服务
 @Autowired
-private RedisListService redisListService;
+private IRedisListService redisListService;
+
+// redis 发布订阅服务
+@Autowired
+private IRedisPubSubService redisPubSubService;
 ```
 
 ## 配置
 
-本构件自定义redis配置，相比较spring原生的redis配置，多定义了：命令等待超时时间。
-同时，本构件兼容spring原生的redis配置。
+本构件自定义redis配置，相比较spring原生的redis配置，多定义了：命令等待超时时间。 同时，本构件兼容spring原生的redis配置。
 
 配置加载优先级如下：
 
