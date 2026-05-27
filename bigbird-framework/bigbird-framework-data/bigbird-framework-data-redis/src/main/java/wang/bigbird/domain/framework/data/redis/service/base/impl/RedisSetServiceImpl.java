@@ -44,6 +44,15 @@ public class RedisSetServiceImpl implements IRedisSetService {
     }
 
     @Override
+    public boolean sadd(String key, Set<?> objs) {
+        RSet<String> set = redissonClient.getSet(key);
+        Set<String> jsonList = objs.stream()
+                .map(JsonUtils::object2Json)
+                .collect(Collectors.toSet());
+        return set.addAll(jsonList);
+    }
+
+    @Override
     public boolean sismember(String key, Object value) {
         RSet<String> set = redissonClient.getSet(key);
         String jsonString = JsonUtils.object2Json(value);

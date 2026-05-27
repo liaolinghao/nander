@@ -35,6 +35,18 @@ public interface IRedisSetService {
     boolean sadd(String key, Object value);
 
     /**
+     * SADD
+     * <p>
+     * 将一批 member 元素加入到集合 key 当中，已经存在于集合的 member 元素将被忽略。
+     * 假如 key 不存在，则创建一个包含 member 元素作成员的集合。
+     *
+     * @param key  键
+     * @param objs 值
+     * @return 操作是否成功
+     */
+    boolean sadd(String key, Set<?> objs);
+
+    /**
      * SISMEMBER
      * <p>
      * 判断 member 元素是否存在于集合 key 当中。
