@@ -54,11 +54,14 @@ public class RedisForbidWordRepository extends AbstractForbidWordRepository {
         redisPubSubService.subscribe(forbidWordRefreshEventTopic, (pattern, channel, msg) -> {
             ForbidWordRefreshEvent forbidWordRefreshEvent = JsonUtils.json2Object(msg, ForbidWordRefreshEvent.class);
             switch (forbidWordRefreshEvent.getRefreshType()) {
-                case add:
+                case ADD:
                     dfa.addWord(forbidWordRefreshEvent.getWords().iterator());
                     break;
-                case delete:
+                case DELETE:
                     dfa.removeWord(forbidWordRefreshEvent.getWords().iterator());
+                    break;
+                case REFRESH:
+                    refresh(true);
                     break;
                 default:
                     break;

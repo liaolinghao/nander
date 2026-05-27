@@ -24,11 +24,15 @@ public enum RefreshTypeEnum implements ValuedEnum<String> {
     /**
      * 添加禁用词
      */
-    add("ADD"),
+    ADD("ADD"),
     /**
      * 删除禁用词
      */
-    delete("DELETE");
+    DELETE("DELETE"),
+    /**
+     * 刷新禁用词库
+     */
+    REFRESH("REFRESH");
 
     private String type;
 
