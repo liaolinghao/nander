@@ -10,15 +10,15 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-package wang.bigbird.domain.framework.server.web.core.support.validator;
+package wang.bigbird.domain.framework.server.web.ban.support.validator;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import wang.bigbird.domain.framework.core.base.util.CollectionUtils;
 import wang.bigbird.domain.framework.core.base.util.StringUtils;
-import wang.bigbird.domain.framework.server.web.core.service.base.IForbidWordValidateService;
-import wang.bigbird.domain.framework.server.web.core.support.annotation.ForbidWord;
+import wang.bigbird.domain.framework.server.web.ban.service.base.IForbidWordValidateService;
+import wang.bigbird.domain.framework.server.web.ban.support.annotation.ForbidWord;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

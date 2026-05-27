@@ -10,31 +10,29 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-package wang.bigbird.domain.framework.server.web.core.service.base;
+package wang.bigbird.domain.framework.server.web.ban.config.property;
 
-import java.util.List;
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 /**
- * 禁用词校验服务
+ * 禁用词框架通用配置
  *
  * @author Bigbird
  */
-public interface IForbidWordValidateService {
+@Data
+@Configuration
+@ConfigurationProperties(prefix = "bigbird.server.common.ban")
+public class BanProperties {
 
     /**
-     * 判断文本是否包含禁用词
-     *
-     * @param value 文本
-     * @return 是否包含禁用词
+     * 禁用词库在redis中的键
      */
-    boolean containsForbidWord(String value);
-
+    private String forbidWordPoolKey;
     /**
-     * 文本包含的禁用词列表
-     *
-     * @param value 文本
-     * @return 禁用词列表
+     * 禁用词变更事件在redis中的发布渠道
      */
-    List<String> forbidWordList(String value);
+    private String forbidWordRefreshEventTopic;
 
 }

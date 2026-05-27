@@ -1,10 +1,12 @@
-# WEB构件禁用词模块
+# SERVER通用能力构件禁用词模块
 
-本构件属于统一WEB框架的禁用词模块，提供以下功能：
+本构件属于统一SERVER通用能力的禁用词模块，提供以下功能：
 
 1、提供基于Redis的禁用词库管理。
 
 2、基于Redis的Pub/Sub机制实现禁用词动态更新。
+
+3、提供@ForbidWord注解实现对接口入参数据的合法性验证。
 
 ## 配置
 
@@ -13,7 +15,7 @@
 ```
 bigbird:
   server:
-    web:
+    common:
       ban:
         forbidWordPoolKey: word:forbid #禁用词库在redis中的键
         forbidWordRefreshEventTopic: word:forbid:refresh:topic #禁用词变更事件在redis中的发布渠道

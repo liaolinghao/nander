@@ -19,6 +19,7 @@
         <module>bigbird-framework-server-common-frequency</module>
         <module>bigbird-framework-server-common-retrofit</module>
         <module>bigbird-framework-server-common-quartz</module>
+        <module>bigbird-framework-server-common-ban</module>
     </modules>
 
     <dependencies>
