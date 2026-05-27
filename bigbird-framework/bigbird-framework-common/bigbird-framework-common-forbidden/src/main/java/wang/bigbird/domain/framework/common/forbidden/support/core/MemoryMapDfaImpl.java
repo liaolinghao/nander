@@ -15,7 +15,6 @@ package wang.bigbird.domain.framework.common.forbidden.support.core;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
-import wang.bigbird.domain.framework.core.base.util.JsonUtils;
 import wang.bigbird.domain.framework.core.base.util.StringUtils;
 
 import java.util.Iterator;
@@ -67,7 +66,6 @@ public class MemoryMapDfaImpl implements Dfa {
             count++;
         }
         log.debug("Load a total of {} forbidden words.", count);
-        log.debug("Dfa: {}", JsonUtils.object2Json(dfaMap));
     }
 
     @Override
@@ -83,7 +81,6 @@ public class MemoryMapDfaImpl implements Dfa {
             }
             removeSingleWord(word);
         }
-        log.debug("Dfa: {}", JsonUtils.object2Json(dfaMap));
     }
 
     @Override
