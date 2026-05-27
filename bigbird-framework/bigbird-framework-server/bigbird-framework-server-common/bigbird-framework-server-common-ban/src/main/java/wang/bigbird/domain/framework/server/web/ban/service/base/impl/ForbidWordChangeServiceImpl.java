@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import wang.bigbird.domain.framework.core.base.util.JsonUtils;
 import wang.bigbird.domain.framework.data.redis.service.base.IRedisPubSubService;
+import wang.bigbird.domain.framework.data.redis.service.base.IRedisSetService;
 import wang.bigbird.domain.framework.server.web.ban.base.enums.RefreshTypeEnum;
 import wang.bigbird.domain.framework.server.web.ban.config.property.BanProperties;
 import wang.bigbird.domain.framework.server.web.ban.domain.pojo.msg.ForbidWordRefreshEvent;
@@ -38,6 +39,8 @@ public class ForbidWordChangeServiceImpl implements IForbidWordChangeService {
 
     @Autowired
     private IRedisPubSubService redisPubSubService;
+    @Autowired
+    private IRedisSetService redisSetService;
 
     @Override
     public void add(Set<String> words) {
@@ -60,6 +63,11 @@ public class ForbidWordChangeServiceImpl implements IForbidWordChangeService {
         ForbidWordRefreshEvent forbidWordRefreshEvent = new ForbidWordRefreshEvent();
         forbidWordRefreshEvent.setRefreshType(RefreshTypeEnum.REFRESH);
         redisPubSubService.publish(banProperties.getForbidWordRefreshEventTopic(), JsonUtils.object2Json(forbidWordRefreshEvent));
+    }
+
+    @Override
+    public void initPool(Set<String> words) {
+        redisSetService.sadd(banProperties.getForbidWordPoolKey(), words);
     }
 
 }

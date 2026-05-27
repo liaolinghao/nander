@@ -15,6 +15,7 @@ package wang.bigbird.domain.framework.server.web.ban.service.base.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import wang.bigbird.domain.framework.common.forbidden.service.base.IForbidWordService;
+import wang.bigbird.domain.framework.server.web.ban.service.base.IForbidWordValidateService;
 
 import java.util.List;
 

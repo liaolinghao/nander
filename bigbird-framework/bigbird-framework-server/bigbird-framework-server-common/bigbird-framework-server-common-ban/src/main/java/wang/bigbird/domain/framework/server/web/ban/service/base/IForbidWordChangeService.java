@@ -40,4 +40,11 @@ public interface IForbidWordChangeService {
      */
     void refresh();
 
+    /**
+     * 初始化禁用词库
+     *
+     * @param words 禁用词列表
+     */
+    void initPool(Set<String> words);
+
 }
