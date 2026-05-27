@@ -42,13 +42,6 @@ public interface Dfa {
     void removeWord(Iterator<String> words);
 
     /**
-     * 新建一个空的实例
-     *
-     * @return DFA数据结构容器
-     */
-    Dfa createNewEmpty();
-
-    /**
      * 检测禁用词，从文本指定位置开始，检测到符合要求的第一个禁用词就结束检测
      *
      * @param text  检测文本
@@ -56,5 +49,10 @@ public interface Dfa {
      * @return 禁用词位置索引
      */
     FlagIndex getFlagIndex(String text, int begin);
+
+    /**
+     * 清空词库
+     */
+    void clear();
 
 }

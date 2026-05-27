@@ -32,7 +32,7 @@ import java.security.SecureRandom;
 import java.util.concurrent.TimeUnit;
 
 /**
- * WEB框架配置
+ * 网络框架配置
  *
  * @author Bigbird
  */

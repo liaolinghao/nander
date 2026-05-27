@@ -87,11 +87,6 @@ public class MemoryMapDfaImpl implements Dfa {
     }
 
     @Override
-    public Dfa createNewEmpty() {
-        return new MemoryMapDfaImpl();
-    }
-
-    @Override
     public FlagIndex getFlagIndex(String text, int begin) {
         final char[] charset = text.toCharArray();
         Map current = dfaMap;
@@ -121,6 +116,11 @@ public class MemoryMapDfaImpl implements Dfa {
         fi.setFlag(flag);
         fi.setIndex(index);
         return fi;
+    }
+
+    @Override
+    public void clear() {
+        dfaMap.clear();
     }
 
     private void removeSingleWord(String word) {

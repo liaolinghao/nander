@@ -68,11 +68,10 @@ public abstract class AbstractForbidWordRepository {
      */
     public void refresh(boolean replace) {
         if (replace) {
-            final Dfa theDfa = dfa.createNewEmpty();
+            dfa.clear();
             THREAD_POOL_EXECUTOR.execute(() -> {
                 log.info("Asynchronous update forbidden words...");
-                theDfa.addWord(loadForbidWords());
-                dfa = theDfa;
+                dfa.addWord(loadForbidWords());
             });
         } else {
             log.info("Synchronous update forbidden words...");

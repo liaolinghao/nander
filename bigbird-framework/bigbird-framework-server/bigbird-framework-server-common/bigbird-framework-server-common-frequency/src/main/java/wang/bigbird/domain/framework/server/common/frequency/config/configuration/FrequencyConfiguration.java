@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
 import javax.annotation.PostConstruct;
 
 /**
- * WEB框架配置
+ * 频控框架配置
  *
  * @author Bigbird
  */

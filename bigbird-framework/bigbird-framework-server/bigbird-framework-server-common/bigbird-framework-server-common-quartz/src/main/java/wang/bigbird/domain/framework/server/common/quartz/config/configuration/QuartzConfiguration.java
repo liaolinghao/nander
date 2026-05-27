@@ -27,7 +27,7 @@ import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
 
 /**
- * WEB框架配置
+ * 作业框架配置
  *
  * @author Bigbird
  */
