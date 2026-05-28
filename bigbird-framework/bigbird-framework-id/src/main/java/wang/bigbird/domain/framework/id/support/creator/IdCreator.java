@@ -13,7 +13,7 @@
 package wang.bigbird.domain.framework.id.support.creator;
 
 import wang.bigbird.domain.framework.core.base.util.DataUtils;
-import wang.bigbird.domain.framework.id.support.IdGenerator;
+import wang.bigbird.domain.framework.id.support.generator.IdGenerator;
 
 /**
  * id策略上下文

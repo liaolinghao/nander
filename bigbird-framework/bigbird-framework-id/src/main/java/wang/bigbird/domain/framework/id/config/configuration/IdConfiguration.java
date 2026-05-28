@@ -18,12 +18,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import wang.bigbird.domain.framework.id.config.property.IdProperties;
-import wang.bigbird.domain.framework.id.support.IdGenerator;
-import wang.bigbird.domain.framework.id.support.SegmentGenerator;
-import wang.bigbird.domain.framework.id.support.SnowflakeGenerator;
-import wang.bigbird.domain.framework.id.support.UidGenerator;
 import wang.bigbird.domain.framework.id.support.assigner.*;
 import wang.bigbird.domain.framework.id.support.creator.IdCreator;
+import wang.bigbird.domain.framework.id.support.generator.IdGenerator;
+import wang.bigbird.domain.framework.id.support.generator.SegmentGenerator;
+import wang.bigbird.domain.framework.id.support.generator.SnowflakeGenerator;
+import wang.bigbird.domain.framework.id.support.generator.UidGenerator;
 import wang.bigbird.domain.framework.id.support.strategy.meituan.leaf.segment.SegmentIdWorker;
 
 import javax.annotation.PostConstruct;

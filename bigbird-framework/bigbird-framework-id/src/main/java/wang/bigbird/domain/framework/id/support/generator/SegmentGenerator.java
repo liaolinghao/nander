@@ -10,7 +10,7 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-package wang.bigbird.domain.framework.id.support;
+package wang.bigbird.domain.framework.id.support.generator;
 
 import wang.bigbird.domain.framework.id.base.enums.IdStrategyEnum;
 import wang.bigbird.domain.framework.id.support.strategy.meituan.leaf.segment.SegmentIdWorker;
