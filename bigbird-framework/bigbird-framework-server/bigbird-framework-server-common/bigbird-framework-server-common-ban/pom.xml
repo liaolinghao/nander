@@ -10,7 +10,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>bigbird-framework-server-web-ban</artifactId>
+    <artifactId>bigbird-framework-server-common-ban</artifactId>
     <name>Bigbird Framework :: Server :: Common :: Ban</name>
     <description>鸟域开发框架 :: Server构件 :: 通用能力构件 :: 禁用词模块</description>
 
