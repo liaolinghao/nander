@@ -10,7 +10,7 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-package wang.bigbird.domain.framework.server.web.ban.config.configuration;
+package wang.bigbird.domain.framework.server.common.ban.config.configuration;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,20 +23,20 @@ import wang.bigbird.domain.framework.common.forbidden.support.core.Dfa;
 import wang.bigbird.domain.framework.common.forbidden.support.core.MemoryMapDfaImpl;
 import wang.bigbird.domain.framework.data.redis.service.base.IRedisPubSubService;
 import wang.bigbird.domain.framework.data.redis.service.base.IRedisSetService;
-import wang.bigbird.domain.framework.server.web.ban.config.property.BanProperties;
-import wang.bigbird.domain.framework.server.web.ban.support.repository.RedisForbidWordRepository;
+import wang.bigbird.domain.framework.server.common.ban.config.property.BanProperties;
+import wang.bigbird.domain.framework.server.common.ban.support.repository.RedisForbidWordRepository;
 
 import javax.annotation.PostConstruct;
 
 /**
- * WEB框架配置
+ * 禁用词框架配置
  *
  * @author Bigbird
  */
 @Slf4j
-@ComponentScan("wang.bigbird.domain.framework.server.web.ban")
+@ComponentScan("wang.bigbird.domain.framework.server.common.ban")
 @Configuration
-public class WebBanConfiguration {
+public class BanConfiguration {
 
     @Autowired
     private BanProperties banProperties;

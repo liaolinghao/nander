@@ -10,9 +10,9 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-package wang.bigbird.domain.framework.server.web.ban.support.annotation;
+package wang.bigbird.domain.framework.server.common.ban.support.annotation;
 
-import wang.bigbird.domain.framework.server.web.ban.support.validator.ForbidWordValidator;
+import wang.bigbird.domain.framework.server.common.ban.support.validator.ForbidWordValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

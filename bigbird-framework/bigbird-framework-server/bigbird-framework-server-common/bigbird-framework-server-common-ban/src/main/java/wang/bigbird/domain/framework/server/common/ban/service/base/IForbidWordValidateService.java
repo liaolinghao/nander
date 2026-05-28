@@ -10,41 +10,31 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-package wang.bigbird.domain.framework.server.web.ban.service.base;
+package wang.bigbird.domain.framework.server.common.ban.service.base;
 
-import java.util.Set;
+import java.util.List;
 
 /**
- * 禁用词变更服务
+ * 禁用词校验服务
  *
  * @author Bigbird
  */
-public interface IForbidWordChangeService {
+public interface IForbidWordValidateService {
 
     /**
-     * 添加禁用词
+     * 判断文本是否包含禁用词
      *
-     * @param words 禁用词列表
+     * @param value 文本
+     * @return 是否包含禁用词
      */
-    void add(Set<String> words);
+    boolean containsForbidWord(String value);
 
     /**
-     * 删除禁用词
+     * 文本包含的禁用词列表
      *
-     * @param words 禁用词列表
+     * @param value 文本
+     * @return 禁用词列表
      */
-    void remove(Set<String> words);
-
-    /**
-     * 刷新禁用词库
-     */
-    void refresh();
-
-    /**
-     * 初始化禁用词库
-     *
-     * @param words 禁用词列表
-     */
-    void initPool(Set<String> words);
+    List<String> forbidWordList(String value);
 
 }

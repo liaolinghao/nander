@@ -10,12 +10,12 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-package wang.bigbird.domain.framework.server.web.ban.service.base.impl;
+package wang.bigbird.domain.framework.server.common.ban.service.base.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import wang.bigbird.domain.framework.common.forbidden.service.base.IForbidWordService;
-import wang.bigbird.domain.framework.server.web.ban.service.base.IForbidWordValidateService;
+import wang.bigbird.domain.framework.server.common.ban.service.base.IForbidWordValidateService;
 
 import java.util.List;
 

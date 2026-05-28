@@ -10,7 +10,7 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-package wang.bigbird.domain.framework.server.web.ban.support.repository;
+package wang.bigbird.domain.framework.server.common.ban.support.repository;
 
 import lombok.extern.slf4j.Slf4j;
 import wang.bigbird.domain.framework.common.forbidden.support.core.Dfa;
@@ -19,7 +19,8 @@ import wang.bigbird.domain.framework.core.base.util.CollectionUtils;
 import wang.bigbird.domain.framework.core.base.util.JsonUtils;
 import wang.bigbird.domain.framework.data.redis.service.base.IRedisPubSubService;
 import wang.bigbird.domain.framework.data.redis.service.base.IRedisSetService;
-import wang.bigbird.domain.framework.server.web.ban.domain.pojo.msg.ForbidWordRefreshEvent;
+import wang.bigbird.domain.framework.server.common.ban.base.enums.RefreshTypeEnum;
+import wang.bigbird.domain.framework.server.common.ban.domain.pojo.msg.ForbidWordRefreshEvent;
 
 import java.util.Collections;
 import java.util.Iterator;

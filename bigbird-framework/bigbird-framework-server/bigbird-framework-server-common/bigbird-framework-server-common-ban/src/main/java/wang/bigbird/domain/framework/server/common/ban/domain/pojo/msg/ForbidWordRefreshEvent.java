@@ -10,31 +10,34 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-package wang.bigbird.domain.framework.server.web.ban.service.base;
+package wang.bigbird.domain.framework.server.common.ban.domain.pojo.msg;
 
-import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import wang.bigbird.domain.framework.server.common.ban.base.enums.RefreshTypeEnum;
+
+import java.io.Serializable;
+import java.util.Set;
 
 /**
- * 禁用词校验服务
+ * 禁用词刷新事件
  *
  * @author Bigbird
  */
-public interface IForbidWordValidateService {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class ForbidWordRefreshEvent implements Serializable {
 
     /**
-     * 判断文本是否包含禁用词
-     *
-     * @param value 文本
-     * @return 是否包含禁用词
+     * 禁用词刷新事件类型
      */
-    boolean containsForbidWord(String value);
+    private RefreshTypeEnum refreshType;
 
     /**
-     * 文本包含的禁用词列表
-     *
-     * @param value 文本
-     * @return 禁用词列表
+     * 禁用词集合
      */
-    List<String> forbidWordList(String value);
+    private Set<String> words;
 
 }

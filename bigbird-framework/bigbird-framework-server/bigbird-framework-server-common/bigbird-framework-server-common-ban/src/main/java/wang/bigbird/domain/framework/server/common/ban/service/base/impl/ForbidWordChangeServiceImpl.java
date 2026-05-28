@@ -10,7 +10,7 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-package wang.bigbird.domain.framework.server.web.ban.service.base.impl;
+package wang.bigbird.domain.framework.server.common.ban.service.base.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +18,10 @@ import org.springframework.stereotype.Service;
 import wang.bigbird.domain.framework.core.base.util.JsonUtils;
 import wang.bigbird.domain.framework.data.redis.service.base.IRedisPubSubService;
 import wang.bigbird.domain.framework.data.redis.service.base.IRedisSetService;
-import wang.bigbird.domain.framework.server.web.ban.base.enums.RefreshTypeEnum;
-import wang.bigbird.domain.framework.server.web.ban.config.property.BanProperties;
-import wang.bigbird.domain.framework.server.web.ban.domain.pojo.msg.ForbidWordRefreshEvent;
-import wang.bigbird.domain.framework.server.web.ban.service.base.IForbidWordChangeService;
+import wang.bigbird.domain.framework.server.common.ban.base.enums.RefreshTypeEnum;
+import wang.bigbird.domain.framework.server.common.ban.config.property.BanProperties;
+import wang.bigbird.domain.framework.server.common.ban.domain.pojo.msg.ForbidWordRefreshEvent;
+import wang.bigbird.domain.framework.server.common.ban.service.base.IForbidWordChangeService;
 
 import java.util.Set;
 

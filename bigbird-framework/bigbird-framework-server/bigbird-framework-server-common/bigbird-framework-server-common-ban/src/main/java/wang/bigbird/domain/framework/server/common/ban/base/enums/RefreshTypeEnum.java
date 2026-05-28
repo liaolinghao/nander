@@ -10,7 +10,7 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-package wang.bigbird.domain.framework.server.web.ban.base.enums;
+package wang.bigbird.domain.framework.server.common.ban.base.enums;
 
 import wang.bigbird.domain.framework.core.base.util.enums.ValuedEnum;
 
