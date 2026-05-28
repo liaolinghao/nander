@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import wang.bigbird.domain.framework.core.base.constant.CommonConstants;
 import wang.bigbird.domain.framework.core.base.tool.Assert;
 import wang.bigbird.domain.framework.core.base.tool.Coder;
+import wang.bigbird.domain.framework.core.base.util.event.TraverseEvent;
 
 import java.io.*;
 import java.text.DecimalFormat;
@@ -1612,6 +1613,24 @@ public class FileUtils {
             StreamUtils.close(fileReader);
         }
         return sb.toString();
+    }
+
+    /**
+     * 依次处理从指定流中读入的每行文本
+     *
+     * @param input    输入流
+     * @param encoding 编码
+     * @param event    触发的事件
+     * @throws IOException
+     */
+    public static void traverseLines(InputStream input, String encoding, TraverseEvent<String> event)
+            throws IOException {
+        try (BufferedReader in = new BufferedReader(new InputStreamReader(input, encoding))) {
+            String line;
+            while ((line = in.readLine()) != null) {
+                event.visit(line);
+            }
+        }
     }
 
     /**
