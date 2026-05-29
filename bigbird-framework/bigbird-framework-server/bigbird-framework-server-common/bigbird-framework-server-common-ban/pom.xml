@@ -17,10 +17,6 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>bigbird-framework-server-web-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>bigbird-framework-data-redis</artifactId>
         </dependency>
         <dependency>
