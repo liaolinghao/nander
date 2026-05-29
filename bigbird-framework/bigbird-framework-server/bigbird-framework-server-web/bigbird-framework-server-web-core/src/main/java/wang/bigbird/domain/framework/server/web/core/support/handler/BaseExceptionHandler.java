@@ -103,7 +103,7 @@ public class BaseExceptionHandler implements ApplicationContextAware {
                     }
                     String defaultMessage = o.getDefaultMessage();
                     fieldNameMsgMap.computeIfAbsent(fieldName, v -> new ArrayList<>()).add(defaultMessage);
-                    return fieldName + " " + defaultMessage;
+                    return defaultMessage;
                 })
                 .collect(Collectors.joining("; "));
         List<ValidExceptionDetailVO> vos = convertErrorMsgMap(fieldNameMsgMap);
@@ -131,7 +131,7 @@ public class BaseExceptionHandler implements ApplicationContextAware {
                     }
                     String message = o.getMessage();
                     fieldNameMsgMap.computeIfAbsent(fieldName, v -> new ArrayList<>()).add(message);
-                    return fieldName + " " + message;
+                    return message;
                 })
                 .collect(Collectors.joining("; "));
         List<ValidExceptionDetailVO> vos = convertErrorMsgMap(fieldNameMsgMap);
@@ -156,7 +156,7 @@ public class BaseExceptionHandler implements ApplicationContextAware {
                     String field = o.getField();
                     String defaultMessage = o.getDefaultMessage();
                     fieldNameMsgMap.computeIfAbsent(field, v -> new ArrayList<>()).add(defaultMessage);
-                    return field + " " + defaultMessage;
+                    return defaultMessage;
                 })
                 .collect(Collectors.joining("; "));
         List<ValidExceptionDetailVO> vos = convertErrorMsgMap(fieldNameMsgMap);
