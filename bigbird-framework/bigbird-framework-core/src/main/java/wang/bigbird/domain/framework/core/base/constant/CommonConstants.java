@@ -32,6 +32,7 @@ public class CommonConstants {
     public static final String HTTPS_PROTOCOL = "https";
     public static final String HTTP_PROTOCOL = "http";
     public static final String PROTOCOL_DELIMITER = "://";
+    public static final String VERTICAL_BAR = "|";
     public static final String SLASH = "/";
     public static final String BACKSLASH = "\\";
     public static final String CR = "\r";
