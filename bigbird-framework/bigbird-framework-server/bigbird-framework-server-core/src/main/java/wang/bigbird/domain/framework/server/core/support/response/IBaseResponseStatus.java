@@ -49,12 +49,12 @@ public interface IBaseResponseStatus {
     ResponseStatus SERVER_TIMEOUT = new ResponseStatus(504, "服务超时");
     ResponseStatus SERVER_NONSUPPORT = new ResponseStatus(505, "服务不支持");
 
-    ResponseStatus INVALID_JWT_SIGNATURE = new ResponseStatus(10000, "无效的JWT签名");
-    ResponseStatus EXPIRED_JWT = new ResponseStatus(10001, "JWT过期");
-    ResponseStatus UNSUPPORTED_JWT = new ResponseStatus(10002, "不被本服务支持的JWT");
-    ResponseStatus INVALID_JWT = new ResponseStatus(10003, "无效的JWT");
-    ResponseStatus KICK_OFF_JWT = new ResponseStatus(10004, "被踢下线的JWT");
-    ResponseStatus DISPOSED_JWT = new ResponseStatus(10005, "被注销的JWT");
+    ResponseStatus INVALID_JWT_SIGNATURE = new ResponseStatus(10000, "无效的令牌签名");
+    ResponseStatus EXPIRED_JWT = new ResponseStatus(10001, "令牌已过期");
+    ResponseStatus UNSUPPORTED_JWT = new ResponseStatus(10002, "不被本服务支持的令牌");
+    ResponseStatus INVALID_JWT = new ResponseStatus(10003, "无效的令牌");
+    ResponseStatus KICK_OFF_JWT = new ResponseStatus(10004, "认证对象已被踢下线");
+    ResponseStatus DISPOSED_JWT = new ResponseStatus(10005, "认证信息发生变化，需重新认证");
     ResponseStatus BAD_REQUEST_DATA = new ResponseStatus(10006, "非法的请求数据");
     ResponseStatus CALLER_NOT_FOUND = new ResponseStatus(10007, "接入系统未注册");
     ResponseStatus IP_INVALID = new ResponseStatus(10008, "非法的访问IP");
