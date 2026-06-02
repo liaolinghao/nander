@@ -27,6 +27,12 @@ public XxxHttpClient xxxHttpClient(OkHttpClient okHttpClient) {
 3、提供支持流式响应的回调处理器，具体使用方式如下：
 
 ```
+// 关键！不加@Streaming，OkHttp会全缓存完再返回
+// 流式返回接口 → 必须用 ResponseBody 接收
+@Streaming 
+@POST("xxx")
+Call<ResponseBody> callMethod(xx);
+
 @Autowired
 private AsyncTaskExecutor asyncTaskExecutor;
 asyncTaskExecutor.execute(() -> {
@@ -36,6 +42,11 @@ asyncTaskExecutor.execute(() -> {
         @Override
         public void onSuccess(String fullData) {
            // 成功获得完整数据的业务处理
+        }
+        
+        @Override
+        public void onProcess(String data) {
+           // 中间数据的业务处理
         }
 
         @Override

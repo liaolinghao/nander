@@ -22,10 +22,14 @@ import org.springframework.context.annotation.Configuration;
 import wang.bigbird.domain.framework.server.common.retrofit.config.property.RetrofitProperties;
 
 import javax.annotation.PostConstruct;
+import javax.net.SocketFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.Socket;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -70,7 +74,49 @@ public class RetrofitConfiguration {
         OkHttpClient.Builder okhttpClient = new OkHttpClient().newBuilder();
         okhttpClient.connectTimeout(retrofitProperties.getConnectTimeoutMs(), TimeUnit.MILLISECONDS)
                 .readTimeout(retrofitProperties.getReadTimeoutMs(), TimeUnit.MILLISECONDS)
-                .writeTimeout(retrofitProperties.getWriteTimeoutMs(), TimeUnit.MILLISECONDS);
+                .writeTimeout(retrofitProperties.getWriteTimeoutMs(), TimeUnit.MILLISECONDS)
+                .socketFactory(new SocketFactory() {
+
+                    // 拿到默认的 SocketFactory，真正干活用它
+                    private final SocketFactory delegate = SocketFactory.getDefault();
+
+                    // 抽取公共方法：创建Socket并设置TcpNoDelay
+                    private Socket createAndConfigureSocket(Socket socket) {
+                        if (socket != null) {
+                            try {
+                                socket.setTcpNoDelay(true);
+                            } catch (Exception ignored) {
+                                // 配置失败不影响连接建立
+                            }
+                        }
+                        return socket;
+                    }
+
+                    @Override
+                    public Socket createSocket() throws IOException {
+                        return createAndConfigureSocket(delegate.createSocket());
+                    }
+
+                    @Override
+                    public Socket createSocket(String host, int port) throws IOException {
+                        return createAndConfigureSocket(delegate.createSocket(host, port));
+                    }
+
+                    @Override
+                    public Socket createSocket(String host, int port, InetAddress localAddr, int localPort) throws IOException {
+                        return createAndConfigureSocket(delegate.createSocket(host, port, localAddr, localPort));
+                    }
+
+                    @Override
+                    public Socket createSocket(InetAddress addr, int port) throws IOException {
+                        return createAndConfigureSocket(delegate.createSocket(addr, port));
+                    }
+
+                    @Override
+                    public Socket createSocket(InetAddress addr, int port, InetAddress localAddr, int localPort) throws IOException {
+                        return createAndConfigureSocket(delegate.createSocket(addr, port, localAddr, localPort));
+                    }
+                });
         //信任所有服务器地址
         okhttpClient.hostnameVerifier((s, sslSession) -> true);
         //创建管理器
