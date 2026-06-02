@@ -107,13 +107,7 @@ public class KafkaConfiguration {
     private Map<String, Object> producerConfigs(KafkaProducerProperties kafkaProducerProperties) {
         Map<String, Object> props = new HashMap<>(CollectionUtils.initialMapCapacity(10));
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaProducerProperties.getAddresses());
-        Boolean transaction = kafkaProducerProperties.getTransaction();
-        if (null != transaction && transaction) {
-            // 事务模式下必须设置 retries=0
-            props.put(ProducerConfig.RETRIES_CONFIG, 0);
-        } else {
-            props.put(ProducerConfig.RETRIES_CONFIG, kafkaProducerProperties.getRetries());
-        }
+        props.put(ProducerConfig.RETRIES_CONFIG, kafkaProducerProperties.getRetries());
         props.put(ProducerConfig.ACKS_CONFIG, kafkaProducerProperties.getAcks());
         props.put(ProducerConfig.BATCH_SIZE_CONFIG, kafkaProducerProperties.getBatchSize().intValue());
         props.put(ProducerConfig.BUFFER_MEMORY_CONFIG, kafkaProducerProperties.getBufferMemory());
