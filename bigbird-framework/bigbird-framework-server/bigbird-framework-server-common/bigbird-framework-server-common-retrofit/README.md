@@ -40,18 +40,27 @@ asyncTaskExecutor.execute(() -> {
     StreamResponseHandler streamResponseHandler = new StreamResponseHandler(call, new IStreamCallbacker() {
 
         @Override
-        public void onSuccess(String fullData) {
-           // 成功获得完整数据的业务处理
+        public void onStart() throws IOException {
+           // 响应开始的业务处理，可以在这里利用SseEmitter emitter输出响应开始提示
+           // emitter.send();
         }
-        
+
         @Override
-        public void onProcess(String data) {
-           // 中间数据的业务处理
+        public void onProcess(String data) throws IOException {
+           // 中间获得每行数据的业务处理，可以在这里利用SseEmitter emitter输出实时数据
+           // emitter.send(data);
+        }
+
+        @Override
+        public void onSuccess(String fullData) {
+           // 成功获得完整数据的业务处理，可以在这里设置SseEmitter emitter输出完毕
+           // emitter.complete();
         }
 
         @Override
         public void onFailed(Throwable throwable) {
-           // 流式响应失败的业务处理
+           // 流式响应失败的业务处理，可以在这里利用SseEmitter emitter输出错误
+           // emitter.completeWithError(throwable);
         }
               
     });

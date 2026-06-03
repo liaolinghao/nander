@@ -15,10 +15,6 @@
     <description>鸟域开发框架 :: Server构件 :: 通用能力构件 :: 网络模块</description>
 
     <dependencies>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-        </dependency>
         <!-- retrofit执行接口请求依赖，必须按照如下顺序配置，以避免版本错误 -->
         <dependency>
             <groupId>com.alibaba.csp</groupId>

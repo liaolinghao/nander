@@ -12,6 +12,8 @@
  */
 package wang.bigbird.domain.framework.server.common.retrofit.support.callback;
 
+import java.io.IOException;
+
 /**
  * 流式返回回调处理者
  *
@@ -20,18 +22,23 @@ package wang.bigbird.domain.framework.server.common.retrofit.support.callback;
 public interface IStreamCallbacker {
 
     /**
-     * 流式返回成功业务处理
-     *
-     * @param fullData 流式返回的完整文本
+     * 流式返回开始业务处理
      */
-    void onSuccess(String fullData);
+    void onStart() throws IOException;
 
     /**
      * 流式返回中间过程处理
      *
      * @param data 流式中间过程数据
      */
-    void onProcess(String data);
+    void onProcess(String data) throws IOException;
+
+    /**
+     * 流式返回成功业务处理
+     *
+     * @param fullData 流式返回的完整文本
+     */
+    void onSuccess(String fullData);
 
     /**
      * 流式返回失败业务处理

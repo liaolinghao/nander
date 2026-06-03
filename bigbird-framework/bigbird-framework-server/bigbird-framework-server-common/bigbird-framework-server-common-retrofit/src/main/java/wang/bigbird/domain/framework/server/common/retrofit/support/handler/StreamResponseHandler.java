@@ -1,8 +1,19 @@
+/*
+ * Copyright (c) 2026 廖凌浩 / 鸟域
+ *
+ * Licensed under the Mulan PSL v2.
+ * You can use this software according to the terms and conditions of the Mulan PSL v2.
+ * You may obtain a copy of Mulan PSL v2 at:
+ *          http://license.coscl.org.cn/MulanPSL2
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PSL v2 for more details.
+ */
 package wang.bigbird.domain.framework.server.common.retrofit.support.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.ResponseBody;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -30,12 +41,9 @@ public class StreamResponseHandler {
 
     private IStreamCallbacker streamCallbacker;
 
-    private SseEmitter emitter;
-
-    public StreamResponseHandler(Call<ResponseBody> call, IStreamCallbacker streamCallback, SseEmitter emitter) {
+    public StreamResponseHandler(Call<ResponseBody> call, IStreamCallbacker streamCallback) {
         this.call = call;
         this.streamCallbacker = streamCallback;
-        this.emitter = emitter;
     }
 
     public void handleResponse() {
@@ -48,47 +56,36 @@ public class StreamResponseHandler {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
+                    streamCallbacker.onStart();
                     ResponseBody body = response.body();
                     if (body == null) {
                         // 请求失败
                         StreamResponseException e = new StreamResponseException("The response body is null");
-                        errorRef.set(e);
-                        if (emitter != null) {
-                            emitter.completeWithError(e);
-                        }
-                        streamCallbacker.onFailed(e);
+                        onFailure(call, e);
                         return;
                     }
                     StringBuilder result = new StringBuilder();
                     // 重点：使用 byteStream() 实时读取流
-                    try (InputStream is = body.byteStream(); BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+                    try (InputStream is = body.byteStream(); BufferedReader reader = new BufferedReader(new InputStreamReader(is), 128)) {
                         String line;
-                        // 一行一行读取，实时处理
+                        // 一行一行读取，实时处理，不会缓存
                         while ((line = reader.readLine()) != null) {
                             // 处理流式消息（SSE 格式）
                             if (StringUtils.isNotBlank(line)) {
                                 log.debug("Read line:{}", line);
-                                if (emitter != null) {
-                                    emitter.send(line);
-                                }
                                 streamCallbacker.onProcess(line);
                                 result.append(line).append(StringUtils.getLineSeparator());
                             }
                         }
-                        if (emitter != null) {
-                            emitter.complete();
-                        }
-                        // 全部读取完成 → 回调业务
+                        // 全部读取完成 → 才回调业务
                         streamCallbacker.onSuccess(result.toString());
                     } catch (IOException e) {
-                        log.error("Error occurred while executing the request:{}", e.getMessage(), e);
-                        errorRef.set(e);
-                        if (emitter != null) {
-                            emitter.completeWithError(e);
-                        }
-                        streamCallbacker.onFailed(e);
+                        onFailure(call, e);
                     }
+                } catch (IOException e) {
+                    onFailure(call, e);
                 } finally {
+                    // 无论如何，最后释放阻塞
                     latch.countDown();
                 }
             }
@@ -98,17 +95,15 @@ public class StreamResponseHandler {
                 try {
                     log.error("Error occurred while executing the request:{}", t.getMessage(), t);
                     errorRef.set(t);
-                    if (emitter != null) {
-                        emitter.completeWithError(t);
-                    }
                     streamCallbacker.onFailed(t);
                 } finally {
+                    // 失败也要释放阻塞
                     latch.countDown();
                 }
             }
         });
         try {
-            // 阻塞直到请求完全结束
+            // 阻塞在这里，直到请求完全结束
             latch.await();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();

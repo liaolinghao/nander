@@ -1,8 +1,19 @@
+/*
+ * Copyright (c) 2026 廖凌浩 / 鸟域
+ *
+ * Licensed under the Mulan PSL v2.
+ * You can use this software according to the terms and conditions of the Mulan PSL v2.
+ * You may obtain a copy of Mulan PSL v2 at:
+ *          http://license.coscl.org.cn/MulanPSL2
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PSL v2 for more details.
+ */
 package wang.bigbird.domain.framework.server.common.retrofit.support.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.ResponseBody;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -19,16 +30,13 @@ public class StreamResponseCallbackHandler implements Callback<ResponseBody> {
 
     private IStreamCallbacker streamCallbacker;
 
-    private SseEmitter emitter;
-
-    public StreamResponseCallbackHandler(IStreamCallbacker streamCallback, SseEmitter emitter) {
+    public StreamResponseCallbackHandler(IStreamCallbacker streamCallback) {
         this.streamCallbacker = streamCallback;
-        this.emitter = emitter;
     }
 
     @Override
     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-        StreamResponseHandler streamResponseHandler = new StreamResponseHandler(call, streamCallbacker, emitter);
+        StreamResponseHandler streamResponseHandler = new StreamResponseHandler(call, streamCallbacker);
         streamResponseHandler.handleResponse();
     }
 
