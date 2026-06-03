@@ -112,6 +112,10 @@ public class ForbidWordServiceImpl implements IForbidWordService {
         return result;
     }
 
+    @Override
+    public void printDfa() {
+        forbidWordRepository.getDfa().print();
+    }
 
     private FlagIndex getFlagIndex(final String text, final int begin) {
         return forbidWordRepository.getDfa().getFlagIndex(text, begin);

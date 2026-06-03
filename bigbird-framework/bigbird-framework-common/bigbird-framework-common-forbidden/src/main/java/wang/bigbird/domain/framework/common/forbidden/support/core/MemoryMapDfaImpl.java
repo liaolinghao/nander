@@ -17,6 +17,7 @@ import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
 import wang.bigbird.domain.framework.core.base.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,7 @@ import java.util.Map;
 @Slf4j
 public class MemoryMapDfaImpl implements Dfa {
 
-    private Map dfaMap = Maps.newHashMap();
+    private Map<Character, Object> dfaMap = Maps.newHashMap();
 
     @Override
     public void addWord(Iterator<String> words) {
@@ -38,7 +39,7 @@ public class MemoryMapDfaImpl implements Dfa {
         }
         long count = 0L;
         Map nowMap;
-        Map<String, String> newWordMap;
+        Map<Character, Boolean> newWordMap;
         // 迭代keyWordSet
         while (words.hasNext()) {
             String key = words.next();
@@ -57,12 +58,12 @@ public class MemoryMapDfaImpl implements Dfa {
                 } else {
                     // 不存在则构建一个map
                     newWordMap = Maps.newHashMapWithExpectedSize(128);
-                    // 不是最后一个
-                    newWordMap.put(END_OF_WORD, Boolean.toString(i == (key.length() - 1)));
                     nowMap.put(keyChar, newWordMap);
                     nowMap = newWordMap;
                 }
             }
+            // 增加词结束标记
+            nowMap.put(END_OF_WORD, true);
             count++;
         }
         log.debug("Load a total of {} forbidden words.", count);
@@ -107,7 +108,7 @@ public class MemoryMapDfaImpl implements Dfa {
                     break;
                 }
             }
-            flag = "true".equals(current.get(Dfa.END_OF_WORD));
+            flag = current.containsKey(Dfa.END_OF_WORD) && (Boolean) current.get(Dfa.END_OF_WORD);
         }
         FlagIndex fi = new FlagIndex();
         fi.setFlag(flag);
@@ -118,6 +119,43 @@ public class MemoryMapDfaImpl implements Dfa {
     @Override
     public void clear() {
         dfaMap.clear();
+    }
+
+    @Override
+    public void print() {
+        System.out.println("根节点");
+        printTree(dfaMap, "");
+    }
+
+    /**
+     * 递归打印树形结构
+     *
+     * @param node   当前节点
+     * @param indent 缩进前缀
+     */
+    private void printTree(Map<Character, Object> node, String indent) {
+        List<Character> keys = new ArrayList<>(node.keySet());
+        for (int i = 0; i < keys.size(); i++) {
+            Character c = keys.get(i);
+            boolean last = (i == keys.size() - 1);
+            // 跳过结束标记 isEnd
+            if (c == Dfa.END_OF_WORD) {
+                continue;
+            }
+            // 打印当前字符
+            System.out.print(indent);
+            System.out.print(last ? "└─ " : "├─ ");
+            System.out.print(c);
+            // 如果是敏感词结尾，标注【结束】
+            Map<Character, Object> child = (Map<Character, Object>) node.get(c);
+            if (child.containsKey(Dfa.END_OF_WORD) && (Boolean) child.get(Dfa.END_OF_WORD)) {
+                System.out.print(" 【结束】");
+            }
+            System.out.println();
+            // 递归打印子节点
+            String newIndent = indent + (last ? "   " : "│  ");
+            printTree(child, newIndent);
+        }
     }
 
     private void removeSingleWord(String word) {
@@ -134,7 +172,7 @@ public class MemoryMapDfaImpl implements Dfa {
             current = next;
         }
         // 检查是否真的是一个结束标记
-        boolean isEnd = "true".equals(current.get(END_OF_WORD));
+        boolean isEnd = current.containsKey(Dfa.END_OF_WORD) && (Boolean) current.get(Dfa.END_OF_WORD);
         if (!isEnd) {
             return;
         }
@@ -146,7 +184,8 @@ public class MemoryMapDfaImpl implements Dfa {
             char keyChar = word.charAt(i);
             Map child = (Map) parent.get(keyChar);
             // 如果子节点是空的，直接删掉
-            if (child != null && (child.isEmpty() || (child.containsKey(END_OF_WORD) && child.size() == 1))) {
+            boolean empty = child != null && (child.isEmpty() || (child.containsKey(END_OF_WORD) && child.size() == 1));
+            if (empty) {
                 parent.remove(keyChar);
             } else {
                 // 只要有一个节点不为空，前面的都不能删

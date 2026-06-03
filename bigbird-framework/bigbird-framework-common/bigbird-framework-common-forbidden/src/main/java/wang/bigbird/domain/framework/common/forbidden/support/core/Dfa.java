@@ -25,7 +25,7 @@ public interface Dfa {
     /**
      * 词完结的标志
      */
-    String END_OF_WORD = "EOW";
+    char END_OF_WORD = '\0';
 
     /**
      * 将词加到DFA的数据结构中
@@ -54,5 +54,10 @@ public interface Dfa {
      * 清空词库
      */
     void clear();
+
+    /**
+     * 打印 DFA 结构字符串，该方法仅适合加载少量禁用词进行业务调试
+     */
+    void print();
 
 }

@@ -72,4 +72,9 @@ public interface IForbidWordService {
      */
     boolean removeForbidWord(boolean refreshNow, String... words);
 
+    /**
+     * 打印 DFA 结构字符串，该方法仅适合加载少量禁用词进行业务调试
+     */
+    void printDfa();
+
 }
