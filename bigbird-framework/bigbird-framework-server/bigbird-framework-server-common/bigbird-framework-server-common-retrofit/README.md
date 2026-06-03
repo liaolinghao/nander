@@ -24,7 +24,20 @@ public XxxHttpClient xxxHttpClient(OkHttpClient okHttpClient) {
 }
 ```
 
-3、提供支持流式响应的回调处理器，具体使用方式如下：
+3、提供支持SSE请求的Retrofit客户端构造器，具体构造方式如下：
+
+```
+@Bean
+public XxxHttpClient xxxHttpClient(OkHttpClient sseHttpClient) {
+    Retrofit retrofit = new Retrofit.Builder().baseUrl(authBaseUrl)
+            .addConverterFactory(JacksonConverterFactory.create())
+            .client(sseHttpClient)
+            .build();
+    return retrofit.create(XxxHttpClient.class);
+}
+```
+
+4、提供支持流式响应的回调处理器，具体使用方式如下：
 
 ```
 // 关键！不加@Streaming，OkHttp会全缓存完再返回

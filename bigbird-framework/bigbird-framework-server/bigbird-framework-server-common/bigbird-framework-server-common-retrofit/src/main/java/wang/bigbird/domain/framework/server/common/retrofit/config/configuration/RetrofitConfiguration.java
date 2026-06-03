@@ -65,60 +65,36 @@ public class RetrofitConfiguration {
      * .build();
      * return retrofit.create(XxxHttpClient.class);
      *
-     * @return
+     * @return 支持https请求的客户端
      * @throws NoSuchAlgorithmException
      * @throws KeyManagementException
      */
     @Bean
     public OkHttpClient okHttpClient() throws NoSuchAlgorithmException, KeyManagementException {
-        OkHttpClient.Builder okhttpClient = new OkHttpClient().newBuilder();
-        okhttpClient.connectTimeout(retrofitProperties.getConnectTimeoutMs(), TimeUnit.MILLISECONDS)
-                .readTimeout(retrofitProperties.getReadTimeoutMs(), TimeUnit.MILLISECONDS)
-                .writeTimeout(retrofitProperties.getWriteTimeoutMs(), TimeUnit.MILLISECONDS)
-                .socketFactory(new SocketFactory() {
+        return createOkHttpClient(false);
+    }
 
-                    // 拿到默认的 SocketFactory，真正干活用它
-                    private final SocketFactory delegate = SocketFactory.getDefault();
+    /**
+     * 用于支持sse请求
+     * <p>
+     * 对于sse接口请求需要采用以下方式构造Retrofit客户端
+     * <p>
+     * Retrofit retrofit = new Retrofit.Builder().baseUrl(authBaseUrl)
+     * .addConverterFactory(JacksonConverterFactory.create())
+     * .client(sseHttpClient)
+     * .build();
+     * return retrofit.create(XxxHttpClient.class);
+     *
+     * @return 支持sse请求的客户端
+     * @throws NoSuchAlgorithmException
+     * @throws KeyManagementException
+     */
+    @Bean
+    public OkHttpClient sseHttpClient() throws NoSuchAlgorithmException, KeyManagementException {
+        return createOkHttpClient(true);
+    }
 
-                    // 抽取公共方法：创建Socket并设置TcpNoDelay
-                    private Socket createAndConfigureSocket(Socket socket) {
-                        if (socket != null) {
-                            try {
-                                socket.setTcpNoDelay(true);
-                            } catch (Exception ignored) {
-                                // 配置失败不影响连接建立
-                            }
-                        }
-                        return socket;
-                    }
-
-                    @Override
-                    public Socket createSocket() throws IOException {
-                        return createAndConfigureSocket(delegate.createSocket());
-                    }
-
-                    @Override
-                    public Socket createSocket(String host, int port) throws IOException {
-                        return createAndConfigureSocket(delegate.createSocket(host, port));
-                    }
-
-                    @Override
-                    public Socket createSocket(String host, int port, InetAddress localAddr, int localPort) throws IOException {
-                        return createAndConfigureSocket(delegate.createSocket(host, port, localAddr, localPort));
-                    }
-
-                    @Override
-                    public Socket createSocket(InetAddress addr, int port) throws IOException {
-                        return createAndConfigureSocket(delegate.createSocket(addr, port));
-                    }
-
-                    @Override
-                    public Socket createSocket(InetAddress addr, int port, InetAddress localAddr, int localPort) throws IOException {
-                        return createAndConfigureSocket(delegate.createSocket(addr, port, localAddr, localPort));
-                    }
-                });
-        //信任所有服务器地址
-        okhttpClient.hostnameVerifier((s, sslSession) -> true);
+    private OkHttpClient createOkHttpClient(boolean isStream) throws NoSuchAlgorithmException, KeyManagementException {
         //创建管理器
         TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
             @Override
@@ -141,11 +117,70 @@ public class RetrofitConfiguration {
         SSLContext sc = SSLContext.getInstance("TLS");
         sc.init(null, trustAllCerts, new SecureRandom());
         SSLSocketFactory ssfFactory = sc.getSocketFactory();
-        okhttpClient.sslSocketFactory(ssfFactory, (X509TrustManager) trustAllCerts[0]);
         // 打印请求过程详细信息
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
-        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        return okhttpClient.addInterceptor(httpLoggingInterceptor).build();
+        OkHttpClient.Builder okhttpClient = new OkHttpClient().newBuilder();
+        okhttpClient.connectTimeout(retrofitProperties.getConnectTimeoutMs(), TimeUnit.MILLISECONDS)
+                .readTimeout(retrofitProperties.getReadTimeoutMs(), TimeUnit.MILLISECONDS)
+                .writeTimeout(retrofitProperties.getWriteTimeoutMs(), TimeUnit.MILLISECONDS)
+                //信任所有服务器地址
+                .hostnameVerifier((s, sslSession) -> true)
+                // 信任所有证书
+                .sslSocketFactory(ssfFactory, (X509TrustManager) trustAllCerts[0]);
+        if (isStream) {
+            // 不能开 BODY 级别日志，否则 OkHttp 会缓存整份响应全部接收完才抛流
+            httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
+            okhttpClient.socketFactory(new SocketFactory() {
+
+                        // 拿到默认的 SocketFactory，真正干活用它
+                        private final SocketFactory delegate = SocketFactory.getDefault();
+
+                        // 抽取公共方法：创建Socket并设置TcpNoDelay
+                        private Socket createAndConfigureSocket(Socket socket) {
+                            if (socket != null) {
+                                try {
+                                    socket.setTcpNoDelay(true);
+                                } catch (Exception ignored) {
+                                    // 配置失败不影响连接建立
+                                }
+                            }
+                            return socket;
+                        }
+
+                        @Override
+                        public Socket createSocket() throws IOException {
+                            return createAndConfigureSocket(delegate.createSocket());
+                        }
+
+                        @Override
+                        public Socket createSocket(String host, int port) throws IOException {
+                            return createAndConfigureSocket(delegate.createSocket(host, port));
+                        }
+
+                        @Override
+                        public Socket createSocket(String host, int port, InetAddress localAddr, int localPort) throws IOException {
+                            return createAndConfigureSocket(delegate.createSocket(host, port, localAddr, localPort));
+                        }
+
+                        @Override
+                        public Socket createSocket(InetAddress addr, int port) throws IOException {
+                            return createAndConfigureSocket(delegate.createSocket(addr, port));
+                        }
+
+                        @Override
+                        public Socket createSocket(InetAddress addr, int port, InetAddress localAddr, int localPort) throws IOException {
+                            return createAndConfigureSocket(delegate.createSocket(addr, port, localAddr, localPort));
+                        }
+                    })
+                    // 禁用缓存
+                    .cache(null)
+                    .addInterceptor(httpLoggingInterceptor);
+        } else {
+            // 开了 BODY 级别日志，OkHttp 会缓存整份响应，全部接收完才抛流
+            httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            okhttpClient.addInterceptor(httpLoggingInterceptor);
+        }
+        return okhttpClient.build();
     }
 
 }

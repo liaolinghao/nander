@@ -25,8 +25,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * 流式返回处理器
@@ -47,10 +45,6 @@ public class StreamResponseHandler {
     }
 
     public void handleResponse() {
-        // 创建计数器，等待流式请求完成
-        CountDownLatch latch = new CountDownLatch(1);
-        // 用来存异常
-        AtomicReference<Throwable> errorRef = new AtomicReference<>();
         // Retrofit 异步 + 流式处理
         call.enqueue(new Callback<>() {
             @Override
@@ -84,36 +78,15 @@ public class StreamResponseHandler {
                     }
                 } catch (IOException e) {
                     onFailure(call, e);
-                } finally {
-                    // 无论如何，最后释放阻塞
-                    latch.countDown();
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                try {
-                    log.error("Error occurred while executing the request:{}", t.getMessage(), t);
-                    errorRef.set(t);
-                    streamCallbacker.onFailed(t);
-                } finally {
-                    // 失败也要释放阻塞
-                    latch.countDown();
-                }
+                log.error("Error occurred while executing the request:{}", t.getMessage(), t);
+                streamCallbacker.onFailed(t);
             }
         });
-        try {
-            // 阻塞在这里，直到请求完全结束
-            latch.await();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            errorRef.set(e);
-            streamCallbacker.onFailed(e);
-        }
-        // 如果有异常，直接抛出
-        if (errorRef.get() != null) {
-            throw new RuntimeException(errorRef.get());
-        }
     }
 
 }
