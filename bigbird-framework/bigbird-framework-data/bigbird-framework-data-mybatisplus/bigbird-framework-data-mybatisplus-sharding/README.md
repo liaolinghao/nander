@@ -22,7 +22,7 @@ spring:
       names: ds1,ds2
       # 配置数据源具体内容，包含：连接池，驱动，地址，用户名，密码
       ds1:
-        url: jdbc:p6spy:mysql://localhost:3306/mybatis_plus3?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=utf8&character_set_server=utf8mb4&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+        url: jdbc:p6spy:mysql://localhost:3306/mybatis_plus3?createDatabaseIfNotExist=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_bin&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Shanghai
         username: root
         password: root
         driver-class-name: com.p6spy.engine.spy.P6SpyDriver
@@ -49,7 +49,7 @@ spring:
         filters: stat,wall,slf4j
         connection-properties: druid.stat.mergeSql=false;druid.stat.slowSqlMillis=3000;druid.stat.logSlowSql=true;druid.wall.multiStatementAllow=true;druid.wall.throwException=false;druid.log.stmt.executableSql=true;
       ds2:
-        url: jdbc:p6spy:mysql://localhost:3306/mybatis_plus4?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=utf8&character_set_server=utf8mb4&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+        url: jdbc:p6spy:mysql://localhost:3306/mybatis_plus4?createDatabaseIfNotExist=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_bin&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Shanghai
         username: root
         password: root
         driver-class-name: com.p6spy.engine.spy.P6SpyDriver
@@ -203,13 +203,13 @@ spring:
       strict: false
       datasource:
         master:
-          url: jdbc:p6spy:mysql://localhost:3306/mybatis_plus1?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=utf8&character_set_server=utf8mb4&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+          url: jdbc:p6spy:mysql://localhost:3306/mybatis_plus1?createDatabaseIfNotExist=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_bin&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Shanghai
           username: root
           password: ENC(VZamSTMi224AH6RUtJGXNldiDp/XEL2ozRhBUu/o9ChodT4JEb9kE/j0EFhXKbjsfvLVacUW0AUzetA6OrNJug==)
           driver-class-name: com.p6spy.engine.spy.P6SpyDriver
           type: com.alibaba.druid.pool.DruidDataSource
         slave:
-          url: jdbc:p6spy:mysql://localhost:3306/mybatis_plus2?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=utf8&character_set_server=utf8mb4&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+          url: jdbc:p6spy:mysql://localhost:3306/mybatis_plus2?createDatabaseIfNotExist=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_bin&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Shanghai
           username: root
           password: ENC(VZamSTMi224AH6RUtJGXNldiDp/XEL2ozRhBUu/o9ChodT4JEb9kE/j0EFhXKbjsfvLVacUW0AUzetA6OrNJug==)
           driver-class-name: com.p6spy.engine.spy.P6SpyDriver
@@ -220,7 +220,7 @@ spring:
       names: ds1,ds2
       # 配置数据源具体内容，包含：连接池，驱动，地址，用户名，密码
       ds1:
-        url: jdbc:p6spy:mysql://localhost:3306/mybatis_plus3?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=utf8&character_set_server=utf8mb4&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+        url: jdbc:p6spy:mysql://localhost:3306/mybatis_plus3?createDatabaseIfNotExist=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_bin&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Shanghai
         username: root
         password: root
         driver-class-name: com.p6spy.engine.spy.P6SpyDriver
@@ -247,7 +247,7 @@ spring:
         filters: stat,wall,slf4j
         connection-properties: druid.stat.mergeSql=false;druid.stat.slowSqlMillis=3000;druid.stat.logSlowSql=true;druid.wall.multiStatementAllow=true;druid.wall.throwException=false;druid.log.stmt.executableSql=true;
       ds2:
-        url: jdbc:p6spy:mysql://localhost:3306/mybatis_plus4?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=utf8&character_set_server=utf8mb4&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+        url: jdbc:p6spy:mysql://localhost:3306/mybatis_plus4?createDatabaseIfNotExist=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_bin&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Shanghai
         username: root
         password: root
         driver-class-name: com.p6spy.engine.spy.P6SpyDriver

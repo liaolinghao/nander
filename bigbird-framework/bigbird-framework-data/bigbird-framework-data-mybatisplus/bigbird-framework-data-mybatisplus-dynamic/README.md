@@ -124,13 +124,13 @@ spring:
       p6spy: false
       datasource:
         master:
-          url: jdbc:p6spy:mysql://localhost:3306/mybatis_plus?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=utf8&character_set_server=utf8mb4&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+          url: jdbc:p6spy:mysql://localhost:3306/mybatis_plus?createDatabaseIfNotExist=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_bin&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Shanghai
           username: root
           password: root
           driver-class-name: com.p6spy.engine.spy.P6SpyDriver
           type: com.alibaba.druid.pool.DruidDataSource
         slave:
-          url: jdbc:p6spy:mysql://localhost:3306/mybatis_plus2?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=utf8&character_set_server=utf8mb4&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+          url: jdbc:p6spy:mysql://localhost:3306/mybatis_plus2?createDatabaseIfNotExist=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_bin&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Shanghai
           username: root
           password: root
           driver-class-name: com.p6spy.engine.spy.P6SpyDriver
@@ -202,7 +202,7 @@ decorator:
 ```
 执行时刻：2023-07-18 17:29:06
 SQL耗时：1毫秒
-连接信息：jdbc:p6spy:mysql://localhost:3306/mybatis_plus?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=utf8&character_set_server=utf8mb4&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+连接信息：jdbc:p6spy:mysql://localhost:3306/mybatis_plus?createDatabaseIfNotExist=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_bin&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Shanghai
 执行SQL：SELECT id,name,age,email,create_time,update_time FROM user WHERE id=1546747253062778882
 ```
 
@@ -239,9 +239,9 @@ spring:
 
 再次，为支持以指定编码utf8mb4创建数据库，以下三个细节需要注意：
 
-1、数据库连接语句需要设置：createDatabaseIfNotExist=true&character_set_server=utf8mb4
+1、数据库连接语句需要设置：createDatabaseIfNotExist=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_bin&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Shanghai
 
-2、第一个执行的数据库脚本：ALTER DATABASE db CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
+2、第一个执行的数据库脚本：ALTER DATABASE ${flyway:database} CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
 
 3、上述修改数据库编码语句无法被druid正确解析，为此，druid如果开启了wall，那么必须设置：strictSyntaxCheck: false，以防止修改数据库编码语句执行失败。
 
@@ -350,13 +350,13 @@ spring:
       strict: false
       datasource:
         master:
-          url: jdbc:p6spy:mysql://localhost:3306/mybatis_plus1?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=utf8&character_set_server=utf8mb4&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+          url: jdbc:p6spy:mysql://localhost:3306/mybatis_plus1?createDatabaseIfNotExist=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_bin&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Shanghai
           username: root
           password: ENC(VZamSTMi224AH6RUtJGXNldiDp/XEL2ozRhBUu/o9ChodT4JEb9kE/j0EFhXKbjsfvLVacUW0AUzetA6OrNJug==)
           driver-class-name: com.p6spy.engine.spy.P6SpyDriver
           type: com.alibaba.druid.pool.DruidDataSource
         slave:
-          url: jdbc:p6spy:mysql://localhost:3306/mybatis_plus2?createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=utf8&character_set_server=utf8mb4&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+          url: jdbc:p6spy:mysql://localhost:3306/mybatis_plus2?createDatabaseIfNotExist=true&characterEncoding=UTF-8&connectionCollation=utf8mb4_bin&zeroDateTimeBehavior=convertToNull&allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=Asia/Shanghai
           username: root
           password: ENC(VZamSTMi224AH6RUtJGXNldiDp/XEL2ozRhBUu/o9ChodT4JEb9kE/j0EFhXKbjsfvLVacUW0AUzetA6OrNJug==)
           driver-class-name: com.p6spy.engine.spy.P6SpyDriver
