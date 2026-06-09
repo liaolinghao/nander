@@ -71,6 +71,15 @@ public enum ChannelEnum implements ValuedEnum<String> {
         return UNKNOW;
     }
 
+    /**
+     * 判断当前渠道是否属于APP（移动端原生应用）
+     *
+     * @return true-是APP，false-不是APP
+     */
+    public boolean isApp() {
+        return this == ANDROID || this == IOS || this == HarmonyOS;
+    }
+
     @Override
     public String value() {
         return name();
