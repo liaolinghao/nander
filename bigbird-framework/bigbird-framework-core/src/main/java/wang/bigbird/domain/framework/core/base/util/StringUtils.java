@@ -1511,8 +1511,8 @@ public class StringUtils {
     /**
      * 是否是时刻
      *
-     * @param str
-     * @return
+     * @param str 时刻字符串
+     * @return 判断结果
      */
     public static boolean isTime(String str) {
         Matcher m = TIME_PATTERN.matcher(str);
