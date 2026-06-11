@@ -24,11 +24,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
-import wang.bigbird.domain.framework.cache.support.condition.CacheEnableCondition;
 import wang.bigbird.domain.framework.cache.config.property.CacheProperties;
 import wang.bigbird.domain.framework.cache.support.SpelResolvingCacheResolver;
 import wang.bigbird.domain.framework.cache.support.caffeine.CustomizedCaffeineCacheManager;
-import wang.bigbird.domain.framework.cache.support.redission.CustomizedJsonJacksonCodec;
+import wang.bigbird.domain.framework.cache.support.condition.CacheEnableCondition;
 import wang.bigbird.domain.framework.cache.support.redission.CustomizedRedissonCacheManager;
 
 import javax.annotation.PostConstruct;
@@ -60,7 +59,7 @@ public class CacheConfiguration extends CachingConfigurerSupport {
     @Bean
     @ConditionalOnProperty(prefix = "spring.cache", name = "type", havingValue = "redis")
     public CustomizedRedissonCacheManager redissonCacheManager(RedissonClient redissonClient, CacheProperties cacheProperties) {
-        return new CustomizedRedissonCacheManager(redissonClient, cacheProperties, CustomizedJsonJacksonCodec.INSTANCE);
+        return new CustomizedRedissonCacheManager(redissonClient, cacheProperties);
     }
 
     /**

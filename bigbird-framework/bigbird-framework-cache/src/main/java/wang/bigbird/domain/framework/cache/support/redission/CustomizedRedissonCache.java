@@ -73,13 +73,11 @@ public class CustomizedRedissonCache implements Cache {
         } else {
             value = this.map.get(key);
         }
-
         if (value == null) {
             this.addCacheMiss();
         } else {
             this.addCacheHit();
         }
-
         return this.toValueWrapper(value);
     }
 
@@ -91,7 +89,6 @@ public class CustomizedRedissonCache implements Cache {
         } else {
             value = this.map.get(key);
         }
-
         if (value == null) {
             this.addCacheMiss();
         } else {
@@ -104,7 +101,6 @@ public class CustomizedRedissonCache implements Cache {
                 throw new IllegalStateException("Cached value is not of required type [" + type.getName() + "]: " + value);
             }
         }
-
         return (T) this.fromStoreValue(value);
     }
 
@@ -121,7 +117,6 @@ public class CustomizedRedissonCache implements Cache {
             } else {
                 this.map.fastPut(key, value);
             }
-
             this.addCachePut();
         }
     }
@@ -144,7 +139,6 @@ public class CustomizedRedissonCache implements Cache {
                 this.addCachePut();
             }
         }
-
         return this.toValueWrapper(prevValue);
     }
 
@@ -162,7 +156,7 @@ public class CustomizedRedissonCache implements Cache {
         if (value == null) {
             return null;
         } else {
-            return (ValueWrapper)(value.getClass().getName().equals(NullValue.class.getName()) ? NullValue.INSTANCE : new SimpleValueWrapper(value));
+            return (ValueWrapper) (value.getClass().getName().equals(NullValue.class.getName()) ? NullValue.INSTANCE : new SimpleValueWrapper(value));
         }
     }
 
@@ -174,12 +168,10 @@ public class CustomizedRedissonCache implements Cache {
         } else {
             value = this.map.get(key);
         }
-
         if (value == null) {
             this.addCacheMiss();
             RLock lock = this.map.getLock(key);
             lock.lock();
-
             try {
                 value = this.map.get(key);
                 if (value == null) {
@@ -199,19 +191,16 @@ public class CustomizedRedissonCache implements Cache {
             value = valueLoader.call();
         } catch (Exception var9) {
             Exception ex = var9;
-
             RuntimeException exception;
             try {
                 Class<?> c = Class.forName("org.springframework.cache.Cache$ValueRetrievalException");
                 Constructor<?> constructor = c.getConstructor(Object.class, Callable.class, Throwable.class);
-                exception = (RuntimeException)constructor.newInstance(key, valueLoader, ex);
+                exception = (RuntimeException) constructor.newInstance(key, valueLoader, ex);
             } catch (Exception var8) {
                 throw new IllegalStateException(var8);
             }
-
             throw exception;
         }
-
         this.put(key, value);
         return value;
     }
@@ -224,15 +213,15 @@ public class CustomizedRedissonCache implements Cache {
         return userValue == null ? NullValue.INSTANCE : userValue;
     }
 
-    long getCacheHits() {
+    public long getCacheHits() {
         return this.hits.get();
     }
 
-    long getCacheMisses() {
+    public long getCacheMisses() {
         return this.misses.get();
     }
 
-    long getCachePuts() {
+    public long getCachePuts() {
         return this.puts.get();
     }
 
@@ -247,5 +236,6 @@ public class CustomizedRedissonCache implements Cache {
     private void addCacheMiss() {
         this.misses.incrementAndGet();
     }
+
 }
 

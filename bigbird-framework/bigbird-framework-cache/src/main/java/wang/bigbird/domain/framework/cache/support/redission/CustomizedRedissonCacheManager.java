@@ -14,16 +14,15 @@ package wang.bigbird.domain.framework.cache.support.redission;
 
 import org.redisson.api.RMap;
 import org.redisson.api.RMapCache;
-import org.springframework.cache.Cache;
-import wang.bigbird.domain.framework.cache.config.property.CacheProperties;
 import org.redisson.api.RedissonClient;
 import org.redisson.client.codec.Codec;
 import org.redisson.spring.cache.CacheConfig;
+import org.springframework.cache.Cache;
+import wang.bigbird.domain.framework.cache.config.property.CacheProperties;
 import wang.bigbird.domain.framework.cache.support.CustomizedCacheManager;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -36,55 +35,18 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class CustomizedRedissonCacheManager extends CustomizedCacheManager {
 
-    private boolean dynamic;
-    private boolean allowNullValues;
-    private Codec codec;
+    private boolean dynamic = true;
+    private boolean allowNullValues = true;
+    private Codec codec = CustomizedJsonJacksonCodec.INSTANCE;
     private RedissonClient redisson;
-    private Map<String, CacheConfig> configMap;
-    private ConcurrentMap<String, Cache> instanceMap;
+    private Map<String, CacheConfig> configMap = new ConcurrentHashMap();
+    private ConcurrentMap<String, Cache> instanceMap = new ConcurrentHashMap();
 
     private CacheProperties.Redis redisCacheProperties;
 
-    public CustomizedRedissonCacheManager(RedissonClient redisson, CacheProperties cacheProperties, Codec codec) {
-        this.dynamic = true;
-        this.allowNullValues = true;
-        this.configMap = new ConcurrentHashMap();
-        this.instanceMap = new ConcurrentHashMap();
+    public CustomizedRedissonCacheManager(RedissonClient redisson, CacheProperties config) {
         this.redisson = redisson;
-        this.redisCacheProperties = cacheProperties.getRedis();
-        this.codec = codec;
-    }
-
-    public void setAllowNullValues(boolean allowNullValues) {
-        this.allowNullValues = allowNullValues;
-    }
-
-    public void setCacheNames(Collection<String> names) {
-        if (names != null) {
-            Iterator var2 = names.iterator();
-
-            while (var2.hasNext()) {
-                String name = (String) var2.next();
-                this.getCache(name);
-            }
-
-            this.dynamic = false;
-        } else {
-            this.dynamic = true;
-        }
-
-    }
-
-    public void setConfig(Map<String, CacheConfig> config) {
-        this.configMap = config;
-    }
-
-    public void setRedisson(RedissonClient redisson) {
-        this.redisson = redisson;
-    }
-
-    public void setCodec(Codec codec) {
-        this.codec = codec;
+        this.redisCacheProperties = config.getRedis();
     }
 
     protected CacheConfig createDefaultConfig() {
@@ -96,20 +58,20 @@ public class CustomizedRedissonCacheManager extends CustomizedCacheManager {
 
     @Override
     public Cache getCache(String name) {
-        Cache cache = this.instanceMap.get(name);
+        Cache cache = instanceMap.get(name);
         if (cache != null) {
             return cache;
-        } else if (!this.dynamic) {
-            return cache;
+        } else if (!dynamic) {
+            return null;
         } else {
-            CacheConfig config = this.configMap.get(name);
+            CacheConfig config = configMap.get(name);
             if (config == null) {
-                config = this.createDefaultConfig();
-                config.setTTL(parseTTL(name,config.getTTL()));
-                config.setMaxIdleTime(parseMaxIdleTime(name,config.getMaxIdleTime()));
-                this.configMap.put(name, config);
+                config = createDefaultConfig();
+                config.setTTL(parseTTL(name, config.getTTL()));
+                config.setMaxIdleTime(parseMaxIdleTime(name, config.getMaxIdleTime()));
+                configMap.put(name, config);
             }
-            return config.getMaxIdleTime() == 0L && config.getTTL() == 0L && config.getMaxSize() == 0 ? this.createMap(name, config) : this.createMapCache(name, config);
+            return config.getMaxIdleTime() == 0L && config.getTTL() == 0L && config.getMaxSize() == 0 ? createMap(name) : createMapCache(name, config);
         }
     }
 
@@ -117,22 +79,20 @@ public class CustomizedRedissonCacheManager extends CustomizedCacheManager {
      * 无失效时间的缓存
      *
      * @param name
-     * @param config
      * @return
      */
-    private Cache createMap(String name, CacheConfig config) {
-        RMap<Object, Object> map = this.getMap(name, config);
-        Cache cache = new CustomizedRedissonCache(map, this.allowNullValues);
-        Cache oldCache = this.instanceMap.putIfAbsent(name, cache);
+    private Cache createMap(String name) {
+        RMap<Object, Object> map = getMap(name);
+        Cache cache = new CustomizedRedissonCache(map, allowNullValues);
+        Cache oldCache = instanceMap.putIfAbsent(name, cache);
         if (oldCache != null) {
             cache = oldCache;
         }
-
         return cache;
     }
 
-    protected RMap<Object, Object> getMap(String name, CacheConfig config) {
-        return this.codec != null ? this.redisson.getMap(name, this.codec) : this.redisson.getMap(name);
+    private RMap<Object, Object> getMap(String name) {
+        return redisson.getMap(name, codec);
     }
 
     /**
@@ -143,9 +103,9 @@ public class CustomizedRedissonCacheManager extends CustomizedCacheManager {
      * @return
      */
     private Cache createMapCache(String name, CacheConfig config) {
-        RMapCache<Object, Object> map = this.getMapCache(name, config);
-        Cache cache = new CustomizedRedissonCache(map, config, this.allowNullValues);
-        Cache oldCache = this.instanceMap.putIfAbsent(name, cache);
+        RMapCache<Object, Object> map = getMapCache(name);
+        Cache cache = new CustomizedRedissonCache(map, config, allowNullValues);
+        Cache oldCache = instanceMap.putIfAbsent(name, cache);
         if (oldCache != null) {
             cache = oldCache;
         } else {
@@ -154,13 +114,13 @@ public class CustomizedRedissonCacheManager extends CustomizedCacheManager {
         return cache;
     }
 
-    protected RMapCache<Object, Object> getMapCache(String name, CacheConfig config) {
-        return this.codec != null ? this.redisson.getMapCache(name, this.codec) : this.redisson.getMapCache(name);
+    private RMapCache<Object, Object> getMapCache(String name) {
+        return redisson.getMapCache(name, codec);
     }
 
     @Override
     public Collection<String> getCacheNames() {
-        return Collections.unmodifiableSet(this.configMap.keySet());
+        return Collections.unmodifiableSet(configMap.keySet());
     }
 
 }
