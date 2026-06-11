@@ -108,6 +108,17 @@ public class JsonUtils {
      * 支持jsr310，即新的时间类（java.time包下的时间类）
      *
      * @param objectMapper
+     */
+    public static void registerJavaTimeModule(ObjectMapper objectMapper) {
+        registerJavaTimeModule(objectMapper, STANDARD_PATTERN, DATE_PATTERN, TIME_PATTERN, null);
+    }
+
+    /**
+     * 注册时间序列化模块
+     * <p>
+     * 支持jsr310，即新的时间类（java.time包下的时间类）
+     *
+     * @param objectMapper
      * @param dateTimePattern
      * @param datePattern
      * @param timePattern
@@ -116,6 +127,8 @@ public class JsonUtils {
     public static void registerJavaTimeModule(ObjectMapper objectMapper, String dateTimePattern, String datePattern, String timePattern, String setNullDateTime) {
         objectMapper.setDateFormat(new SimpleDateFormat(dateTimePattern));
         objectMapper.registerModule(createJavaTimeModule(dateTimePattern, datePattern, timePattern, setNullDateTime));
+        // 关闭「时间输出为时间戳数字」，改为输出可读日期字符串
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
     /**
