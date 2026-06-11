@@ -106,6 +106,32 @@ public class StringUtils {
             .compile("^([01]?[0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$");
 
     /**
+     * 标准时间格式正则模式
+     * ^ 和 $ 表示匹配整个字符串
+     */
+    public static final Pattern DATE_TIME_PATTERN = Pattern
+            .compile("^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$");
+
+    /**
+     * 匹配正负小数正则
+     * ^ 和 $ 表示匹配整个字符串
+     */
+    public static final Pattern DECIMAL_PATTERN = Pattern
+            .compile("^-?\\d+\\.\\d+$");
+
+    /**
+     * 匹配正负整数正则
+     * ^ 和 $ 表示匹配整个字符串
+     */
+    public static final Pattern INTEGER_PATTERN = Pattern.compile("^-?\\d+$");
+
+    /**
+     * 匹配数字串正则
+     * ^ 和 $ 表示匹配整个字符串
+     */
+    public static final Pattern NUMERIC_PATTERN = Pattern.compile("^[0-9]+$");
+
+    /**
      * 键盘布局模式（QWERTY示例），包含键盘横向方向和键盘斜线方向
      */
     private static final String[] KEYBOARD_SEQUENCES = {
@@ -1494,6 +1520,50 @@ public class StringUtils {
     }
 
     /**
+     * 是否是时间
+     *
+     * @param str 时间字符串
+     * @return 判断结果
+     */
+    public static boolean isDateTime(String str) {
+        Matcher m = DATE_TIME_PATTERN.matcher(str);
+        return m.matches();
+    }
+
+    /**
+     * 是否是整型数字
+     *
+     * @param str 整型数字字符串
+     * @return 判断结果
+     */
+    public static boolean isInteger(String str) {
+        Matcher m = INTEGER_PATTERN.matcher(str);
+        return m.matches();
+    }
+
+    /**
+     * 是否是小数
+     *
+     * @param str 小数字符串
+     * @return 判断结果
+     */
+    public static boolean isDecimal(String str) {
+        Matcher m = DECIMAL_PATTERN.matcher(str);
+        return m.matches();
+    }
+
+    /**
+     * 利用正则表达式判断字符串是否都是由数字构成
+     *
+     * @param str 字符串
+     * @return 是否数字串
+     */
+    public static boolean isNumeric(String str) {
+        Matcher m = NUMERIC_PATTERN.matcher(str);
+        return m.matches();
+    }
+
+    /**
      * 提取手机号码
      *
      * @param text
@@ -1744,20 +1814,6 @@ public class StringUtils {
             }
         }
         return sb.toString();
-    }
-
-    /**
-     * 利用正则表达式判断字符串是否都是由数字构成
-     *
-     * @param str 字符串
-     * @return 是否数字串
-     */
-    public static boolean isNumeric(String str) {
-        if (isBlank(str)) {
-            return false;
-        }
-        Pattern pattern = Pattern.compile("[0-9]+");
-        return pattern.matcher(str).matches();
     }
 
     /**
