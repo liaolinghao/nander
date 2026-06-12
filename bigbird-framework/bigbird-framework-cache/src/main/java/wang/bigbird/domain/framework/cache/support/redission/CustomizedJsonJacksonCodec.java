@@ -110,6 +110,10 @@ public class CustomizedJsonJacksonCodec implements Codec {
                         return Double.valueOf(numVal);
                     } catch (Exception ignored) {
                     }
+                } else if (Boolean.TRUE.toString().equalsIgnoreCase(value)) {
+                    return Boolean.TRUE;
+                } else if (Boolean.FALSE.toString().equalsIgnoreCase(value)) {
+                    return Boolean.FALSE;
                 }
             }
             return raw;
