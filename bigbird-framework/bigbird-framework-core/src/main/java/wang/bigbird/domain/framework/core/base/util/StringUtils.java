@@ -132,6 +132,12 @@ public class StringUtils {
     public static final Pattern NUMERIC_PATTERN = Pattern.compile("^[0-9]+$");
 
     /**
+     * 匹配字母对正则
+     * ^ 和 $ 表示匹配整个字符串
+     */
+    public static final Pattern LETTER_PAIR_PATTERN = Pattern.compile("^[A-Za-z]+-[A-Za-z]+$");
+
+    /**
      * 键盘布局模式（QWERTY示例），包含键盘横向方向和键盘斜线方向
      */
     private static final String[] KEYBOARD_SEQUENCES = {
@@ -1560,6 +1566,17 @@ public class StringUtils {
      */
     public static boolean isNumeric(String str) {
         Matcher m = NUMERIC_PATTERN.matcher(str);
+        return m.matches();
+    }
+
+    /**
+     * 利用正则表达式判断字符串是否是字母对
+     *
+     * @param str 字符串
+     * @return 是否字母对
+     */
+    public static boolean isLetterPair(String str) {
+        Matcher m = LETTER_PAIR_PATTERN.matcher(str);
         return m.matches();
     }
 
