@@ -58,6 +58,11 @@ public class DateUtils {
      */
     public static final String TIME_PATTERN = "HH:mm:ss";
     /**
+     * 24小时制式标准日期时间格式化器
+     */
+    public static final DateTimeFormatter FORMATTER_24H_STANDARD = DateTimeFormatter.ofPattern(STANDARD_PATTERN);
+
+    /**
      * GMT时间格式化阈值
      */
     private static final int GMT_TIME_THRESHOLD = 10;
