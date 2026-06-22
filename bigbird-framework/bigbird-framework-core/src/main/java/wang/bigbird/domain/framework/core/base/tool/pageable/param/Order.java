@@ -35,7 +35,7 @@ public class Order implements Serializable {
     private static final String SORT_DELIMITER = ",";
     private static final int ORDER_PARTS_WITH_DIRECTION = 2;
 
-    @Pattern(regexp = "^\\w+$", message = "无效的字段名称！")
+    @Pattern(regexp = "^\\w+$", message = "无效的字段名称")
     private String column;
 
     private Boolean asc = true;

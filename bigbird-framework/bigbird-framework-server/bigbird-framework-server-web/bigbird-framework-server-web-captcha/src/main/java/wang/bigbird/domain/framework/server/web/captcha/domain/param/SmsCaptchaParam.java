@@ -27,19 +27,19 @@ import java.io.Serializable;
 @Data
 public class SmsCaptchaParam implements Serializable {
 
-    @NotBlank(message = "手机号不能为空！")
-    @Pattern(regexp = "((13[0-9])|(14[^23])|(15[^4])|(16[2567])|(17[0-9])|(18[0-9])|(19[^4]))\\d{8}", message = "无效的手机号！")
+    @NotBlank(message = "手机号不能为空")
+    @Pattern(regexp = "((13[0-9])|(14[^23])|(15[^4])|(16[2567])|(17[0-9])|(18[0-9])|(19[^4]))\\d{8}", message = "无效的手机号")
     @DecryptField
     private String mobilephone;
 
-    @NotBlank(message = "验证码类型不能为空！")
-    @Pattern(regexp = "^(IMAGE|SLIDER)$", message = "无效的验证码类型！")
+    @NotBlank(message = "验证码类型不能为空")
+    @Pattern(regexp = "^(IMAGE|SLIDER)$", message = "无效的验证码类型")
     private String captchaType;
 
-    @NotBlank(message = "验证码值不能为空！")
+    @NotBlank(message = "验证码值不能为空")
     private String captchaValue;
 
-    @NotBlank(message = "验证码用途不能为空！")
+    @NotBlank(message = "验证码用途不能为空")
     private String scene;
 
     /**

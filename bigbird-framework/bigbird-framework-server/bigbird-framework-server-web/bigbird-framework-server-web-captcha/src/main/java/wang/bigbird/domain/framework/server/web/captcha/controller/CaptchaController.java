@@ -137,7 +137,7 @@ public class CaptchaController {
             sessionId = request.getSession().getId();
         }
         String templateId = captchaProperties.getSmsSceneTemplateIdMap().get(smsCaptchaParam.getScene());
-        Assert.hasText(templateId, StringUtils.joinStr("Unsupported usage scenario:", smsCaptchaParam.getScene()));
+        Assert.hasText(templateId, StringUtils.joinStr("无效的场景值：", smsCaptchaParam.getScene()));
         CaptchaTypeEnum cte = CaptchaTypeEnum.getInstanceByName(smsCaptchaParam.getCaptchaType());
         switch (cte) {
             case IMAGE:
@@ -182,7 +182,7 @@ public class CaptchaController {
             sessionId = request.getSession().getId();
         }
         String template = captchaProperties.getEmailSceneTemplateMap().get(emailCaptchaParam.getScene());
-        Assert.hasText(template, StringUtils.joinStr("Unsupported usage scenario:", emailCaptchaParam.getScene()));
+        Assert.hasText(template, StringUtils.joinStr("无效的场景值：", emailCaptchaParam.getScene()));
         CaptchaTypeEnum cte = CaptchaTypeEnum.getInstanceByName(emailCaptchaParam.getCaptchaType());
         switch (cte) {
             case IMAGE:

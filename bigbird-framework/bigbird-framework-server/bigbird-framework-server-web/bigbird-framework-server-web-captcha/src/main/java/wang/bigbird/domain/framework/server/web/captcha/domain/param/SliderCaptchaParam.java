@@ -26,10 +26,10 @@ import java.io.Serializable;
 @Data
 public class SliderCaptchaParam implements Serializable {
 
-    @NotBlank(message = "滑块验证码ID不能为空！")
+    @NotBlank(message = "滑块验证码ID不能为空")
     private String id;
 
-    @NotNull(message = "坐标值不能为空！")
+    @NotNull(message = "坐标值不能为空")
     private Double x;
 
 }

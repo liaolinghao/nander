@@ -27,19 +27,19 @@ import java.io.Serializable;
 @Data
 public class EmailCaptchaParam implements Serializable {
 
-    @NotBlank(message = "电子邮箱不能为空！")
-    @Pattern(regexp = "(([0-9a-zA-Z]+)|([0-9a-zA-Z]+[_.0-9a-zA-Z-]*[0-9a-zA-Z-]+))@([a-zA-Z0-9-]+[.])+(net|NET|asia|ASIA|com|COM|gov|GOV|mil|MIL|org|ORG|edu|EDU|int|INT|cn|CN|cc|CC|sg|SG|([a-zA-Z]*))", message = "无效的电子邮箱！")
+    @NotBlank(message = "电子邮箱不能为空")
+    @Pattern(regexp = "(([0-9a-zA-Z]+)|([0-9a-zA-Z]+[_.0-9a-zA-Z-]*[0-9a-zA-Z-]+))@([a-zA-Z0-9-]+[.])+(net|NET|asia|ASIA|com|COM|gov|GOV|mil|MIL|org|ORG|edu|EDU|int|INT|cn|CN|cc|CC|sg|SG|([a-zA-Z]*))", message = "无效的电子邮箱")
     @DecryptField
     private String email;
 
-    @NotBlank(message = "验证码类型不能为空！")
-    @Pattern(regexp = "^(IMAGE|SLIDER)$", message = "无效的验证码类型！")
+    @NotBlank(message = "验证码类型不能为空")
+    @Pattern(regexp = "^(IMAGE|SLIDER)$", message = "无效的验证码类型")
     private String captchaType;
 
-    @NotBlank(message = "验证码值不能为空！")
+    @NotBlank(message = "验证码值不能为空")
     private String captchaValue;
 
-    @NotBlank(message = "验证码用途不能为空！")
+    @NotBlank(message = "验证码用途不能为空")
     private String scene;
 
     /**
