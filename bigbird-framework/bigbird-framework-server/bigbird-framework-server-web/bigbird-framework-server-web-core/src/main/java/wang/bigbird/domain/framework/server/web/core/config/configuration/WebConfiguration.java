@@ -17,6 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.format.FormatterRegistry;
+import org.springframework.format.datetime.standard.DateTimeFormatterRegistrar;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -26,6 +28,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import wang.bigbird.domain.framework.core.base.util.DateUtils;
 import wang.bigbird.domain.framework.core.base.util.JsonUtils;
 import wang.bigbird.domain.framework.core.base.util.StringUtils;
 import wang.bigbird.domain.framework.server.web.core.config.property.WebProperties;
@@ -59,6 +62,19 @@ public class WebConfiguration extends WebMvcConfigurerAdapter {
     private DecryptRequestParamResolver decryptRequestParamResolver;
     @Autowired
     private DecryptPathVariableResolver decryptPathVariableResolver;
+
+    /**
+     * 全局配置转换器，支持Controller的@RequestParam LocalDateTime 参数，
+     * 都能自动解析 yyyy-MM-dd HH:mm:ss
+     *
+     * @param registry
+     */
+    @Override
+    public void addFormatters(FormatterRegistry registry) {
+        DateTimeFormatterRegistrar registrar = new DateTimeFormatterRegistrar();
+        registrar.setDateTimeFormatter(DateUtils.FORMATTER_24H_STANDARD);
+        registrar.registerFormatters(registry);
+    }
 
     /**
      * trace拦截器放置在最开始执行，以便从请求处理开始就添加请求链路ID
