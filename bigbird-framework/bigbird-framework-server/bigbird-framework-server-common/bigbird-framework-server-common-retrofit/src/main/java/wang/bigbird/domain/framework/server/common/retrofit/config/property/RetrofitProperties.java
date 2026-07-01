@@ -15,6 +15,7 @@ package wang.bigbird.domain.framework.server.common.retrofit.config.property;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+import wang.bigbird.domain.framework.server.common.retrofit.base.enums.LogLevelEnum;
 
 /**
  * 网络配置
@@ -40,5 +41,15 @@ public class RetrofitProperties {
      * 写入超时时间（毫秒）
      */
     private Long writeTimeoutMs = 30000L;
+
+    /**
+     * 取值为：none、basic、headers、body
+     */
+    private LogLevelEnum level = LogLevelEnum.HEADERS;
+
+    /**
+     * 序列化长度
+     */
+    private Integer serializeLength = 2048;
 
 }
