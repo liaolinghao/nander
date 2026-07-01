@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
+import wang.bigbird.domain.framework.common.logging.core.base.enums.LogLevelEnum;
 import wang.bigbird.domain.framework.common.logging.core.base.util.AopTargetUtils;
 import wang.bigbird.domain.framework.common.logging.core.config.property.CustomLoggingProperties;
 import wang.bigbird.domain.framework.common.logging.core.domain.pojo.ExcludeWrapper;
@@ -63,7 +64,7 @@ public class CustomLoggingAop extends BaseLoggingAop implements Ordered {
     }
 
     @Override
-    public String getLoggingLevel() {
+    public LogLevelEnum getLoggingLevel() {
         return customLoggingProperties.getLevel();
     }
 

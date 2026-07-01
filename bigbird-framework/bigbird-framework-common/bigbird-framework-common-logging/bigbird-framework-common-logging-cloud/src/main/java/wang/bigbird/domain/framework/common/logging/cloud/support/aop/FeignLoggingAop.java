@@ -24,6 +24,7 @@ import org.springframework.http.codec.multipart.FilePart;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import wang.bigbird.domain.framework.common.logging.cloud.config.property.FeignLoggingProperties;
+import wang.bigbird.domain.framework.common.logging.core.base.enums.LogLevelEnum;
 import wang.bigbird.domain.framework.common.logging.core.base.util.AopTargetUtils;
 import wang.bigbird.domain.framework.common.logging.core.base.util.ExcludeHandlerUtils;
 import wang.bigbird.domain.framework.common.logging.core.domain.pojo.ExcludeWrapper;
@@ -88,7 +89,7 @@ public class FeignLoggingAop extends BaseLoggingAop implements Ordered {
     }
 
     @Override
-    public String getLoggingLevel() {
+    public LogLevelEnum getLoggingLevel() {
         return feignLoggingProperties.getLevel();
     }
 

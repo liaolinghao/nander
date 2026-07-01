@@ -98,7 +98,7 @@ public abstract class BaseLoggingAop {
                 // 日志类型
                 String loggingType = getLoggingType();
                 // 级别
-                String level = getLoggingLevel();
+                String level = getLoggingLevel().getCode();
                 // 获取方法参数值数组
                 Object[] args = joinPoint.getArgs();
                 // 获取方法 参数名:参数值,参数名:参数值,... 字符串
@@ -140,7 +140,7 @@ public abstract class BaseLoggingAop {
      *
      * @return 日志级别
      */
-    public abstract String getLoggingLevel();
+    public abstract LogLevelEnum getLoggingLevel();
 
 
     /**

@@ -36,7 +36,7 @@ public class FeignLoggingProperties {
     /**
      * 级别，支持 trace debug info warn error
      */
-    private String level = LogLevelEnum.INFO.getCode();
+    private LogLevelEnum level = LogLevelEnum.INFO;
     /**
      * 排除的类或方法
      */
