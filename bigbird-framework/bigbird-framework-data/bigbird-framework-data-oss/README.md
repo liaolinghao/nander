@@ -20,7 +20,7 @@ bigbird:
         url: 
         accessKey: 
         secretKey: 
-        secure: #true采用https，false采用http，默认值是false
+        secure: # true采用https，false采用http，默认值是false
 ```
 
 ## 基于阿里云的云对象存储

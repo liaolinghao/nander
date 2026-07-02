@@ -101,9 +101,9 @@ bigbird:
     web:
       core:
         jackson:
-          #web框架有关数据进行json格式转换时，对null值时间进行判断的表达式，比如时间格式化后为：1970-01-01 00:00:00，可以认为设置的时间为null
+          # web框架有关数据进行json格式转换时，对null值时间进行判断的表达式，比如时间格式化后为：1970-01-01 00:00:00，可以认为设置的时间为null
           setNullDateTime: 1970-01-01 00:00:00
-          #长整型是否转换为字符串开关，默认打开以解决前端JS对长整型支持不足的问题，对于RPC模式服务，需要关闭
+          # 长整型是否转换为字符串开关，默认打开以解决前端JS对长整型支持不足的问题，对于RPC模式服务，需要关闭
           longToString: true
 ```
 
@@ -115,13 +115,13 @@ bigbird:
     web:
       core:
         cors:
-          enable: true #是否开启跨域访问策略
-          allowedOrigins: ["*"] #允许跨域的域名，列表
-          allowedMethods: [GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS,TRACE] #允许跨域的请求方法，列表
-          allowedHeaders: ["*"] #允许跨域携带的请求头，列表
-          exposedHeaders: ["*"] #允许跨域暴露的请求头，列表
-          allowCredentials: true #跨域请求也会带上cookie信息
-          maxAge: 60 #预检请求的有效期 
+          enable: true # 是否开启跨域访问策略
+          allowedOrigins: ["*"] # 允许跨域的域名，列表
+          allowedMethods: [GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS,TRACE] # 允许跨域的请求方法，列表
+          allowedHeaders: ["*"] # 允许跨域携带的请求头，列表
+          exposedHeaders: ["*"] # 允许跨域暴露的请求头，列表
+          allowCredentials: true # 跨域请求也会带上cookie信息
+          maxAge: 60 # 预检请求的有效期 
 ```
 
 ### 用于Swagger配置
@@ -129,22 +129,22 @@ bigbird:
 ```
 springfox:
   documentation:
-    enabled: false #当swagger关闭时，建议增加这项配置，以便禁用页面，防止渗透扫描检测出漏洞
+    enabled: false # 当swagger关闭时，建议增加这项配置，以便禁用页面，防止渗透扫描检测出漏洞
 
 bigbird:
   server:
     web:
       core:
         swagger:
-          enable: true #是否开启swagger
-          basePackage:  #扫描包路径，可以不指定，系统会通过自动扫描{@link io.swagger.annotations.ApiOperation}
-          title:  #swagger文档生成的标题
-          description:  #应用描述
-          serviceUrl:  #API接口的服务地址，API接口的网址域名前缀
-          version: #API版本号，默认V1.0.0
-          license:  #许可协议名称
-          licenseUrl:  #许可协议访问地址
-          host: #swagger接口文档服务访问地址，默认为：服务启动入口地址/swagger-ui/index.html
+          enable: true # 是否开启swagger
+          basePackage:  # 扫描包路径，可以不指定，系统会通过自动扫描{@link io.swagger.annotations.ApiOperation}
+          title:  # swagger文档生成的标题
+          description:  # 应用描述
+          serviceUrl:  # API接口的服务地址，API接口的网址域名前缀
+          version: # API版本号，默认V1.0.0
+          license:  # 许可协议名称
+          licenseUrl:  # 许可协议访问地址
+          host: # swagger接口文档服务访问地址，默认为：服务启动入口地址/swagger-ui/index.html
 ```
 
 ### 用于自定义业务异常处理
@@ -157,7 +157,7 @@ bigbird:
     web:
       core:
         base-business-exception-handle:
-          enable: true  #web框架开启对各类继承自BaseBusinessException异常的处理
+          enable: true  # web框架开启对各类继承自BaseBusinessException异常的处理
 ```
 
 ## 常用接口

@@ -15,7 +15,7 @@
 ```
 bigbird:
   message:
-    frequency: 10 #消息发送的间隔频率，毫秒为单位
+    frequency: 10 # 消息发送的间隔频率，毫秒为单位
 ```
 
 # 邮件消息

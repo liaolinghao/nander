@@ -17,11 +17,11 @@
 ```
 bigbird:
   id:
-    factor: #基因因子，不设置则采用默认基因，建议采用一个比较大的数值
-    enableGeneCoding: #true或者false，是否启用基因编码
-    strategy: #ID生成策略，默认twitter-snowflake，具体策略对应的详细配置见对应说明
+    factor: # 基因因子，不设置则采用默认基因，建议采用一个比较大的数值
+    enableGeneCoding: # true或者false，是否启用基因编码
+    strategy: # ID生成策略，默认twitter-snowflake，具体策略对应的详细配置见对应说明
     workerId:
-      strategy: zero #workerId提供策略，默认zero，具体策略对应的详细配置见对应说明
+      strategy: zero # workerId提供策略，默认zero，具体策略对应的详细配置见对应说明
 ```  
 
 ## Id生成策略
@@ -33,8 +33,8 @@ bigbird:
   id:
     strategy: snowflake
     twitter:
-      workerId: #工作机器ID（0~31）
-      datacenterId: #数据中心ID（0~31）
+      workerId: # 工作机器ID（0~31）
+      datacenterId: # 数据中心ID（0~31）
 ```
 
 2、leaf-segment，相关配置如下：
@@ -52,13 +52,13 @@ bigbird:
   id:
     strategy: uid
     baidu:
-      timeBits: #时间戳部分长度，与workerBits+seqBits加起来必须等于63
-      workerBits: #机器ID部分长度，与timeBits+seqBits加起来必须等于63
-      seqBits: #序列号部分长度，与workerBits+workerBits加起来必须等于63
-      epochStr: #起始日期
-      boostPower: #缓存环扩容值
-      paddingFactor: #缓存环填充UID比例
-      scheduleInterval: #缓存环定时填充周期，不配置则不启用定时填充
+      timeBits: # 时间戳部分长度，与workerBits+seqBits加起来必须等于63
+      workerBits: # 机器ID部分长度，与timeBits+seqBits加起来必须等于63
+      seqBits: # 序列号部分长度，与workerBits+workerBits加起来必须等于63
+      epochStr: # 起始日期
+      boostPower: # 缓存环扩容值
+      paddingFactor: # 缓存环填充UID比例
+      scheduleInterval: # 缓存环定时填充周期，不配置则不启用定时填充
 ```
 
 ## workerId提供策略
@@ -226,25 +226,25 @@ bigbird:
   id:
     workerId:
       strategy: zk
-      interval: #心跳间隔时间，单位：毫秒
-      pidHome: #本地workerID文件存储根路径 
-      pidPort: #使用端口（同机多uid应用时区分端口）
+      interval: # 心跳间隔时间，单位：毫秒
+      pidHome: # 本地workerID文件存储根路径 
+      pidPort: # 使用端口（同机多uid应用时区分端口）
   data:
     zookeeper:
-      addresses:  #节点地址，逗号分隔
-      namespace: #命名空间
-      sessionTimeout: #会话超时时间，单位：毫秒，默认5秒
-      connectTimeout: #连接超时，单位：毫秒，默认5秒
+      addresses:  # 节点地址，逗号分隔
+      namespace: # 命名空间
+      sessionTimeout: # 会话超时时间，单位：毫秒，默认5秒
+      connectTimeout: # 连接超时，单位：毫秒，默认5秒
       retry:
-        type: #重连策略，枚举值，默认以指数级延迟的重连模式
-        retryTime: #重连间隔时间，以秒为单位，默认1秒
-        maxSleepTime: #最大重连间隔时间，以秒为单位，默认30秒
-        maxRetries: #最大重连次数，默认10次
-        retryUntilElapsed: #总等待时间，以秒为单位，默认10秒
+        type: # 重连策略，枚举值，默认以指数级延迟的重连模式
+        retryTime: # 重连间隔时间，以秒为单位，默认1秒
+        maxSleepTime: # 最大重连间隔时间，以秒为单位，默认30秒
+        maxRetries: # 最大重连次数，默认10次
+        retryUntilElapsed: # 总等待时间，以秒为单位，默认10秒
       authentication:
-        type: #认证策略，枚举值，默认任何客户端都可以访问
-        username: #认证用户名
-        password: #认证密码
+        type: # 认证策略，枚举值，默认任何客户端都可以访问
+        username: # 认证用户名
+        password: # 认证密码
 ```
 
 4、利用redis来实现workerId的提供管理，对于同一个IP+Port的服务来说，即使服务重启也可以再次使用上一次分配的workerId，可实现workerId固定不变，同时在获取workerId过程中对时钟回拨问题进行处理，相关配置如下：
@@ -254,18 +254,18 @@ bigbird:
   id:
     workerId:
       strategy: redis
-      interval: #心跳间隔时间，单位：毫秒
-      pidHome: #本地workerID文件存储根路径 
-      pidPort: #使用端口（同机多uid应用时区分端口）
+      interval: # 心跳间隔时间，单位：毫秒
+      pidHome: # 本地workerID文件存储根路径 
+      pidPort: # 使用端口（同机多uid应用时区分端口）
   data:
     redis:
-      addresses:  #节点地址，逗号分隔
-      password: #密码
-      database: #库编号（单机版可用）
-      timeout: #命令等待超时，单位：毫秒
-      connectTimeout: #连接超时，单位：毫秒
-      connectionPoolSize: #节点连接池大小
-      connectionMinimumIdleSize: #节点最小空闲连接数
+      addresses:  # 节点地址，逗号分隔
+      password: # 密码
+      database: # 库编号（单机版可用）
+      timeout: # 命令等待超时，单位：毫秒
+      connectTimeout: # 连接超时，单位：毫秒
+      connectionPoolSize: # 节点连接池大小
+      connectionMinimumIdleSize: # 节点最小空闲连接数
 ```
 
 ## 服务启动重用worker id时，对时钟回拨的处理流程

@@ -25,10 +25,10 @@ bigbird:
   server:
     web:
       ws:
-        springEnabled: true #是否开启Spring WS机制，该机制更灵活，性能更好
-        target: ws://ip:port #目标ws
-        relayPath: /v1/** #Spring WS机制透传ws路径模式，匹配所有/v1开头的路径
-        allowedOrigins: ["*"] #Spring WS机制允许跨域的域名，列表
+        springEnabled: true # 是否开启Spring WS机制，该机制更灵活，性能更好
+        target: ws://ip:port # 目标ws
+        relayPath: /v1/** # Spring WS机制透传ws路径模式，匹配所有/v1开头的路径
+        allowedOrigins: ["*"] # Spring WS机制允许跨域的域名，列表
 ```
 
 ## Tomcat WS机制服务实现方式

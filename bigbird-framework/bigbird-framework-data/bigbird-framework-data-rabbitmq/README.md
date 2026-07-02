@@ -62,12 +62,12 @@ bigbird:
   data:
     rabbitmq:
       key: # 加解密密钥
-      addresses: #节点地址，逗号分隔
-      username: #用户名
-      password: #密码
-      virtualHost: #虚拟主机
-      receiveTimeout: #主动拉取消息的超时时间
-      replyTimeout: #获取发送消息回复的超时时间
-      concurrentConsumers: #最小的消费者数量
-      maxConcurrentConsumers: #最大的消费者数量
+      addresses: # 节点地址，逗号分隔
+      username: # 用户名
+      password: # 密码
+      virtualHost: # 虚拟主机
+      receiveTimeout: # 主动拉取消息的超时时间
+      replyTimeout: # 获取发送消息回复的超时时间
+      concurrentConsumers: # 最小的消费者数量
+      maxConcurrentConsumers: # 最大的消费者数量
 ```

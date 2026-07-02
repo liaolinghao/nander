@@ -45,11 +45,11 @@ bigbird:
   data:
     redis:
       key: # 加解密密钥
-      addresses:  #节点地址，逗号分隔
-      password: #密码
-      database: #库编号（单机版可用）
-      timeout: #命令等待超时，单位：毫秒
-      connectTimeout: #连接超时，单位：毫秒
-      connectionPoolSize: #节点连接池大小
-      connectionMinimumIdleSize: #节点最小空闲连接数
+      addresses:  # 节点地址，逗号分隔
+      password: # 密码
+      database: # 库编号（单机版可用）
+      timeout: # 命令等待超时，单位：毫秒
+      connectTimeout: # 连接超时，单位：毫秒
+      connectionPoolSize: # 节点连接池大小
+      connectionMinimumIdleSize: # 节点最小空闲连接数
 ```

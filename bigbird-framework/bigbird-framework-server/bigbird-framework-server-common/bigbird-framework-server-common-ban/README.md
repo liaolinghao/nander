@@ -17,8 +17,8 @@ bigbird:
   server:
     common:
       ban:
-        forbidWordPoolKey: word:forbid #禁用词库在redis中的键
-        forbidWordRefreshEventTopic: word:forbid:refresh:topic #禁用词变更事件在redis中的发布渠道
+        forbidWordPoolKey: word:forbid # 禁用词库在redis中的键
+        forbidWordRefreshEventTopic: word:forbid:refresh:topic # 禁用词变更事件在redis中的发布渠道
 ```
 
 ## 构件依赖

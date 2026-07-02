@@ -17,32 +17,32 @@ bigbird:
   server:
     web:
       captcha:
-        async: false #是否异步发送
-        backdoor-enable: true #启用后门
-        backdoor: xxx #后门验证码
-        backdoor-limit: 10 #后门验证码每日可用次数
-        verifyMax: 3 #最大重复验证次数
-        verify-time-period: 10 #验证时间周期，秒为单位，在该周期内验证失败次数超过最大次数，就让验证码失效
-        ttl: 30 #验证码有效期，秒为单位
-        length: 4  #验证码长度
-        width: 110  #图片验证码宽度
-        height: 40  #图片验证码高度
-        max-day-counts: 30  #一天内同一个手机号在同一个场景获取短信验证码的最大次数
-        max-hour-counts: 10  #一小时内同一个手机号在同一个场景获取短信验证码的最大次数
-        max-minute-counts: 1  #一分钟内同一个手机号在同一个场景获取短信验证码的最大次数
-        sms-frequency-max-count: 10000 #短信频率控制：最大条数
-        sms-frequency-duration-time: 600 #短信频率控制：时长（秒）
-        smsSceneTemplateIdMap: #短信使用场景与模板ID对应关系
+        async: false # 是否异步发送
+        backdoor-enable: true # 启用后门
+        backdoor: xxx # 后门验证码
+        backdoor-limit: 10 # 后门验证码每日可用次数
+        verifyMax: 3 # 最大重复验证次数
+        verify-time-period: 10 # 验证时间周期，秒为单位，在该周期内验证失败次数超过最大次数，就让验证码失效
+        ttl: 30 # 验证码有效期，秒为单位
+        length: 4  # 验证码长度
+        width: 110  # 图片验证码宽度
+        height: 40  # 图片验证码高度
+        max-day-counts: 30  # 一天内同一个手机号在同一个场景获取短信验证码的最大次数
+        max-hour-counts: 10  # 一小时内同一个手机号在同一个场景获取短信验证码的最大次数
+        max-minute-counts: 1  # 一分钟内同一个手机号在同一个场景获取短信验证码的最大次数
+        sms-frequency-max-count: 10000 # 短信频率控制：最大条数
+        sms-frequency-duration-time: 600 # 短信频率控制：时长（秒）
+        smsSceneTemplateIdMap: # 短信使用场景与模板ID对应关系
           login: 558529
           modify_phone: 558530
-        emailSceneTemplateMap: #邮箱使用场景与模板消息对应关系
+        emailSceneTemplateMap: # 邮箱使用场景与模板消息对应关系
           # 模版消息中的变量用{}标识，各分段用|分隔，第一段为邮件标题
           login: 登录验证|您好！|您的验证码是：{}|您可以复制此验证码进行验证。|此验证码只能使用一次，在{}分钟内有效。验证成功则自动失效。|如果您没有进行上述操作，请忽略此邮件。
           modify_email: 修改电子邮箱验证|您好！|您的验证码是：{}|您可以复制此验证码进行验证。|此验证码只能使用一次，在{}分钟内有效。验证成功则自动失效。|如果您没有进行上述操作，请忽略此邮件。
         slider:
-          deviation: 5 #滑块校验允许误差（默认是5）
-          imageFileDir: #背景图路径（默认是jar中图片）
-          imageFormat: png #背景图文件后缀（默认是png）
+          deviation: 5 # 滑块校验允许误差（默认是5）
+          imageFileDir: # 背景图路径（默认是jar中图片）
+          imageFormat: png # 背景图文件后缀（默认是png）
 ```
 
 ## 验证码服务
