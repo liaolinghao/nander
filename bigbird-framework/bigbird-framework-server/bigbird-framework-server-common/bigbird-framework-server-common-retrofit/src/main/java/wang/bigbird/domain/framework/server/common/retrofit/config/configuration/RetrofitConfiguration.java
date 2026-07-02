@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import wang.bigbird.domain.framework.server.common.retrofit.config.property.RetrofitProperties;
+import wang.bigbird.domain.framework.server.common.retrofit.support.interceptor.CustomHttpLoggingInterceptor;
 
 import javax.annotation.PostConstruct;
 import javax.net.SocketFactory;
@@ -126,9 +127,9 @@ public class RetrofitConfiguration {
                 .hostnameVerifier((s, sslSession) -> true)
                 // 信任所有证书
                 .sslSocketFactory(ssfFactory, (X509TrustManager) trustAllCerts[0]);
-        // 打印请求过程详细信息
-        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
         if (isStream) {
+            // 打印请求过程详细信息
+            HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
             // 不能开 BODY 级别日志，否则 OkHttp 会缓存整份响应全部接收完才抛流
             httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
             okhttpClient.socketFactory(new SocketFactory() {
@@ -177,30 +178,11 @@ public class RetrofitConfiguration {
                     .cache(null)
                     .addInterceptor(httpLoggingInterceptor);
         } else {
-            // 开了 BODY 级别日志，OkHttp 会缓存整份响应，全部接收完才抛流
-            httpLoggingInterceptor.setLevel(retrofitProperties.getLevel().toOkHttpLevel());
-            okhttpClient.addNetworkInterceptor(chain -> {
-                okhttp3.Request request = chain.request();
-                okhttp3.Response response = chain.proceed(request);
-                okhttp3.ResponseBody body = response.body();
-                if (body != null && body.contentType() != null && body.contentType().toString().contains("application/json")) {
-                    ResponseBody peekBody = response.peekBody(Long.MAX_VALUE);
-                    String bodyStr = peekBody.string();
-                    String logContent;
-                    // 全局长度判断
-                    if (bodyStr.length() > retrofitProperties.getSerializeLength()) {
-                        logContent = "[响应JSON内容过长，总长度:" + bodyStr.length() + "，已省略详情]";
-                    } else {
-                        logContent = bodyStr;
-                    }
-                    // 重建response，后续日志打印就是替换后的内容
-                    okhttp3.MediaType mediaType = body.contentType();
-                    okhttp3.ResponseBody newLogBody = okhttp3.ResponseBody.create(logContent, mediaType);
-                    response = response.newBuilder().body(newLogBody).build();
-                }
-                return response;
-            });
-            okhttpClient.addInterceptor(httpLoggingInterceptor);
+            // 打印请求过程详细信息
+            CustomHttpLoggingInterceptor customLoggingInterceptor =
+                    new CustomHttpLoggingInterceptor(retrofitProperties.getLevel(),
+                            retrofitProperties.getSerializeLength());
+            okhttpClient.addInterceptor(customLoggingInterceptor);
         }
         return okhttpClient.build();
     }

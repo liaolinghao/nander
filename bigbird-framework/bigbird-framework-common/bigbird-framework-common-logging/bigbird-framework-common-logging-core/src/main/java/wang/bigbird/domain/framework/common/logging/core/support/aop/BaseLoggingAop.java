@@ -14,7 +14,6 @@ package wang.bigbird.domain.framework.common.logging.core.support.aop;
 
 import cn.hutool.core.collection.CollectionUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -24,6 +23,7 @@ import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import wang.bigbird.domain.framework.common.logging.core.base.enums.LogLevelEnum;
 import wang.bigbird.domain.framework.common.logging.core.domain.pojo.ExcludeWrapper;
 import wang.bigbird.domain.framework.core.base.constant.CommonConstants;
+import wang.bigbird.domain.framework.core.base.util.StringUtils;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -246,7 +246,7 @@ public abstract class BaseLoggingAop {
         } else {
             paramAndValueString = String.join(CommonConstants.COMMA, paramAndValues);
         }
-        return sliceStringBySerializeLength(paramAndValueString);
+        return StringUtils.sliceStringBySerializeLength(paramAndValueString, getSerializeLength());
     }
 
 
@@ -263,23 +263,8 @@ public abstract class BaseLoggingAop {
                 resultJson = json;
             }
         }
-        return sliceStringBySerializeLength(resultJson);
+        return StringUtils.sliceStringBySerializeLength(resultJson, getSerializeLength());
     }
-
-
-    /**
-     * 截断字符串
-     *
-     * @return 返回结果字符串
-     */
-    private String sliceStringBySerializeLength(String s) {
-        Integer serializeLength = getSerializeLength();
-        if (null != serializeLength && serializeLength > 0) {
-            return StringUtils.substring(s, 0, serializeLength);
-        }
-        return s;
-    }
-
 
     /**
      * 序列化

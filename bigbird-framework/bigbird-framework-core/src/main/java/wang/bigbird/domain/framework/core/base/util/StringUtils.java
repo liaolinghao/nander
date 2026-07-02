@@ -2090,4 +2090,18 @@ public class StringUtils {
         return "";
     }
 
+    /**
+     * 截断字符串
+     *
+     * @param str             原始字符串
+     * @param serializeLength 序列化长度，为空或者0代表不限制
+     * @return 截断后字符串
+     */
+    public static String sliceStringBySerializeLength(String str, Integer serializeLength) {
+        if (null != serializeLength && serializeLength > 0) {
+            return org.apache.commons.lang3.StringUtils.substring(str, 0, serializeLength);
+        }
+        return str;
+    }
+
 }
