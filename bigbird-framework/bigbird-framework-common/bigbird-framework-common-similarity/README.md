@@ -2,34 +2,22 @@
 
 本组件用于文本相似度计算，提供如下类型服务：
 
-数字签名：MD5、SHA1、SHA_256、SHA_512、SM3
+词语相似度计算：词林相似度、知网概念相似度、拼音相似度、字面相似度
 
-数字加解密：简单加解密、对称加解密AES、非对称加解密RSA、国密加解密SM4、数字信封加解密
+短语相似度计算：莱文斯坦归一化相似度、
+
+句子相似度计算：
+
+段落相似度计算：
 
 ```
-// 签名服务
+// 词语相似度计算服务
 @Autowired
-private ISignService signService;
+private IWordSimilarityService wordSimilarityService;
 
-// 简单加密解密服务
-@Autowired
-private ISimpleCryptoService simpleCryptoService;
 
-// AES对称加密解密服务
-@Autowired
-private IAesCryptoService aesCryptoService;
 
-// RSA非对称加密解密服务
-@Autowired
-private IRsaCryptoService rsaCryptoService;
 
-// 国密SM4加密解密服务
-@Autowired
-private ISm4CryptoService sm4CryptoService;
-
-// 数字信封加密解密服务
-@Autowired
-private IEnvelopeCryptoService envelopeCryptoService;
 ```
 
 ## 配置

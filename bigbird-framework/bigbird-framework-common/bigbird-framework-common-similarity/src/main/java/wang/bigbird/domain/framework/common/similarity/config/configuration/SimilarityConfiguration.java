@@ -54,21 +54,21 @@ public class SimilarityConfiguration {
     }
 
     /**
+     * 知网概念相似度策略
+     */
+    @Bean
+    @ConditionalOnMissingBean(ConceptSimilarityStrategy.class)
+    public ConceptSimilarityStrategy conceptSimilarityStrategy() {
+        return new ConceptSimilarityStrategy();
+    }
+
+    /**
      * 拼音相似度策略
      */
     @Bean
     @ConditionalOnMissingBean(PinyinSimilarityStrategy.class)
     public PinyinSimilarityStrategy pinyinSimilarityStrategy() {
         return new PinyinSimilarityStrategy();
-    }
-
-    /**
-     * 概念相似度策略
-     */
-    @Bean
-    @ConditionalOnMissingBean(ConceptSimilarityStrategy.class)
-    public ConceptSimilarityStrategy conceptSimilarityStrategy() {
-        return new ConceptSimilarityStrategy();
     }
 
     /**
@@ -92,8 +92,8 @@ public class SimilarityConfiguration {
             CharacterSimilarityStrategy characterSimilarityStrategy) {
         List<ISimilarityStrategy> strategies = Arrays.asList(
                 cilinStrategy,
-                pinyinStrategy,
                 conceptStrategy,
+                pinyinStrategy,
                 characterSimilarityStrategy
         );
         return new WordSimilarityServiceImpl(strategies);

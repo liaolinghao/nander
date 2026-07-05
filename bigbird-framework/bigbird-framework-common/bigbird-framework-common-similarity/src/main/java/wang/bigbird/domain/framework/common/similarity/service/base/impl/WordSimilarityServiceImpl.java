@@ -44,7 +44,7 @@ public class WordSimilarityServiceImpl implements IWordSimilarityService {
         for (ISimilarityStrategy strategy : strategyList) {
             this.strategies.put(strategy.getAlgorithm(), strategy);
         }
-        log.info("Similarity service initialized, {} algorithms registered", strategies.size());
+        log.info("WordSimilarity service initialized, {} algorithms registered", strategies.size());
     }
 
     @Override
