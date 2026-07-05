@@ -559,13 +559,9 @@ public class CollectionUtils {
     public static <E> Set<E> intersect(Set<E> set1, Set<E> set2) {
         Assert.notNull(set1, "The parameter set1 is null.");
         Assert.notNull(set2, "The parameter set2 is null.");
-        Set<E> set = new HashSet<>();
-        for (E element : set1) {
-            if (set2.contains(element)) {
-                set.add(element);
-            }
-        }
-        return set;
+        Set<E> inter = new HashSet<>(set1);
+        inter.retainAll(set2);
+        return inter;
     }
 
     /**
@@ -579,10 +575,9 @@ public class CollectionUtils {
     public static <E> Set<E> union(Set<E> set1, Set<E> set2) {
         Assert.notNull(set1, "The parameter set1 is null.");
         Assert.notNull(set2, "The parameter set2 is null.");
-        Set<E> set = new HashSet<>();
-        set.addAll(set1);
-        set.addAll(set2);
-        return set;
+        Set<E> union = new HashSet<>(set1);
+        union.addAll(set2);
+        return union;
     }
 
     /**
@@ -596,13 +591,9 @@ public class CollectionUtils {
     public static <E> Set<E> minus(Set<E> set1, Set<E> set2) {
         Assert.notNull(set1, "The parameter set1 is null.");
         Assert.notNull(set2, "The parameter set2 is null.");
-        Set<E> set = new HashSet<>();
-        for (E element : set1) {
-            if (!set2.contains(element)) {
-                set.add(element);
-            }
-        }
-        return set;
+        Set<E> minus = new HashSet<>(set1);
+        minus.removeAll(set2);
+        return minus;
     }
 
     /**
