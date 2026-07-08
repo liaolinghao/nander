@@ -50,5 +50,13 @@ public class SimilarityProperties {
      * 词频统计输出路径
      */
     public static String StatisticsResultPath = "data/WordFrequencyStatistics-Result.txt";
+    /**
+     * 停用词典路径
+     */
+    public static String StopWordPath = "stop-word.txt";
+    /**
+     * 白名单词典路径
+     */
+    public static String WhiteWordPath = "white-word.txt";
 
 }

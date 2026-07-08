@@ -30,16 +30,16 @@ public enum WordSimilarityAlgorithmEnum implements ValuedEnum<String> {
     CILIN("词林相似度"),
 
     /**
+     * 概念相似度（基于知网概念层级）
+     * 适用于概念相关的词语比较
+     */
+    CONCEPT("知网概念相似度"),
+
+    /**
      * 拼音相似度（基于拼音匹配）
      * 适用于拼音相同的词语比较
      */
     PINYIN("拼音相似度"),
-
-    /**
-     * 概念相似度（基于概念层级）
-     * 适用于概念相关的词语比较
-     */
-    CONCEPT("概念相似度"),
 
     /**
      * 字面相似度（基于字符匹配）
