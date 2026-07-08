@@ -101,4 +101,35 @@ public abstract class AbstractServiceImpl<M extends BaseMapper<T>, T> extends MP
         return result;
     }
 
+    /**
+     * 分批查询ID集合后再合并
+     *
+     * @param idSet          待查询ID集合
+     * @param batchSize      每批查询数量
+     * @param batchQueryFunc 单批ID查询回调：传入一批ID集合，返回该批数据
+     * @return 数据集
+     */
+    public static <T> List<T> batchQuery(
+            Set<Long> idSet,
+            int batchSize,
+            Function<Set<Long>, List<T>> batchQueryFunc
+    ) {
+        if (CollectionUtils.isEmpty(idSet)) {
+            return new ArrayList<>();
+        }
+        // Set 转 List 分片
+        List<Long> idList = new ArrayList<>(idSet);
+        List<List<Long>> batchGroups = Lists.partition(idList, batchSize);
+        List<T> result = new ArrayList<>(idSet.size());
+        for (List<Long> batchIds : batchGroups) {
+            Set<Long> batchIdSet = Sets.newHashSet(batchIds);
+            List<T> batchDataList = batchQueryFunc.apply(batchIdSet);
+            if (CollectionUtils.isEmpty(batchDataList)) {
+                continue;
+            }
+            result.addAll(batchDataList);
+        }
+        return result;
+    }
+
 }
