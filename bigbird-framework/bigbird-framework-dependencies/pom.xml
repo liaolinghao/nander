@@ -142,6 +142,8 @@
         <pinyin4j.version>2.5.1</pinyin4j.version>
         <!--websocket客户端工具-->
         <websocket.version>1.5.3</websocket.version>
+        <!--本地内存缓存框架-->
+        <ehcache.version>2.10.9.2</ehcache.version>
         <!--分词工具-->
         <hanlp.version>portable-1.3.4</hanlp.version>
         <ikanalyzer.version>2012_u6</ikanalyzer.version>
@@ -1265,6 +1267,11 @@
                 <groupId>org.java-websocket</groupId>
                 <artifactId>Java-WebSocket</artifactId>
                 <version>${websocket.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.sf.ehcache</groupId>
+                <artifactId>ehcache</artifactId>
+                <version>${ehcache.version}</version>
             </dependency>
             <!-- 做 ES/Solr 搜索优先选 IK；做 NLP（分词 + 词性 + 实体 + 新词）优先选 HanLP -->
             <!--全能 NLP 工具包，纯 Java 零依赖，分词 + 词性 + 实体 + 关键词 + 简繁 + 拼音，精度更高-->
