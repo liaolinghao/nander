@@ -35,7 +35,8 @@ import java.util.Map;
  * 如果只是做对象拷贝，然后直接抛出这个对象给前台使用是没有问题的，
  * 但是如果这个通过拷贝得到的对象要在代码中进行业务流转，
  * 则会报java.lang.ClassCastException 类强转异常
- * 因此，如果存在对象之间list属性的拷贝，建议采用BeanMapperUtils工具类
+ * 因此，如果存在对象之间list属性的拷贝，建议采用BeanMapperUtils工具类，
+ * 否则，采用该类最合适，因为该类的拷贝性能是BeanMapperUtils的几十～上百倍。
  *
  * @author Bigbird
  */
