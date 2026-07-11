@@ -38,6 +38,12 @@
             <groupId>com.github.ben-manes.caffeine</groupId>
             <artifactId>caffeine</artifactId>
         </dependency>
+        <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <!--本依赖仅当前模块编译、测试时需要，不会向下传递给子工程 / 依赖当前工程的第三方项目-->
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
 </project>
