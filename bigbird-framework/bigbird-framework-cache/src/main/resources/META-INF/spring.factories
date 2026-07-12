@@ -1,2 +1,4 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-wang.bigbird.domain.framework.cache.config.configuration.CacheConfiguration
+wang.bigbird.domain.framework.cache.config.configuration.CacheConfiguration,\
+wang.bigbird.domain.framework.cache.support.cacheasmulti.cache.config.EnhancedCacheAutoConfiguration,\
+wang.bigbird.domain.framework.cache.support.redis.RedisCacheCustomizerAutoConfiguration
