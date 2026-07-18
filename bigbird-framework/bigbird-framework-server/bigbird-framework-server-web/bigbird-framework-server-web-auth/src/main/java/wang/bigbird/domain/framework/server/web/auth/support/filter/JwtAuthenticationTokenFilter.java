@@ -23,13 +23,13 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import wang.bigbird.domain.framework.core.base.util.JsonUtils;
 import wang.bigbird.domain.framework.core.base.util.StringUtils;
+import wang.bigbird.domain.framework.server.core.support.holder.SpringContextHolder;
 import wang.bigbird.domain.framework.server.core.support.response.IBaseResponseStatus;
 import wang.bigbird.domain.framework.server.core.support.response.RespResult;
 import wang.bigbird.domain.framework.server.web.auth.config.property.JwtSecurityProperties;
 import wang.bigbird.domain.framework.server.web.auth.exception.DisposedJwtException;
 import wang.bigbird.domain.framework.server.web.auth.exception.KickOffJwtException;
 import wang.bigbird.domain.framework.server.web.auth.support.processor.JwtSecurityProcessor;
-import wang.bigbird.domain.framework.server.web.core.support.holder.SpringContextHolder;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;

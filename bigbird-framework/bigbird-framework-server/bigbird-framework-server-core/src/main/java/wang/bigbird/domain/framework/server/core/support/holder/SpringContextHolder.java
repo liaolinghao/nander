@@ -10,12 +10,15 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-package wang.bigbird.domain.framework.server.web.core.support.holder;
+package wang.bigbird.domain.framework.server.core.support.holder;
 
+import com.google.common.collect.Maps;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.properties.bind.Binder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.Annotation;
@@ -117,6 +120,23 @@ public class SpringContextHolder implements ApplicationContextAware {
     public static <T> T getConfigValue(String key, Class<T> type) {
         assertApplicationContext();
         return applicationContext.getEnvironment().getProperty(key, type);
+    }
+
+    /**
+     * 根据配置前缀，批量读取一组配置转为Map
+     *
+     * @param prefix 配置前缀，例：encrypt.config
+     * @return key=后缀, value=配置值
+     */
+    public static Map<String, String> getConfigMap(String prefix) {
+        assertApplicationContext();
+        Environment environment = applicationContext.getEnvironment();
+        Map<String, String> resultMap = Maps.newHashMapWithExpectedSize(3);
+        // Spring标准Binder绑定，自动提取前缀下所有属性
+        Binder binder = Binder.get(environment);
+        Map<String, String> bindMap = binder.bind(prefix, Map.class).orElse(Maps.newHashMapWithExpectedSize(0));
+        resultMap.putAll(bindMap);
+        return resultMap;
     }
 
     /**

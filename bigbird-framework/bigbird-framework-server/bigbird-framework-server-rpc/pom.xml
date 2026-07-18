@@ -15,6 +15,10 @@
     <name>Bigbird Framework :: Server :: Rpc</name>
     <description>鸟域开发框架 :: Server构件 :: Rpc构件</description>
 
+    <modules>
+        <module>bigbird-framework-server-rpc-core</module>
+    </modules>
+
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
