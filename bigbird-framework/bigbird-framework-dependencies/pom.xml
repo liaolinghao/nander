@@ -361,7 +361,7 @@
             <!--bigbird-framework-server-common-->
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>bigbird-framework-server-common-retrofit</artifactId>
+                <artifactId>bigbird-framework-server-common-ban</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -372,6 +372,11 @@
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>bigbird-framework-server-common-quartz</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>bigbird-framework-server-common-retrofit</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!--bigbird-framework-server-web-->
