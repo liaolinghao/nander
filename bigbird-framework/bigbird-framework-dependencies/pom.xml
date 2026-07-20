@@ -24,7 +24,7 @@
         <spring-cloud-alibaba.version>2.2.6.RELEASE</spring-cloud-alibaba.version>
         <spring-cloud-context.version>2.2.6.RELEASE</spring-cloud-context.version>
         <spring-context-support.version>1.0.11</spring-context-support.version>
-        <shenyu.version>2.4.3</shenyu.version>
+        <shenyu.version>2.6.1</shenyu.version>
         <dubbo.version>2.7.23</dubbo.version>
         <nacos-config.version>0.2.12</nacos-config.version>
         <nacos-client.version>2.5.2</nacos-client.version>
@@ -463,33 +463,9 @@
                 <scope>import</scope>
             </dependency>
             <!--ShenYu网关版本控制-->
-            <!--ShenYu网关核心依赖-->
-            <dependency>
-                <groupId>org.apache.shenyu</groupId>
-                <artifactId>shenyu-spring-boot-starter-gateway</artifactId>
-                <version>${shenyu.version}</version>
-            </dependency>
             <dependency>
                 <groupId>org.apache.shenyu</groupId>
                 <artifactId>shenyu-spring-boot-starter-client-springcloud</artifactId>
-                <version>${shenyu.version}</version>
-            </dependency>
-            <!--注册中心依赖（以 Nacos 为例，需与 ShenYu 兼容）-->
-            <dependency>
-                <groupId>org.apache.shenyu</groupId>
-                <artifactId>shenyu-register-center-nacos</artifactId>
-                <version>${shenyu.version}</version>
-            </dependency>
-            <!--配置中心依赖（如需使用 Nacos 配置中心）-->
-            <dependency>
-                <groupId>org.apache.shenyu</groupId>
-                <artifactId>shenyu-config-center-nacos</artifactId>
-                <version>${shenyu.version}</version>
-            </dependency>
-            <!--可选：Admin 控制台依赖（如需自部署控制台）-->
-            <dependency>
-                <groupId>org.apache.shenyu</groupId>
-                <artifactId>shenyu-admin-server</artifactId>
                 <version>${shenyu.version}</version>
             </dependency>
             <!--dubbo 版本控制-->

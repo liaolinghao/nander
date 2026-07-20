@@ -31,11 +31,11 @@ public class TimeTracer {
     /**
      * 默认开启开关配置key
      */
-    public static final String DEFAULT_SWITCH_KEY = "trace.watch.enable";
+    public static final String DEFAULT_SWITCH_KEY = "bigbird.server.core.tracer.enable";
     /**
      * 默认慢阈值配置key
      */
-    public static final String DEFAULT_THRESHOLD_KEY = "trace.watch.threshold.ms";
+    public static final String DEFAULT_THRESHOLD_KEY = "bigbird.server.core.tracer.threshold.ms";
     /**
      * 默认慢阀值时间
      */

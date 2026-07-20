@@ -1,6 +1,6 @@
-# WEB构件验证码模块
+# SERVER统一WEB能力构件验证码模块
 
-本构件属于统一WEB框架的验证码模块，提供以下功能：
+本构件属于SERVER统一WEB能力的验证码模块，提供以下功能：
 
 1、提供验证码检查，可用于登录验证，修改重要信息等需要验证码的场景。
 
@@ -334,4 +334,4 @@ private ICaptchaService captchaService;
 
 ## 构件依赖
 
-日志组件、Redis构件、消息构件。
+日志组件、Redis构件、消息构件、SERVER核心能力构件。

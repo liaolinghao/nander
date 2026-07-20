@@ -1,6 +1,6 @@
-# WEB构件授权模块
+# SERVER统一WEB能力构件授权模块
 
-本构件属于统一WEB框架的授权模块，提供以下功能：
+本构件属于SERVER统一WEB能力的授权模块，提供以下功能：
 
 1、提供JWT创建与解析功能。
 
@@ -187,4 +187,4 @@ private JwtSecurityProcessor jwtSecurityProcessor;
 
 ## 构件依赖
 
-日志组件、Redis构件。
+日志组件、Redis构件、SERVER核心能力构件。

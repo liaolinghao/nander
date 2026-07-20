@@ -1,8 +1,8 @@
-# WEB构件核心模块
+# SERVER统一WEB能力构件核心模块
 
-本构件属于统一WEB框架的核心模块，提供以下功能：
+本构件属于SERVER统一WEB能力的核心模块，提供以下功能：
 
-1、约定了时间为null的判断机制、线程池策略、跨域访问策略、Swagger配置、统一异常响应（见IBaseResponseStatus）和密码验证策略配置（见PasswordPolicy，弱密码库要求采用全小写录入）。
+1、约定了时间为null的判断机制、线程池策略、跨域访问策略、Swagger配置和密码验证策略配置（见PasswordPolicy，弱密码库要求采用全小写录入）。
 
 2、提供了WEB服务常用的REST功能接口。
 
@@ -721,4 +721,4 @@ doc,docx,xls,xlsx,ppt,pptx,pdf,txt,md,xml
 
 ## 构件依赖
 
-日志组件、加解密组件、PDF构件。
+日志组件、加解密组件、PDF构件、SERVER核心能力构件。

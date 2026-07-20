@@ -16,4 +16,4 @@ private ITaskSchedulingService taskSchedulingService;
 
 ## 构件依赖
 
-日志组件、MybatisPlus构件。
+日志组件、MybatisPlus构件、SERVER核心能力构件。

@@ -14,4 +14,4 @@ private IFrequencyCheckerService frequencyCheckerService;
 
 ## 构件依赖
 
-日志组件、Redis构件。
+日志组件、Redis构件、SERVER核心能力构件。

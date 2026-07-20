@@ -1,6 +1,6 @@
-# WEB构件WS模块
+# SERVER统一WEB能力构件WS模块
 
-本构件属于统一WEB框架的WS模块，提供以下功能：
+本构件属于SERVER统一WEB能力的WS模块，提供以下功能：
 
 1、提供支持全双工透传的客户端与服务端。
 
@@ -44,4 +44,4 @@ public class AsrWsRelayServer extends AbstractWsRelayServer {
 
 ## 构件依赖
 
-日志组件。
+日志组件、SERVER核心能力构件。
