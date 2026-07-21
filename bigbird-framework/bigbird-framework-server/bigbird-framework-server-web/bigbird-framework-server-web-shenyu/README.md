@@ -73,6 +73,35 @@ management:
   endpoint:
     health:
       show-details: always
+      
+nacos:
+  config:
+    bootstrap:
+      # 启用预加载（核心配置）
+      enable: true
+      # 核心：打印 Bootstrap 阶段详细日志，必须启用 Bootstrap 模式，logEnable 才生效
+      logEnable: true
+    server-addr: ${NACOS_ADDRESS:127.0.0.1:8848}
+    # Nacos 用户名（若开启认证）
+    username: ${NACOS_USERNAME:nacos}
+    # Nacos 密码（若开启认证）
+    password: ${NACOS_PWD:nacos}
+    # 兼容 Nacos 2.x 鉴权的备用参数
+    accessKey: ${NACOS_USERNAME:nacos}
+    # 兼容 Nacos 2.x 鉴权的备用参数
+    secretKey: ${NACOS_PWD:nacos}
+    # 命名空间ID
+    namespace: ${NACOS_NAMESPACE:}
+    # 配置组
+    group: ${NACOS_GROUP:xxx-xxx}
+    # Nacos配置Data ID
+    data-id: xxx-xxx.yml
+    #后缀名，只支持properties和yaml类型
+    type: yaml
+    #启用远程同步配置
+    enable-remote-sync-config: true
+    #开启nacos自动刷新
+    auto-refresh: true
 ```
 
 ## 构件依赖

@@ -47,7 +47,7 @@
             </exclusions>
         </dependency>
         <!-- Dubbo Spring Boot 集成 -->
-        <!--Dubbo Spring Boot Starter 核心依赖-->
+        <!-- Dubbo Spring Boot Starter 核心依赖 -->
         <dependency>
             <groupId>org.apache.dubbo</groupId>
             <artifactId>dubbo-spring-boot-starter</artifactId>
@@ -56,16 +56,17 @@
             <groupId>org.apache.dubbo</groupId>
             <artifactId>dubbo-serialization-kryo</artifactId>
         </dependency>
-        <!--可选：Dubbo 配置处理器（支持 application.yml 配置自动提示）-->
+        <!-- 可选：Dubbo 配置处理器（支持 application.yml 配置自动提示） -->
         <dependency>
             <groupId>org.apache.dubbo</groupId>
             <artifactId>dubbo-spring-boot-actuator</artifactId>
         </dependency>
-        <!--注册中心依赖（以 Nacos 为例，根据实际使用的注册中心选择）-->
+        <!-- 注册中心依赖（以 Nacos 为例，根据实际使用的注册中心选择） -->
         <dependency>
             <groupId>org.apache.dubbo</groupId>
             <artifactId>dubbo-registry-nacos</artifactId>
         </dependency>
+        <!-- Nacos 操控客户端 -->
         <dependency>
             <groupId>com.alibaba.nacos</groupId>
             <artifactId>nacos-client</artifactId>
