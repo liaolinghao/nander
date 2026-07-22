@@ -172,10 +172,10 @@ nacos:
     enable-remote-sync-config: true
     #开启nacos自动刷新
     auto-refresh: true
-  # 注册中心专用配置
+  # 注册中心专用配置，供自定义Nacos注册器使用
   discovery:
     server-addr: ${NACOS_ADDRESS:127.0.0.1:8848}
-    # 注册到Nacos的服务名，Dubbo会复用
+    # 注册到Nacos的服务名
     service-name: xx-service
     group: ${NACOS_GROUP:xx-platform}
     namespace: ${NACOS_NAMESPACE:}
