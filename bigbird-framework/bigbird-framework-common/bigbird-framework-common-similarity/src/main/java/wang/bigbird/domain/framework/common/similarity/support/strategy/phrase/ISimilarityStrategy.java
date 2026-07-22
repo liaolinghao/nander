@@ -29,7 +29,7 @@ public interface ISimilarityStrategy {
     PhraseSimilarityAlgorithmEnum getAlgorithm();
 
     /**
-     * 计算两个词语的相似度
+     * 计算两个短语的相似度
      *
      * @param targetPhrase    目标短语
      * @param candidatePhrase 候选短语
