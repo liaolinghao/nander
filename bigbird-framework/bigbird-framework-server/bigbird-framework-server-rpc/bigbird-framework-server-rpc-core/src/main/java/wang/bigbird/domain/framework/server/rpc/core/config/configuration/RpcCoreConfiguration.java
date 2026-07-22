@@ -35,9 +35,9 @@ import java.util.Properties;
 @Configuration
 public class RpcCoreConfiguration {
 
-    @Value("${nacos.discovery.server-addr}")
+    @Value("${nacos.discovery.server-addr:}")
     private String serverAddr;
-    @Value("${nacos.discovery.namespace}")
+    @Value("${nacos.discovery.namespace:}")
     private String namespace;
     @Value("${nacos.discovery.username:nacos}")
     private String username;
@@ -50,6 +50,7 @@ public class RpcCoreConfiguration {
     }
 
     @Bean(destroyMethod = "shutDown")
+    @ConditionalOnProperty(prefix = "nacos.discovery", name = "server-addr", matchIfMissing = false)
     public NamingService namingService() throws NacosException {
         Properties properties = new Properties();
         properties.put("serverAddr", serverAddr);
