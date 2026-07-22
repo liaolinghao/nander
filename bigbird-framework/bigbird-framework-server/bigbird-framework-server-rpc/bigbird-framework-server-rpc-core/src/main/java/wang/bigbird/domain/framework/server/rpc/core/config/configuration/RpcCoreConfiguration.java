@@ -12,11 +12,18 @@
  */
 package wang.bigbird.domain.framework.server.rpc.core.config.configuration;
 
+import com.alibaba.nacos.api.NacosFactory;
+import com.alibaba.nacos.api.exception.NacosException;
+import com.alibaba.nacos.api.naming.NamingService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
+import java.util.Properties;
 
 /**
  * RPC框架配置
@@ -28,9 +35,31 @@ import javax.annotation.PostConstruct;
 @Configuration
 public class RpcCoreConfiguration {
 
+    @Value("${nacos.discovery.server-addr}")
+    private String serverAddr;
+    @Value("${nacos.discovery.namespace}")
+    private String namespace;
+    @Value("${nacos.discovery.username:nacos}")
+    private String username;
+    @Value("${nacos.discovery.password:nacos}")
+    private String password;
+
     @PostConstruct
     public void init() {
         log.info("init core rpc framework.");
+    }
+
+    @Bean(destroyMethod = "shutDown")
+    public NamingService namingService() throws NacosException {
+        Properties properties = new Properties();
+        properties.put("serverAddr", serverAddr);
+        properties.put("namespace", namespace);
+        // Nacos 认证配置（若未修改默认用户名密码，可省略，此处兼容配置）
+        if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password)) {
+            properties.put("username", username);
+            properties.put("password", password);
+        }
+        return NacosFactory.createNamingService(properties);
     }
 
 }
