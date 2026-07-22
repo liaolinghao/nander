@@ -14,10 +14,12 @@ package wang.bigbird.domain.framework.id.config.configuration;
 
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import wang.bigbird.domain.framework.id.config.property.IdProperties;
+import wang.bigbird.domain.framework.id.service.base.IPidNameLoaderService;
 import wang.bigbird.domain.framework.id.support.assigner.*;
 import wang.bigbird.domain.framework.id.support.creator.IdCreator;
 import wang.bigbird.domain.framework.id.support.generator.IdGenerator;
@@ -39,6 +41,9 @@ import javax.annotation.PostConstruct;
 @MapperScan("wang.bigbird.domain.framework.id.dao")
 public class IdConfiguration {
 
+    @Autowired(required = false)
+    private IPidNameLoaderService pidNameLoaderService;
+
     @PostConstruct
     public void init() {
         log.info("Init id framework.");
@@ -50,9 +55,9 @@ public class IdConfiguration {
             case db:
                 return new DisposableWorkerIdAssigner();
             case redis:
-                return new RedisWorkerIdAssigner(idProperties.getWorkerId().getInterval(), idProperties.getWorkerId().getPidHome(), idProperties.getWorkerId().getPidPort());
+                return new RedisWorkerIdAssigner(idProperties.getWorkerId().getInterval(), idProperties.getWorkerId().getPidHome(), idProperties.getWorkerId().getPidPort(), pidNameLoaderService);
             case zk:
-                return new ZkWorkerIdAssigner(idProperties.getWorkerId().getInterval(), idProperties.getWorkerId().getPidHome(), idProperties.getWorkerId().getPidPort());
+                return new ZkWorkerIdAssigner(idProperties.getWorkerId().getInterval(), idProperties.getWorkerId().getPidHome(), idProperties.getWorkerId().getPidPort(), pidNameLoaderService);
             default:
                 return new ZeroWorkerIdAssigner();
         }

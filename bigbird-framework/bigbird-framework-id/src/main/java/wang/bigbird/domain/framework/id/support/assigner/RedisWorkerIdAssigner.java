@@ -18,6 +18,7 @@ import wang.bigbird.domain.framework.core.base.util.CollectionUtils;
 import wang.bigbird.domain.framework.core.base.util.StringUtils;
 import wang.bigbird.domain.framework.data.redis.service.base.IRedisService;
 import wang.bigbird.domain.framework.data.redis.service.base.IRedisSortedSetService;
+import wang.bigbird.domain.framework.id.service.base.IPidNameLoaderService;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -49,8 +50,8 @@ public class RedisWorkerIdAssigner extends AbstractWorkerIdAssigner {
     @Autowired
     private IRedisSortedSetService redisSortedSetService;
 
-    public RedisWorkerIdAssigner(Long interval, String pidHome, Integer pidPort) {
-        super(interval, pidHome, pidPort);
+    public RedisWorkerIdAssigner(Long interval, String pidHome, Integer pidPort, IPidNameLoaderService pidNameLoaderService) {
+        super(interval, pidHome, pidPort, pidNameLoaderService);
     }
 
     @Override

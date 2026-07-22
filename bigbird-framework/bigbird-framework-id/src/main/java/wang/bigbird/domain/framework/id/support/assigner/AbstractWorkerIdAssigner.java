@@ -16,6 +16,7 @@ import wang.bigbird.domain.framework.core.base.tool.NamingThreadFactory;
 import wang.bigbird.domain.framework.core.base.tool.SystemClock;
 import wang.bigbird.domain.framework.id.base.util.WorkerIdUtils;
 import wang.bigbird.domain.framework.id.exception.IdGenerateException;
+import wang.bigbird.domain.framework.id.service.base.IPidNameLoaderService;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
@@ -66,10 +67,13 @@ public abstract class AbstractWorkerIdAssigner implements WorkerIdAssigner {
 
     protected Long workerId;
 
-    public AbstractWorkerIdAssigner(Long interval, String pidHome, Integer pidPort) {
+    private IPidNameLoaderService pidNameLoaderService;
+
+    public AbstractWorkerIdAssigner(Long interval, String pidHome, Integer pidPort, IPidNameLoaderService pidNameLoaderService) {
         this.interval = interval;
         this.pidHome = pidHome;
         this.pidPort = pidPort;
+        this.pidNameLoaderService = pidNameLoaderService;
     }
 
     /**
@@ -84,6 +88,11 @@ public abstract class AbstractWorkerIdAssigner implements WorkerIdAssigner {
     public void init() throws Exception {
         try {
             initEnv();
+            if (pidNameLoaderService == null) {
+                pidName = WorkerIdUtils.getPidName(pidPort, socket);
+            } else {
+                pidName = pidNameLoaderService.loadPidName();
+            }
             workerId = loadWorkerId();
             long timestamp = SystemClock.now();
             long lastTimestamp = lastTime();
@@ -134,7 +143,6 @@ public abstract class AbstractWorkerIdAssigner implements WorkerIdAssigner {
      * @return
      */
     private Long loadWorkerIdFromLocalFile() {
-        pidName = WorkerIdUtils.getPidName(pidPort, socket);
         return WorkerIdUtils.getWorkerId(pidHome, pidName);
     }
 

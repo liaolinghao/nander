@@ -18,6 +18,7 @@ import wang.bigbird.domain.framework.core.base.tool.SystemClock;
 import wang.bigbird.domain.framework.core.base.util.CollectionUtils;
 import wang.bigbird.domain.framework.core.base.util.StringUtils;
 import wang.bigbird.domain.framework.data.zookeeper.service.base.IZookeeperService;
+import wang.bigbird.domain.framework.id.service.base.IPidNameLoaderService;
 
 import java.util.List;
 
@@ -49,8 +50,8 @@ public class ZkWorkerIdAssigner extends AbstractWorkerIdAssigner {
     @Autowired
     private IZookeeperService zookeeperService;
 
-    public ZkWorkerIdAssigner(Long interval, String pidHome, Integer pidPort) {
-        super(interval, pidHome, pidPort);
+    public ZkWorkerIdAssigner(Long interval, String pidHome, Integer pidPort, IPidNameLoaderService pidNameLoaderService) {
+        super(interval, pidHome, pidPort, pidNameLoaderService);
     }
 
     @Override
