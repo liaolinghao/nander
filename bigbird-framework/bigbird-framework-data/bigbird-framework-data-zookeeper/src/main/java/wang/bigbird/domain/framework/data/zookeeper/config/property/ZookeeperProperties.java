@@ -39,6 +39,11 @@ import static wang.bigbird.domain.framework.data.zookeeper.base.enums.RetryPolic
 public class ZookeeperProperties {
 
     /**
+     * 是否开启
+     */
+    private boolean enable = true;
+
+    /**
      * 节点地址，逗号分隔
      */
     private String addresses = "127.0.0.1:2181";

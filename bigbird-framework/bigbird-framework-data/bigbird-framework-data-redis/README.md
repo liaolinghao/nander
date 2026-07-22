@@ -44,6 +44,7 @@ private IRedisPubSubService redisPubSubService;
 bigbird:
   data:
     redis:
+      enable: # 开启开关
       key: # 加解密密钥
       addresses:  # 节点地址，逗号分隔
       password: # 密码

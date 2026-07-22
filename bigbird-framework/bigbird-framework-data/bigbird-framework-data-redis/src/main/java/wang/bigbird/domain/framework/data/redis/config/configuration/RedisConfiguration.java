@@ -21,11 +21,11 @@ import org.redisson.config.Config;
 import org.redisson.config.SingleServerConfig;
 import org.redisson.spring.data.connection.RedissonConnectionFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
-
 import org.springframework.data.redis.serializer.RedisSerializer;
 import wang.bigbird.domain.framework.data.redis.base.helper.PropertiesHelper;
 import wang.bigbird.domain.framework.data.redis.config.property.RedisProperties;
@@ -44,6 +44,12 @@ import java.util.stream.Collectors;
 @Configuration
 @Slf4j
 @ComponentScan(basePackages = "wang.bigbird.domain.framework.data.redis")
+@ConditionalOnProperty(
+        prefix = "bigbird.data.redis",
+        name = "enable",
+        havingValue = "true",
+        matchIfMissing = true
+)
 public class RedisConfiguration {
 
     @PostConstruct

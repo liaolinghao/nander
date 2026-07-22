@@ -13,6 +13,7 @@
 package wang.bigbird.domain.framework.data.redis.config.property;
 
 import lombok.Data;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -25,6 +26,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "bigbird.data.redis")
 public class RedisProperties {
+
+    /**
+     * 是否开启
+     */
+    private boolean enable = true;
 
     /**
      * 加解密密钥

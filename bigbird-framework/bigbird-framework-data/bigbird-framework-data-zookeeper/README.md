@@ -18,6 +18,7 @@ private ZookeeperService zookeeperService;
 bigbird:
   data:
     zookeeper:
+      enable: # 开启开关
       addresses:  # 节点地址，逗号分隔
       namespace: # 命名空间
       sessionTimeout: # 会话超时时间，单位：毫秒，默认5秒

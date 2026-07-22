@@ -15,6 +15,7 @@ package wang.bigbird.domain.framework.data.zookeeper.config.configuration;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -31,6 +32,12 @@ import javax.annotation.PostConstruct;
 @Configuration
 @Slf4j
 @ComponentScan(basePackages = "wang.bigbird.domain.framework.data.zookeeper")
+@ConditionalOnProperty(
+        prefix = "bigbird.data.zookeeper",
+        name = "enable",
+        havingValue = "true",
+        matchIfMissing = true
+)
 public class ZookeeperConfiguration {
 
     @PostConstruct
