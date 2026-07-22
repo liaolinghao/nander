@@ -2,9 +2,9 @@
 
 本构件属于SERVER统一RPC能力的核心模块，提供以下功能：
 
-1、基于Dubbo对外提供RPC接口服务。
+1、基于Dubbo对外提供RPC接口服务，可提供Dubbo服务地址信息获取功能。
 
-2、集成Nacos为注册和配置中心。
+2、集成Nacos为注册和配置中心，提供往Nacos注册服务元数据功能。
 
 ## 配置
 
@@ -45,7 +45,7 @@ dubbo:
       # Nacos 命名空间 ID（环境隔离，必填）
       namespace: ${NACOS_DUBBO_NAMESPACE:}
       # 服务分组（同一个系统内的服务分组必须一致，否则不能发现服务提供者）
-      group: ${NACOS_DUBBO_GROUP:auth-platform}
+      group: ${NACOS_DUBBO_GROUP:xx-platform}
       # Nacos 用户名（若开启认证）
       username: ${NACOS_USERNAME:nacos}
       # Nacos 密码（若开启认证）
@@ -144,6 +144,7 @@ dubbo:
       token: ${DUBBO_TOKEN:dubbo-token-2026}
       
 nacos:
+  # 配置中心专用配置
   config:
     bootstrap:
       # 启用预加载（核心配置）
@@ -162,7 +163,7 @@ nacos:
     # 命名空间ID
     namespace: ${NACOS_NAMESPACE:}
     # 配置组
-    group: ${NACOS_GROUP:xxx-xxx}
+    group: ${NACOS_GROUP:xx-platform}
     # Nacos配置Data ID
     data-id: xxx-xxx.yml
     #后缀名，只支持properties和yaml类型
@@ -171,6 +172,17 @@ nacos:
     enable-remote-sync-config: true
     #开启nacos自动刷新
     auto-refresh: true
+  # 注册中心专用配置
+  discovery:
+    server-addr: ${NACOS_ADDRESS:127.0.0.1:8848}
+    # 注册到Nacos的服务名，Dubbo会复用
+    service-name: xx-service
+    group: ${NACOS_GROUP:xx-platform}
+    namespace: ${NACOS_NAMESPACE:}
+    # Nacos 用户名（若开启认证）
+    username: ${NACOS_USERNAME:nacos}
+    # Nacos 密码（若开启认证）
+    password: ${NACOS_PWD:nacos}
 ```
 
 ## 构件依赖
