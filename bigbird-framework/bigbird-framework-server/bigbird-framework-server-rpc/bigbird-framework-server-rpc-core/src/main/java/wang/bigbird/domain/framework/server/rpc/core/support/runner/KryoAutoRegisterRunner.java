@@ -12,23 +12,23 @@
  */
 package wang.bigbird.domain.framework.server.rpc.core.support.runner;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.common.serialize.kryo.utils.KryoUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
-import org.springframework.core.type.filter.AnnotationTypeFilter;
+import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.stereotype.Component;
 import wang.bigbird.domain.framework.core.base.tool.pageable.PageData;
 import wang.bigbird.domain.framework.core.base.tool.pageable.param.Order;
 import wang.bigbird.domain.framework.core.base.tool.pageable.param.Pageable;
 import wang.bigbird.domain.framework.server.rpc.core.config.property.RpcProperties;
-import wang.bigbird.domain.framework.server.rpc.core.support.annotation.KryoSerializable;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Kryo注册器，将RPC接口涉及的传输对象进行注册，
@@ -36,6 +36,7 @@ import java.util.Set;
  *
  * @author Bigbird
  */
+@Slf4j
 @Component
 public class KryoAutoRegisterRunner implements CommandLineRunner {
 
@@ -44,11 +45,11 @@ public class KryoAutoRegisterRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // 扫描指定包下带 @KryoSerializable 的类
+        // 扫描指定包下实现了Serializable的类
         ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
-        scanner.addIncludeFilter(new AnnotationTypeFilter(KryoSerializable.class));
-        List<Class<?>> allKryoClasses = new ArrayList<>();
-        // 1. 收集所有匹配类，不立刻注册
+        scanner.addIncludeFilter(new AssignableTypeFilter(Serializable.class));
+        TreeSet<Class<?>> allKryoClasses = new TreeSet<>(Comparator.comparing(Class::getName));
+        // 收集所有匹配类，不立刻注册
         for (String basePackage : rpcProperties.getScanKryoSerializablePackages()) {
             Set<BeanDefinition> candidates = scanner.findCandidateComponents(basePackage);
             for (BeanDefinition bd : candidates) {
@@ -57,13 +58,12 @@ public class KryoAutoRegisterRunner implements CommandLineRunner {
                 allKryoClasses.add(clazz);
             }
         }
-        // 2. 按类全限定名升序排序，全局统一顺序
-        allKryoClasses.sort(Comparator.comparing(Class::getName));
-        // 3. 有序执行注册，所有服务顺序完全一致
+        // 有序执行注册，所有服务顺序完全一致
         for (Class<?> clazz : allKryoClasses) {
+            log.info("register class:{}.", clazz.getName());
             KryoUtils.register(clazz);
         }
-        // 4. 注册分页相关类
+        // 注册分页相关类
         KryoUtils.register(PageData.class);
         KryoUtils.register(Pageable.class);
         KryoUtils.register(Order.class);
