@@ -23,10 +23,12 @@ import org.springframework.stereotype.Component;
 import wang.bigbird.domain.framework.core.base.tool.pageable.PageData;
 import wang.bigbird.domain.framework.core.base.tool.pageable.param.Order;
 import wang.bigbird.domain.framework.core.base.tool.pageable.param.Pageable;
+import wang.bigbird.domain.framework.core.base.util.CollectionUtils;
 import wang.bigbird.domain.framework.server.rpc.core.config.property.RpcProperties;
 
 import java.io.Serializable;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -45,12 +47,16 @@ public class KryoAutoRegisterRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        List<String> scanKryoSerializablePackages = rpcProperties.getScanKryoSerializablePackages();
+        if (CollectionUtils.isEmpty(scanKryoSerializablePackages)) {
+            return;
+        }
         // 扫描指定包下实现了Serializable的类
         ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
         scanner.addIncludeFilter(new AssignableTypeFilter(Serializable.class));
         TreeSet<Class<?>> allKryoClasses = new TreeSet<>(Comparator.comparing(Class::getName));
         // 收集所有匹配类，不立刻注册
-        for (String basePackage : rpcProperties.getScanKryoSerializablePackages()) {
+        for (String basePackage : scanKryoSerializablePackages) {
             Set<BeanDefinition> candidates = scanner.findCandidateComponents(basePackage);
             for (BeanDefinition bd : candidates) {
                 String className = bd.getBeanClassName();
