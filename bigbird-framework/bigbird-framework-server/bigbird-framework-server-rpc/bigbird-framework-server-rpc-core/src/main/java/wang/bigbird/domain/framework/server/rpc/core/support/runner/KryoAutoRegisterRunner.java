@@ -1,3 +1,15 @@
+/*
+ * Copyright (c) 2026 廖凌浩 / 鸟域
+ *
+ * Licensed under the Mulan PSL v2.
+ * You can use this software according to the terms and conditions of the Mulan PSL v2.
+ * You may obtain a copy of Mulan PSL v2 at:
+ *          http://license.coscl.org.cn/MulanPSL2
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PSL v2 for more details.
+ */
 package wang.bigbird.domain.framework.server.rpc.core.support.runner;
 
 import org.apache.dubbo.common.serialize.kryo.utils.KryoUtils;
@@ -7,6 +19,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.stereotype.Component;
+import wang.bigbird.domain.framework.core.base.tool.pageable.PageData;
+import wang.bigbird.domain.framework.core.base.tool.pageable.param.Order;
+import wang.bigbird.domain.framework.core.base.tool.pageable.param.Pageable;
 import wang.bigbird.domain.framework.server.rpc.core.config.property.RpcProperties;
 import wang.bigbird.domain.framework.server.rpc.core.support.annotation.KryoSerializable;
 
@@ -48,6 +63,10 @@ public class KryoAutoRegisterRunner implements CommandLineRunner {
         for (Class<?> clazz : allKryoClasses) {
             KryoUtils.register(clazz);
         }
+        // 4. 注册分页相关类
+        KryoUtils.register(PageData.class);
+        KryoUtils.register(Pageable.class);
+        KryoUtils.register(Order.class);
     }
 
 }
