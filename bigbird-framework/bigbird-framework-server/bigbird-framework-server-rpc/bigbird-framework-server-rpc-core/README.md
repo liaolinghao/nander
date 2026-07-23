@@ -6,6 +6,8 @@
 
 2、集成Nacos为注册和配置中心，提供往Nacos注册服务元数据功能。
 
+3、提供了支撑RPC高性能序列化方式kryo的类注册机制，通过扫描指定包下被@KryoSerializable注解的类实现。
+
 ## 配置
 
 本构件有以下重要配置，描述如下：
@@ -183,6 +185,13 @@ nacos:
     username: ${NACOS_USERNAME:nacos}
     # Nacos 密码（若开启认证）
     password: ${NACOS_PWD:nacos}
+    
+bigbird:
+  server:
+    rpc:
+      core:
+        # kryo注册类所在的包列表
+        scanKryoSerializablePackages: com.a.xxx,com.b.xxx,com.c.xxx 
 ```
 
 ## 构件依赖

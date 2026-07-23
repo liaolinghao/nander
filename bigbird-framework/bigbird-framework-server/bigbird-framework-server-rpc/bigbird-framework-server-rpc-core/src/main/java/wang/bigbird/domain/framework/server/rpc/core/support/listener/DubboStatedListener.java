@@ -15,6 +15,7 @@ package wang.bigbird.domain.framework.server.rpc.core.support.listener;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.bootstrap.DubboBootstrap;
 import org.apache.dubbo.config.spring.context.event.DubboBootstrapStatedEvent;
+import org.apache.dubbo.rpc.model.ApplicationModel;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 import wang.bigbird.domain.framework.server.rpc.core.support.holder.DubboAddressHolder;
@@ -36,7 +37,11 @@ public class DubboStatedListener implements ApplicationListener<DubboBootstrapSt
         }
         DubboBootstrap dubboBootstrap = (DubboBootstrap) source;
         if (dubboBootstrap.isStarted()) {
-            DubboAddressHolder.init();
+            // 判断是否为Dubbo服务提供者：存在暴露的ProviderModel
+            boolean isProvider = !ApplicationModel.allProviderModels().isEmpty();
+            if (isProvider) {
+                DubboAddressHolder.init();
+            }
         }
     }
 

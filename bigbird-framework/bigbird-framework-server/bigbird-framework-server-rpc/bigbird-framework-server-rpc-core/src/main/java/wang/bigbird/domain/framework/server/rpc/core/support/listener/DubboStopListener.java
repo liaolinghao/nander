@@ -15,6 +15,7 @@ package wang.bigbird.domain.framework.server.rpc.core.support.listener;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.bootstrap.DubboBootstrap;
 import org.apache.dubbo.config.spring.context.event.DubboBootstrapStopedEvent;
+import org.apache.dubbo.rpc.model.ApplicationModel;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 import wang.bigbird.domain.framework.server.rpc.core.support.holder.DubboAddressHolder;
@@ -36,7 +37,11 @@ public class DubboStopListener implements ApplicationListener<DubboBootstrapStop
         }
         DubboBootstrap dubboBootstrap = (DubboBootstrap) source;
         if (!dubboBootstrap.isStarted()) {
-            DubboAddressHolder.resetAddress();
+            // 仅服务提供者需要重置地址，纯消费者无地址无需操作
+            boolean isProvider = !ApplicationModel.allProviderModels().isEmpty();
+            if (isProvider) {
+                DubboAddressHolder.resetAddress();
+            }
         }
     }
 
