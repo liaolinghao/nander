@@ -17,6 +17,7 @@ import com.alibaba.nacos.api.naming.NamingService;
 import com.alibaba.nacos.api.naming.pojo.Instance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -27,11 +28,12 @@ import java.util.Map;
  * @author Bigbird
  */
 @Component
+@ConditionalOnProperty(prefix = "nacos.discovery", name = "service-name", matchIfMissing = false)
 public class NacosRegisterHandler {
 
-    @Value("${nacos.discovery.service-name}")
+    @Value("${nacos.discovery.service-name:}")
     private String serviceName;
-    @Value("${nacos.discovery.group}")
+    @Value("${nacos.discovery.group:}")
     private String group;
 
     @Autowired
