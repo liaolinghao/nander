@@ -243,6 +243,55 @@ bigbird:
 </tr>
 </table>
 
+#### 配置项查看接口
+
+<table>
+<tr>
+<td>地址</td>
+<td colspan="5">/health/env/config</td>
+</tr>
+<tr>
+<td>请求方式</td>
+<td colspan="5">GET</td>
+</tr>
+<tr>
+<td></td>
+<td>参数名称</td>
+<td>参数值</td>
+<td>必选</td>
+<td>类型</td>
+<td>描述</td>
+</tr>
+<tr>
+<td>请求头</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>请求参数</td>
+<td>key</td>
+<td></td>
+<td>是</td>
+<td>String</td>
+<td>配置键</td>
+</tr>
+<tr>
+<td>响应</td>
+<td colspan="5">
+<pre>
+{
+    "code": 200,
+    "msg": "成功",
+    "data": "xxx"
+}
+</pre>
+</td>
+</tr>
+</table>
+
 #### 获取服务部署的机器时间戳信息接口
 
 <table>
