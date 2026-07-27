@@ -14,9 +14,11 @@ package wang.bigbird.domain.framework.server.web.core.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import wang.bigbird.domain.framework.core.base.util.CollectionUtils;
 import wang.bigbird.domain.framework.core.base.util.SystemUtils;
+import wang.bigbird.domain.framework.server.core.support.holder.SpringContextHolder;
 import wang.bigbird.domain.framework.server.core.support.response.RespResult;
 
 import java.util.HashMap;
@@ -50,4 +52,10 @@ public class HealthController {
         healthStatus.put("status", HEALTH_STATUS_NORMAL);
         return RespResult.ok(healthStatus);
     }
+
+    @GetMapping(value = "/env/config")
+    public RespResult<String> config(@RequestParam(value = "key") String key) {
+        return RespResult.ok(SpringContextHolder.getConfigValue(key));
+    }
+
 }
