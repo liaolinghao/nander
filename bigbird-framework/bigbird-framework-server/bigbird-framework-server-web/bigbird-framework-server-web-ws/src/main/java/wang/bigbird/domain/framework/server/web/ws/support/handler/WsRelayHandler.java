@@ -20,6 +20,7 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
+import wang.bigbird.domain.framework.core.base.tool.SystemClock;
 import wang.bigbird.domain.framework.core.base.util.StringUtils;
 import wang.bigbird.domain.framework.core.base.util.url.UrlUtils;
 import wang.bigbird.domain.framework.server.web.ws.base.constant.WsConstants;
@@ -56,6 +57,15 @@ public class WsRelayHandler extends TextWebSocketHandler {
      * 会话映射：前端Session → 目标WS客户端
      */
     private final ConcurrentHashMap<WebSocketSession, WebSocketClient> clientMap = new ConcurrentHashMap<>();
+
+    /**
+     * 连接最大等待毫秒
+     */
+    private static final long CONNECT_WAIT_MS = 1000;
+    /**
+     * 重试间隔
+     */
+    private static final long RETRY_INTERVAL = 50;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
@@ -100,8 +110,24 @@ public class WsRelayHandler extends TextWebSocketHandler {
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) {
         WebSocketClient client = clientMap.get(session);
-        if (client == null || !client.isOpen()) {
+        if (client == null) {
+            log.warn("Target client not found, drop message:{}", message);
             return;
+        }
+        // 等待下游连接就绪，最多等待1s
+        long start = SystemClock.now();
+        while (!client.isOpen()) {
+            if (SystemClock.now() - start > CONNECT_WAIT_MS) {
+                log.error("Wait target ws connect timeout, drop message:{}", message);
+                return;
+            }
+            try {
+                Thread.sleep(RETRY_INTERVAL);
+            } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+                log.error("Wait connect interrupted");
+                return;
+            }
         }
         try {
             String appKey = (String) session.getAttributes().get(WsConstants.APPKEY_PARAM_CODE);

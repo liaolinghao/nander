@@ -15,6 +15,7 @@ package wang.bigbird.domain.framework.server.web.ws.server;
 import lombok.extern.slf4j.Slf4j;
 import org.java_websocket.client.WebSocketClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import wang.bigbird.domain.framework.core.base.tool.SystemClock;
 import wang.bigbird.domain.framework.server.web.ws.base.constant.WsConstants;
 import wang.bigbird.domain.framework.server.web.ws.config.property.WsProperties;
 import wang.bigbird.domain.framework.server.web.ws.service.base.IDataProcessService;
@@ -67,6 +68,15 @@ public abstract class AbstractWsRelayServer {
      */
     private static final ConcurrentHashMap<Session, WebSocketClient> CLIENT_MAP = new ConcurrentHashMap<>();
 
+    /**
+     * 连接最大等待毫秒
+     */
+    private static final long CONNECT_WAIT_MS = 1000;
+    /**
+     * 重试间隔
+     */
+    private static final long RETRY_INTERVAL = 50;
+
     @OnOpen
     public void onOpen(Session session, @PathParam("path") String path) {
         // 1. 从握手信息中获取
@@ -106,8 +116,24 @@ public abstract class AbstractWsRelayServer {
     @OnMessage
     public void onMessage(String message, Session session) {
         WebSocketClient client = CLIENT_MAP.get(session);
-        if (client == null || !client.isOpen()) {
+        if (client == null) {
+            log.warn("Target client not found, drop message:{}", message);
             return;
+        }
+        // 等待下游连接就绪，最多等待1s
+        long start = SystemClock.now();
+        while (!client.isOpen()) {
+            if (SystemClock.now() - start > CONNECT_WAIT_MS) {
+                log.error("Wait target ws connect timeout, drop message:{}", message);
+                return;
+            }
+            try {
+                Thread.sleep(RETRY_INTERVAL);
+            } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+                log.error("Wait connect interrupted");
+                return;
+            }
         }
         try {
             String appKey = (String) session.getUserProperties().get(WsConstants.APPKEY_PARAM_CODE);
