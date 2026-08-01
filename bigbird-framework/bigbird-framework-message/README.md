@@ -31,9 +31,9 @@ spring:
     # 服务端口
     port: 587 
     # 认证用户名
-    username: 26089183@qq.com 
+    username: xxx 
     # 授权密码
-    password: mail4Bird 
+    password: xxx 
 ```
 
 # 钉钉消息
