@@ -759,7 +759,7 @@ public class JwtSecurityProcessor implements InitializingBean {
             if (StringUtils.isNotBlank(value)) {
                 return value;
             }
-            throw new ExpiredJwtException(null, null, "The jwt has been expired.");
+            throw new DisposedJwtException("The jwt has been disposed.");
         }
         return refreshToken;
     }
