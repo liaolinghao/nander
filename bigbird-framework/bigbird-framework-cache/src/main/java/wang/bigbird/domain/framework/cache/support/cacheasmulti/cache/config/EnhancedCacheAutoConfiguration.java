@@ -19,6 +19,7 @@ import org.springframework.cache.annotation.AbstractCachingConfiguration;
 import org.springframework.cache.annotation.ProxyCachingConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Role;
 import wang.bigbird.domain.framework.cache.support.cacheasmulti.cache.convert.EnhancedCacheConversionService;
 import wang.bigbird.domain.framework.cache.support.cacheasmulti.cache.convert.converter.EnhancedCacheConverter;
@@ -59,6 +60,7 @@ public class EnhancedCacheAutoConfiguration extends AbstractCachingConfiguration
     @Bean
     @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
     @ConditionalOnMissingBean
+    @Primary
     public EnhancedCacheConversionService enhancedCacheConversionService(Collection<EnhancedCacheConverter<?>> converters) {
         return new EnhancedCacheConversionService(converters);
     }
