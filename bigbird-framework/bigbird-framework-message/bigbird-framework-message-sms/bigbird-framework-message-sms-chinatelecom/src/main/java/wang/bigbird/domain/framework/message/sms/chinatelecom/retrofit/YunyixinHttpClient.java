@@ -14,15 +14,14 @@ package wang.bigbird.domain.framework.message.sms.chinatelecom.retrofit;
 
 import com.github.lianjiatech.retrofit.spring.boot.annotation.OkHttpClientBuilder;
 import com.github.lianjiatech.retrofit.spring.boot.annotation.RetrofitClient;
-import net.dreamlu.mica.core.spring.SpringContextUtil;
 import okhttp3.OkHttpClient;
 import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import wang.bigbird.domain.framework.message.sms.chinatelecom.base.util.OkHttpUtils;
 import wang.bigbird.domain.framework.message.sms.chinatelecom.domain.dto.out.YunyixinSendSmsResponseDTO;
 import wang.bigbird.domain.framework.message.sms.chinatelecom.retrofit.fallback.YunyixinHttpDegradeFallbackFactory;
-import wang.bigbird.domain.framework.message.sms.chinatelecom.support.holder.OkHttpHolder;
 
 import java.util.Map;
 
@@ -35,7 +34,6 @@ import java.util.Map;
 public interface YunyixinHttpClient {
 
     /**
-     * @return
      * @OkHttpClientBuilder 静态方法优先级最高，
      * 该接口会放弃 starter 默认全局 OkHttp，
      * 使用该自定义支持 HTTPS 的客户端，相关原理为：
@@ -46,7 +44,7 @@ public interface YunyixinHttpClient {
      */
     @OkHttpClientBuilder
     static OkHttpClient.Builder okHttpBuilder() {
-        return SpringContextUtil.getBean(OkHttpHolder.class).getHttpsBuilder();
+        return OkHttpUtils.getBuilder();
     }
 
     /**

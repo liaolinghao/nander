@@ -21,6 +21,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
+import wang.bigbird.domain.framework.message.sms.chinatelecom.base.util.OkHttpUtils;
 import wang.bigbird.domain.framework.message.sms.chinatelecom.retrofit.IntegratedHttpClient;
 
 import javax.annotation.PostConstruct;
@@ -52,41 +53,10 @@ public class ChinatelecomSmsConfiguration {
     }
 
     @Bean
-    public OkHttpClient chinatelecomHttpClient() throws NoSuchAlgorithmException, KeyManagementException {
-        OkHttpClient.Builder okhttpClient = new OkHttpClient().newBuilder();
-        //信任所有服务器地址
-        okhttpClient.hostnameVerifier((s, sslSession) -> true);
-        //创建管理器
-        TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
-            @Override
-            public void checkClientTrusted(
-                    java.security.cert.X509Certificate[] x509Certificates,
-                    String s) {
-            }
-
-            @Override
-            public void checkServerTrusted(
-                    java.security.cert.X509Certificate[] x509Certificates,
-                    String s) {
-            }
-
-            @Override
-            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                return new java.security.cert.X509Certificate[]{};
-            }
-        }};
-        SSLContext sc = SSLContext.getInstance("TLS");
-        sc.init(null, trustAllCerts, new SecureRandom());
-        SSLSocketFactory ssfFactory = sc.getSocketFactory();
-        okhttpClient.sslSocketFactory(ssfFactory, (X509TrustManager) trustAllCerts[0]);
-        return okhttpClient.build();
-    }
-
-    @Bean
-    public IntegratedHttpClient integratedHttpClient(OkHttpClient chinatelecomHttpClient) {
+    public IntegratedHttpClient integratedHttpClient() {
         Retrofit retrofit = new Retrofit.Builder().baseUrl(integratedBaseUrl)
                 .addConverterFactory(JacksonConverterFactory.create())
-                .client(chinatelecomHttpClient)
+                .client(OkHttpUtils.getOkHttpClient())
                 .build();
         return retrofit.create(IntegratedHttpClient.class);
     }
