@@ -59,9 +59,9 @@ public class CaptchaController {
     @Autowired
     private ICaptchaService captchaService;
     @Autowired
-    private ISmsService smsService;
-    @Autowired
     private IEmailService emailService;
+    @Autowired(required = false)
+    private ISmsService smsService;
 
     /**
      * 网站自定义图像验证码
@@ -160,7 +160,9 @@ public class CaptchaController {
         String number = RandomStringUtils.randomNumeric(6);
         String cacheKey = WebCoreConstants.CAPTCHA_SMS_KEY_PRE + smsCaptchaParam.getMobilephone() + CommonConstants.COLON + smsCaptchaParam.getScene();
         captchaService.saveCaptchaValue(cacheKey, number);
-        smsService.sendSmsByTemplate(smsCaptchaParam.getMobilephone(), number, templateId);
+        if (smsService != null) {
+            smsService.sendSmsByTemplate(smsCaptchaParam.getMobilephone(), number, templateId);
+        }
         return RespResult.ok();
     }
 
