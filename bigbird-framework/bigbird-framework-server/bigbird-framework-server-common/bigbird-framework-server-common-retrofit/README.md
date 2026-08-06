@@ -99,7 +99,7 @@ bigbird:
         # 写入超时时间，毫秒为单位，推荐 30~60 秒
         write-timeout-ms: 30000
         # 支持 none、basic、headers、body
-        level: info  
+        level: body  
         # 序列化长度，设置合理的长度可以防止打印日志过长使JVM内存溢出
         serialize-length: 2048 
 
