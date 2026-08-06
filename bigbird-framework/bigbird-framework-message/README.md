@@ -76,7 +76,7 @@ retrofit:
 bigbird:
   message:
     sms:
-      type: open或者integrated # open代表能力开放平台，integrated代表一体化服务平台
+      type: open/integrated/yunyixin # open代表能力开放平台，integrated代表一体化服务平台，yunyixin代表云翼信平台
       open: # 当类型为open时配置
         token:  # 访问token
         appId: # 在短信平台注册的应用ID
@@ -85,6 +85,11 @@ bigbird:
         cpCode: # 渠道在一体化消息服务平台申请的cpCode
         accessKey: # 一体化消息服务平台分配的私钥
         baseUrl: # 短信服务API域名地址
+      yunyixin: # 当类型为yunyixin时配置
+        siid: # 客户编号，SI的唯一标识
+        user: # SI发送短信时使用的HTTP帐号
+        secret: # 云翼信平台为SI分配的接口密钥
+        baseUrl: # 短信服务API域名地址       
       
 retrofit:
   enable-response-call-adapter: true
