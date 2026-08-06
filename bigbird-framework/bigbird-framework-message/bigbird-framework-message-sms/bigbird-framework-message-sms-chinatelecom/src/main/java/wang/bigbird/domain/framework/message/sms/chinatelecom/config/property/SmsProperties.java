@@ -38,6 +38,8 @@ public class SmsProperties {
 
     private final Integrated integrated = new Integrated();
 
+    private final Yunyixin yunyixin = new Yunyixin();
+
     /**
      * 能力开放平台配置
      */
@@ -74,6 +76,29 @@ public class SmsProperties {
          * 短信服务API域名地址
          */
         private String baseUrl;
+    }
+
+    /**
+     * 云翼信平台配置
+     */
+    @Data
+    public static class Yunyixin {
+        /**
+         * 客户编号，SI的唯一标识
+         */
+        private String siid;
+        /**
+         * SI发送短信时使用的HTTP帐号
+         */
+        private String user;
+        /**
+         * 云翼信平台为SI分配的接口密钥
+         */
+        private String secret;
+        /**
+         * 短信服务API域名地址
+         */
+        private String baseUrl = "https://yyx.saas.189.cn:8070";
     }
 
 }

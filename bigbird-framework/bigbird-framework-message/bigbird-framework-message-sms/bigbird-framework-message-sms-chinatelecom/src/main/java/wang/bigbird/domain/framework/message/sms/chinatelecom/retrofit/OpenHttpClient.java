@@ -29,7 +29,7 @@ import java.util.Map;
  * @author Bigbird
  * @RetrofitClient 只支持http接口，不支持https
  */
-@RetrofitClient(baseUrl = "${chinatelecom.message.sms.open.baseUrl:http://api.189.cn}", fallbackFactory = OpenHttpDegradeFallbackFactory.class)
+@RetrofitClient(baseUrl = "${bigbird.message.sms.open.baseUrl:http://api.189.cn}", fallbackFactory = OpenHttpDegradeFallbackFactory.class)
 public interface OpenHttpClient {
 
     /**

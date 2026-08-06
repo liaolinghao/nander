@@ -27,6 +27,12 @@ public enum SmsTypeEnum {
     /**
      * 一体化服务平台
      */
-    INTEGRATED
+    INTEGRATED,
+
+    /**
+     * 云翼信平台
+     */
+    YUNYIXIN
+
 
 }
