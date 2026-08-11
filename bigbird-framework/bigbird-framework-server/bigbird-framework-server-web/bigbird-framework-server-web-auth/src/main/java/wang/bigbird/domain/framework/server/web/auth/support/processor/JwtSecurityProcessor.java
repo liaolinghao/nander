@@ -821,6 +821,32 @@ public class JwtSecurityProcessor implements InitializingBean {
     }
 
     /**
+     * 获取认证对象在某个应用通过某种渠道获得的refresh token ID
+     *
+     * @param appKey  应用键
+     * @param channel 登录渠道
+     * @param type    认证对象类型
+     * @param id      认证对象标识
+     * @return refresh token ID
+     */
+    public String getAwardRefreshTokenId(String appKey, ChannelEnum channel, String type, Long id) {
+        String awardRefreshTokenIdsKey = getAwardRefreshTokenIdsKey(appKey, type, id);
+        List<String> tokenIds = redisSortedSetService.zrevrange(awardRefreshTokenIdsKey, 0, -1, String.class);
+        for (String tokenId : tokenIds) {
+            String credentialLoginId = redisService.get(getRefreshTokenId2CredentialKey(tokenId));
+            if (StringUtils.isBlank(credentialLoginId)) {
+                continue;
+            }
+            ChannelEnum ce = ChannelEnum.getInstanceByCode(loadChannelByCredentialLoginId(credentialLoginId));
+            if (channel == ce) {
+                return tokenId;
+            }
+        }
+        // 代表认证状态已失效
+        return null;
+    }
+
+    /**
      * 注销
      * 将本次登录颁发的refresh token与access token从redis中移除
      *
