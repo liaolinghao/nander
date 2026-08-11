@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
 public class BaseController {
 
     @Autowired
-    private JwtSecurityProcessor jwtSecurityProcessor;
+    protected JwtSecurityProcessor jwtSecurityProcessor;
 
     /**
      * 获取当前登录用户ID
@@ -223,7 +223,7 @@ public class BaseController {
     /**
      * 从指定应用注销
      *
-     * @param appKey 应用键
+     * @param appKey        应用键
      * @param mutexTypeEnum 登录互斥类型
      */
     protected void logout(String appKey, MutexTypeEnum mutexTypeEnum) {
