@@ -823,27 +823,35 @@ public class JwtSecurityProcessor implements InitializingBean {
     /**
      * 获取认证对象在某个应用通过某种渠道获得的refresh token ID
      *
-     * @param appKey  应用键
-     * @param channel 登录渠道
-     * @param type    认证对象类型
-     * @param id      认证对象标识
+     * @param appKey        应用键
+     * @param channel       登录渠道
+     * @param mutexTypeEnum 登录互斥类型
+     * @param type          认证对象类型
+     * @param id            认证对象标识
      * @return refresh token ID
      */
-    public String getAwardRefreshTokenId(String appKey, ChannelEnum channel, String type, Long id) {
-        String awardRefreshTokenIdsKey = getAwardRefreshTokenIdsKey(appKey, type, id);
-        List<String> tokenIds = redisSortedSetService.zrevrange(awardRefreshTokenIdsKey, 0, -1, String.class);
-        for (String tokenId : tokenIds) {
-            String credentialLoginId = redisService.get(getRefreshTokenId2CredentialKey(tokenId));
-            if (StringUtils.isBlank(credentialLoginId)) {
-                continue;
-            }
-            ChannelEnum ce = ChannelEnum.getInstanceByCode(loadChannelByCredentialLoginId(credentialLoginId));
-            if (channel == ce) {
-                return tokenId;
-            }
+    public String getAwardRefreshTokenId(String appKey, ChannelEnum channel, MutexTypeEnum mutexTypeEnum, String type, Long id) {
+        if (mutexTypeEnum == null) {
+            // 为空，就不做互斥限制
+            mutexTypeEnum = MutexTypeEnum.none;
         }
-        // 代表认证状态已失效
-        return null;
+        if (mutexTypeEnum.isIgnoreChannel()) {
+            // 不考虑渠道，那么把渠道值修正为忽略，以便统一标识
+            channel = ChannelEnum.IGNORE;
+        }
+        if (mutexTypeEnum.equals(MutexTypeEnum.none)) {
+            // 登录不限制，就获取最近登录颁发的refresh token id
+            String awardRefreshTokenIdsKey = getAwardRefreshTokenIdsKey(appKey, type, id);
+            List<String> tokenIds = redisSortedSetService.zrevrange(awardRefreshTokenIdsKey, 0, -1, String.class);
+            if (CollectionUtils.isEmpty(tokenIds)) {
+                return null;
+            }
+            return tokenIds.get(0);
+        } else {
+            // 登录互斥，从指定槽中获取认证对象通过指定渠道在某个应用获得的refresh token id
+            String awardRefreshTokenIdKey = getAwardRefreshTokenIdKey(appKey, channel, type, id);
+            return redisService.get(awardRefreshTokenIdKey);
+        }
     }
 
     /**
