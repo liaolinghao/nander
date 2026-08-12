@@ -22,9 +22,7 @@ import org.redisson.client.codec.Codec;
 import org.redisson.client.codec.StringCodec;
 import org.redisson.client.protocol.Decoder;
 import org.redisson.client.protocol.Encoder;
-import wang.bigbird.domain.framework.core.base.util.DateUtils;
 import wang.bigbird.domain.framework.core.base.util.JsonUtils;
-import wang.bigbird.domain.framework.core.base.util.StringUtils;
 
 import java.nio.charset.StandardCharsets;
 
@@ -50,13 +48,13 @@ public class CustomizedJsonJacksonCodec implements Codec {
     private final Decoder<Object> mapValueDecoder;
 
     private CustomizedJsonJacksonCodec() {
-        mapper = new ObjectMapper();
-        JsonUtils.registerJavaTimeModule(mapper);
-        JsonUtils.configurateObjectMapper(mapper);
+        mapper = JsonUtils.getRegisterMapper();
         // 开启类型写入
         mapper.activateDefaultTyping(
                 LaissezFaireSubTypeValidator.instance,
-                ObjectMapper.DefaultTyping.NON_FINAL,
+                // 所有对象，包含 final 包装类 Long/Integer/Float 都会带上 @class
+                // 解决缓存反序列化时数据类型问题
+                ObjectMapper.DefaultTyping.EVERYTHING,
                 JsonTypeInfo.As.PROPERTY
         );
 
@@ -78,44 +76,6 @@ public class CustomizedJsonJacksonCodec implements Codec {
             String json = buf.toString(StandardCharsets.UTF_8);
             Object raw = mapper.readValue(json, new TypeReference<>() {
             });
-            if (raw instanceof String) {
-                String value = (String) raw;
-                if (StringUtils.isBlank(value)) {
-                    return raw;
-                }
-                if (StringUtils.isDateTime(value)) {
-                    // 裸字符串 "yyyy-MM-dd HH:mm:ss"，单纯靠 Jackson 自动类型推断，做不到自动转 LocalDateTime
-                    // 除非将其包装到POJO中，为此，这里做一次特殊判断，以便适配单纯的LocalDateTime缓存值返回
-                    try {
-                        return DateUtils.toLocalDateTime(DateUtils.parse(value, DateUtils.STANDARD_PATTERN));
-                    } catch (Exception ignored) {
-
-                    }
-                } else if (StringUtils.isInteger(value)) {
-                    try {
-                        long numVal = Long.parseLong(value);
-                        if (numVal >= Integer.MIN_VALUE && numVal <= Integer.MAX_VALUE) {
-                            return Integer.valueOf((int) numVal);
-                        }
-                        return Long.valueOf(numVal);
-                    } catch (Exception ignored) {
-                    }
-                } else if (StringUtils.isDecimal(value)) {
-                    try {
-                        double numVal = Double.parseDouble(value);
-                        if (numVal >= -Float.MAX_VALUE && numVal <= Float.MAX_VALUE) {
-                            // 此处将double转换为float存在精度丢失风险（＞7 位）
-                            return Float.valueOf((float) numVal);
-                        }
-                        return Double.valueOf(numVal);
-                    } catch (Exception ignored) {
-                    }
-                } else if (Boolean.TRUE.toString().equalsIgnoreCase(value)) {
-                    return Boolean.TRUE;
-                } else if (Boolean.FALSE.toString().equalsIgnoreCase(value)) {
-                    return Boolean.FALSE;
-                }
-            }
             return raw;
         };
 
