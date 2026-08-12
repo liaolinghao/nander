@@ -26,7 +26,9 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.transaction.ChainedKafkaTransactionManager;
 import org.springframework.kafka.transaction.KafkaTransactionManager;
+import wang.bigbird.domain.framework.core.base.constant.CommonConstants;
 import wang.bigbird.domain.framework.core.base.util.CollectionUtils;
+import wang.bigbird.domain.framework.core.base.util.StringUtils;
 import wang.bigbird.domain.framework.data.kafka.base.helper.PropertiesHelper;
 import wang.bigbird.domain.framework.data.kafka.base.tool.serializer.JsonSerializer;
 import wang.bigbird.domain.framework.data.kafka.config.property.KafkaConsumerProperties;
@@ -35,6 +37,7 @@ import wang.bigbird.domain.framework.data.kafka.support.condition.ProducerCondit
 import wang.bigbird.domain.framework.data.kafka.support.condition.TransactionCondition;
 
 import javax.annotation.PostConstruct;
+import java.net.InetAddress;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -124,7 +127,15 @@ public class KafkaConfiguration {
         DefaultKafkaProducerFactory factory = new DefaultKafkaProducerFactory(configs);
         Boolean transaction = kafkaProducerProperties.getTransaction();
         if (null != transaction && transaction) {
-            factory.setTransactionIdPrefix(kafkaProducerProperties.getTransactionIdPrefix());
+            String prefix = kafkaProducerProperties.getTransactionIdPrefix();
+            // 事务前缀需要确保每个运行服务实例唯一，解决多实例抢占事务生产者问题
+            try {
+                String hostname = InetAddress.getLocalHost().getHostName();
+                prefix = prefix + hostname + CommonConstants.DASHED;
+            } catch (Exception e) {
+                prefix = prefix + StringUtils.getUuid() + CommonConstants.DASHED;
+            }
+            factory.setTransactionIdPrefix(prefix);
         }
         return factory;
     }
