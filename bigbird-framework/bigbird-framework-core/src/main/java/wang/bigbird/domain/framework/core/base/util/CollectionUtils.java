@@ -613,6 +613,36 @@ public class CollectionUtils {
     }
 
     /**
+     * 判断两个集合是否相同
+     *
+     * @param set1 待处理集合1
+     * @param set2 待处理集合2
+     * @param <E>
+     * @return 两个集合是否相同
+     */
+    public static <E> boolean isSetEqual(Set<E> set1, Set<E> set2) {
+        if (set1 == set2) {
+            return true;
+        }
+        if (set1 == null || set2 == null) {
+            return false;
+        }
+        return set1.equals(set2);
+    }
+
+    /**
+     * 判断两个集合是否不相同
+     *
+     * @param set1 待处理集合1
+     * @param set2 待处理集合2
+     * @param <E>
+     * @return 两个集合是否相同
+     */
+    public static <E> boolean isSetNotEqual(Set<E> set1, Set<E> set2) {
+        return !isSetEqual(set1, set2);
+    }
+
+    /**
      * 将一个集合按照指定量分为多个批次
      *
      * @param list      集合

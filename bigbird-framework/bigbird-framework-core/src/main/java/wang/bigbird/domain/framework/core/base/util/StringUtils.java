@@ -1396,6 +1396,50 @@ public class StringUtils {
     }
 
     /**
+     * 判断两个字符串是否相同
+     *
+     * @param str1 待处理字符串1
+     * @param str2 待处理字符串2
+     * @return 两个字符串是否相同
+     */
+    public static boolean equals(String str1, String str2) {
+        return Objects.equals(str1, str2);
+    }
+
+    /**
+     * 判断两个字符串是否不相同
+     *
+     * @param str1 待处理字符串1
+     * @param str2 待处理字符串2
+     * @return 两个字符串是否不相同
+     */
+    public static boolean notEquals(String str1, String str2) {
+        return !equals(str1, str2);
+    }
+
+    /**
+     * 判断两个字符串是否相同（忽略大小写）
+     *
+     * @param str1 待处理字符串1
+     * @param str2 待处理字符串2
+     * @return 两个字符串是否相同（忽略大小写）
+     */
+    public static boolean equalsIgnoreCase(String str1, String str2) {
+        return str1 == null ? str2 == null : str1.equalsIgnoreCase(str2);
+    }
+
+    /**
+     * 判断两个字符串是否不相同（忽略大小写）
+     *
+     * @param str1 待处理字符串1
+     * @param str2 待处理字符串2
+     * @return 两个字符串是否不相同（忽略大小写）
+     */
+    public static boolean notEqualsIgnoreCase(String str1, String str2) {
+        return !equalsIgnoreCase(str1, str2);
+    }
+
+    /**
      * 拼接字符串，该方法用于避免多个字符串采用+进行拼接
      *
      * @param strings
