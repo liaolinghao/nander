@@ -20,8 +20,8 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
 import org.springframework.util.concurrent.ListenableFuture;
 import wang.bigbird.domain.framework.data.kafka.config.property.KafkaProducerProperties;
-import wang.bigbird.domain.framework.data.kafka.support.handler.InProducerTransactionJobHandler;
 import wang.bigbird.domain.framework.data.kafka.service.base.IKafkaProducerService;
+import wang.bigbird.domain.framework.data.kafka.support.handler.InProducerTransactionJobHandler;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -59,6 +59,18 @@ public class KafkaProducerServiceImpl implements IKafkaProducerService {
     }
 
     @Override
+    public void sendSync(String topic, String key, Object message, InProducerTransactionJobHandler jobHandler) {
+        ListenableFuture<SendResult<String, Object>> send = sendAsync(topic, key, message, jobHandler);
+        waitDone(send, topic);
+    }
+
+    @Override
+    public void sendSync(String topic, String key, byte[] message, InProducerTransactionJobHandler jobHandler) {
+        ListenableFuture<SendResult<String, byte[]>> send = sendAsync(topic, key, message, jobHandler);
+        waitDone(send, topic);
+    }
+
+    @Override
     public ListenableFuture<SendResult<String, Object>> sendAsync(String topic, Object message, InProducerTransactionJobHandler jobHandler) {
         if (kafkaProducerProperties.getTransaction()) {
             return objectKafkaTemplate.executeInTransaction(operations -> {
@@ -89,6 +101,44 @@ public class KafkaProducerServiceImpl implements IKafkaProducerService {
             });
         } else {
             ListenableFuture<SendResult<String, byte[]>> sendResult = bytesKafkaTemplate.send(topic, message);
+            if (jobHandler != null) {
+                jobHandler.handle();
+            }
+            return sendResult;
+        }
+    }
+
+    @Override
+    public ListenableFuture<SendResult<String, Object>> sendAsync(String topic, String key, Object message, InProducerTransactionJobHandler jobHandler) {
+        if (kafkaProducerProperties.getTransaction()) {
+            return objectKafkaTemplate.executeInTransaction(operations -> {
+                ListenableFuture<SendResult<String, Object>> sendResult = operations.send(topic, key, message);
+                if (jobHandler != null) {
+                    jobHandler.handle();
+                }
+                return sendResult;
+            });
+        } else {
+            ListenableFuture<SendResult<String, Object>> sendResult = objectKafkaTemplate.send(topic, key, message);
+            if (jobHandler != null) {
+                jobHandler.handle();
+            }
+            return sendResult;
+        }
+    }
+
+    @Override
+    public ListenableFuture<SendResult<String, byte[]>> sendAsync(String topic, String key, byte[] message, InProducerTransactionJobHandler jobHandler) {
+        if (kafkaProducerProperties.getTransaction()) {
+            return bytesKafkaTemplate.executeInTransaction(operations -> {
+                ListenableFuture<SendResult<String, byte[]>> sendResult = operations.send(topic, key, message);
+                if (jobHandler != null) {
+                    jobHandler.handle();
+                }
+                return sendResult;
+            });
+        } else {
+            ListenableFuture<SendResult<String, byte[]>> sendResult = bytesKafkaTemplate.send(topic, key, message);
             if (jobHandler != null) {
                 jobHandler.handle();
             }

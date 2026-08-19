@@ -42,6 +42,26 @@ public interface IKafkaProducerService {
     void sendSync(String topic, byte[] message, InProducerTransactionJobHandler jobHandler);
 
     /**
+     * 执行同步发送消息（指定消息key，用于分区路由保证同key消息有序）
+     *
+     * @param topic      主题
+     * @param key        消息key，相同key的消息会路由到同一分区
+     * @param message    消息
+     * @param jobHandler 后继处理任务，一般用于开启事务模式下，消息发送到broke后的后续任务处理
+     */
+    void sendSync(String topic, String key, Object message, InProducerTransactionJobHandler jobHandler);
+
+    /**
+     * 执行同步发送消息（指定消息key，用于分区路由保证同key消息有序）
+     *
+     * @param topic      主题
+     * @param key        消息key，相同key的消息会路由到同一分区
+     * @param message    消息
+     * @param jobHandler 后继处理任务，一般用于开启事务模式下，消息发送到broke后的后续任务处理
+     */
+    void sendSync(String topic, String key, byte[] message, InProducerTransactionJobHandler jobHandler);
+
+    /**
      * 执行异步发送消息
      *
      * @param topic      主题
@@ -60,4 +80,27 @@ public interface IKafkaProducerService {
      * @return ListenableFuture
      */
     ListenableFuture<SendResult<String, byte[]>> sendAsync(String topic, byte[] message, InProducerTransactionJobHandler jobHandler);
+
+    /**
+     * 执行异步发送消息（指定消息key，用于分区路由保证同key消息有序）
+     *
+     * @param topic      主题
+     * @param key        消息key，相同key的消息会路由到同一分区
+     * @param message    消息
+     * @param jobHandler 后继处理任务，一般用于开启事务模式下，消息发送到broke后的后续任务处理
+     * @return ListenableFuture
+     */
+    ListenableFuture<SendResult<String, Object>> sendAsync(String topic, String key, Object message, InProducerTransactionJobHandler jobHandler);
+
+    /**
+     * 执行异步发送消息（指定消息key，用于分区路由保证同key消息有序）
+     *
+     * @param topic      主题
+     * @param key        消息key，相同key的消息会路由到同一分区
+     * @param message    消息
+     * @param jobHandler 后继处理任务，一般用于开启事务模式下，消息发送到broke后的后续任务处理
+     * @return ListenableFuture
+     */
+    ListenableFuture<SendResult<String, byte[]>> sendAsync(String topic, String key, byte[] message, InProducerTransactionJobHandler jobHandler);
+
 }
