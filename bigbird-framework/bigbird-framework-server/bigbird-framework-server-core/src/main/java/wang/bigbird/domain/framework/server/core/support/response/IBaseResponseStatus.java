@@ -54,7 +54,7 @@ public interface IBaseResponseStatus {
     ResponseStatus UNSUPPORTED_JWT = new ResponseStatus(10002, "不被本服务支持的令牌");
     ResponseStatus INVALID_JWT = new ResponseStatus(10003, "无效的令牌");
     ResponseStatus KICK_OFF_JWT = new ResponseStatus(10004, "认证对象已被踢下线");
-    ResponseStatus DISPOSED_JWT = new ResponseStatus(10005, "认证信息发生变化，需重新认证");
+    ResponseStatus DISPOSED_JWT = new ResponseStatus(10005, "认证信息发生变化，需重新登录");
     ResponseStatus BAD_REQUEST_DATA = new ResponseStatus(10006, "非法的请求数据");
     ResponseStatus CALLER_NOT_FOUND = new ResponseStatus(10007, "接入系统未注册");
     ResponseStatus IP_INVALID = new ResponseStatus(10008, "非法的访问IP");
