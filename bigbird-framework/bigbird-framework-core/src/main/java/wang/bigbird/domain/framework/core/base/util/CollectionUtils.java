@@ -830,4 +830,32 @@ public class CollectionUtils {
         return map;
     }
 
+    /**
+     * 从 List 中提取每个元素的指定字段到 Set 中，自动去重。
+     * 自动跳过 null 元素和 null 字段值；返回可变 HashSet，永远不为 null。
+     *
+     * @param list           源列表，可为 null 或空
+     * @param fieldExtractor 字段提取函数，如：Integer::valueOf
+     * @param <V>            元素类型
+     * @param <F>            字段类型
+     * @return 提取后的 Set，永远不为 null
+     */
+    public static <V, F> Set<F> extractFieldToSet(List<V> list, Function<V, F> fieldExtractor) {
+        if (CollectionUtils.isEmpty(list)) {
+            return Sets.newHashSetWithExpectedSize(0);
+        }
+        Set<F> result = new HashSet<>(list.size());
+        for (V item : list) {
+            if (item == null) {
+                continue;
+            }
+            F field = fieldExtractor.apply(item);
+            if (field == null) {
+                continue;
+            }
+            result.add(field);
+        }
+        return result;
+    }
+
 }
