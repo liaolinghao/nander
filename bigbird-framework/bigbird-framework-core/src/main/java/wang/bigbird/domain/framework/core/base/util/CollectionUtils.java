@@ -13,6 +13,7 @@
 package wang.bigbird.domain.framework.core.base.util;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import wang.bigbird.domain.framework.core.base.constant.CommonConstants;
 import wang.bigbird.domain.framework.core.base.tool.Assert;
@@ -771,6 +772,34 @@ public class CollectionUtils {
             }
         }
         return result;
+    }
+
+    /**
+     * 将 List 按 keyExtractor 提取的 key 转换为 Map。
+     * 自动跳过 null 元素和 null key；重复 key 保留第一个。
+     *
+     * @param list         源列表，可为 null 或空
+     * @param keyExtractor key 提取函数，如：Integer::valueOf
+     * @param <K>          key 类型
+     * @param <V>          元素类型
+     * @return 转换后的 Map，永远不为 null
+     */
+    public static <K, V> Map<K, V> toMap(List<V> list, Function<V, K> keyExtractor) {
+        if (isEmpty(list)) {
+            return Maps.newHashMapWithExpectedSize(0);
+        }
+        Map<K, V> map = Maps.newHashMapWithExpectedSize(list.size());
+        for (V item : list) {
+            if (item == null) {
+                continue;
+            }
+            K key = keyExtractor.apply(item);
+            if (key == null) {
+                continue;
+            }
+            map.putIfAbsent(key, item);
+        }
+        return map;
     }
 
 }
