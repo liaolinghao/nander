@@ -802,4 +802,32 @@ public class CollectionUtils {
         return map;
     }
 
+    /**
+     * 将 List 按 keyExtractor 分组，返回 Map<key, List<元素>>。
+     * 自动跳过 null 元素和 null key；返回可变 HashMap，永远不为 null。
+     *
+     * @param list         源列表，可为 null 或空
+     * @param keyExtractor 分组 key 提取函数，如：Integer::valueOf
+     * @param <K>          key 类型
+     * @param <V>          元素类型
+     * @return 分组后的 Map，永远不为 null
+     */
+    public static <K, V> Map<K, List<V>> groupBy(List<V> list, Function<V, K> keyExtractor) {
+        if (isEmpty(list)) {
+            return Maps.newHashMapWithExpectedSize(0);
+        }
+        Map<K, List<V>> map = Maps.newHashMapWithExpectedSize(list.size());
+        for (V item : list) {
+            if (item == null) {
+                continue;
+            }
+            K key = keyExtractor.apply(item);
+            if (key == null) {
+                continue;
+            }
+            map.computeIfAbsent(key, k -> new ArrayList<>()).add(item);
+        }
+        return map;
+    }
+
 }
