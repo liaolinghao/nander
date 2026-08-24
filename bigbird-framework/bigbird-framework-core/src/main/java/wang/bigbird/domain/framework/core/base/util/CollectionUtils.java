@@ -13,6 +13,7 @@
 package wang.bigbird.domain.framework.core.base.util;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import wang.bigbird.domain.framework.core.base.constant.CommonConstants;
 import wang.bigbird.domain.framework.core.base.tool.Assert;
 
@@ -742,6 +743,34 @@ public class CollectionUtils {
                 // 通用类型转换（由传入的函数决定）
                 .map(converter)
                 .collect(Collectors.toSet());
+    }
+
+    /**
+     * 合并 Map 的所有 Collection value 到一个 Set 中，自动去重。
+     *
+     * @param map 源 Map，value 为 Collection；可为 null 或空
+     * @param <K> Map key 类型
+     * @param <V> Collection 元素类型
+     * @return 合并后的 Set，永远不为 null
+     */
+    public static <K, V> Set<V> mergeValuesToSet(Map<K, ? extends Collection<V>> map) {
+        if (isEmpty(map)) {
+            return Sets.newHashSetWithExpectedSize(0);
+        }
+        // 预估容量：所有 collection size 之和，避免多次扩容
+        int expected = 0;
+        for (Collection<V> c : map.values()) {
+            if (c != null) {
+                expected += c.size();
+            }
+        }
+        Set<V> result = new HashSet<>((int) (expected / 0.75f) + 1);
+        for (Collection<V> c : map.values()) {
+            if (isNotEmpty(c)) {
+                result.addAll(c);
+            }
+        }
+        return result;
     }
 
 }
