@@ -97,8 +97,7 @@ public class CtOssHandler extends AbstractOssHandler {
 
     @Override
     protected void loadMetadata(String bucketName, String remotePath, Map info) {
-        S3Object object = oosClient.getObject(bucketName, remotePath);
-        ObjectMetadata objectMetadata = object.getObjectMetadata();
+        ObjectMetadata objectMetadata = oosClient.getObjectMetadata(bucketName, remotePath);
         info.put("size", objectMetadata.getContentLength());
         info.put("etag", objectMetadata.getETag());
         info.put("lastModified", objectMetadata.getLastModified());
