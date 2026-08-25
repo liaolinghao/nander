@@ -20,8 +20,8 @@ import org.springframework.stereotype.Service;
 import wang.bigbird.domain.framework.core.base.util.JsonUtils;
 import wang.bigbird.domain.framework.data.redis.service.base.IRedisSortedSetService;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -148,12 +148,12 @@ public class RedisSortedSetServiceImpl implements IRedisSortedSetService {
      * json转对象
      *
      * @param jsonStrings json字符串列表
-     * @param clazz 类型
+     * @param clazz       类型
      * @return 对象集合
      */
     private <T> List<T> convertJsonToObjects(Collection<String> jsonStrings, Class<T> clazz) {
         if (CollectionUtils.isEmpty(jsonStrings)) {
-            return new ArrayList<>(0);
+            return Collections.emptyList();
         }
         return jsonStrings.stream()
                 .map(jsonString -> JsonUtils.json2Object(jsonString, clazz))

@@ -61,7 +61,7 @@ public class BeanMapperUtils {
     public static <T> List<T> mapList(Collection<?> sourceList,
                                       Class<T> destinationClass) {
         if (CollectionUtils.isEmpty(sourceList)) {
-            return new ArrayList(0);
+            return Collections.emptyList();
         }
         List<T> destinationList = new ArrayList(sourceList.size());
         for (Iterator<?> iterator = sourceList.iterator(); iterator.hasNext(); ) {

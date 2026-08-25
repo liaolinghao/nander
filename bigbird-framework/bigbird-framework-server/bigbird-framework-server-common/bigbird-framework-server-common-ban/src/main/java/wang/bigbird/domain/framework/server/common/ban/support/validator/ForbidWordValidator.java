@@ -52,20 +52,21 @@ public class ForbidWordValidator implements ConstraintValidator<ForbidWord, Stri
         if (forbidWordValidateService == null || !enable || StringUtils.isEmpty(value)) {
             return true;
         }
-        if (disableDefaultMessage) {
-            List<String> forbidWords = forbidWordValidateService.forbidWordList(value);
-            if (CollectionUtils.isNotEmpty(forbidWords)) {
-                // 关闭默认错误提示
-                context.disableDefaultConstraintViolation();
-                // 创建自定义错误提示
-                context.buildConstraintViolationWithTemplate("内容包含敏感词：" + StringUtils.collectionToCommaDelimitedString(forbidWords))
-                        .addConstraintViolation();
-                return false;
-            }
+        List<String> forbidWords = forbidWordValidateService.forbidWordList(value);
+        if (CollectionUtils.isEmpty(forbidWords)) {
             return true;
-        } else {
-            return !forbidWordValidateService.containsForbidWord(value);
         }
+        String msg = StringUtils.joinStr("内容包含敏感词：", StringUtils.collectionToCommaDelimitedString(forbidWords));
+        if (disableDefaultMessage) {
+            // 关闭默认错误提示
+            context.disableDefaultConstraintViolation();
+            // 创建自定义错误提示
+            context.buildConstraintViolationWithTemplate("内容包含敏感词：" + StringUtils.collectionToCommaDelimitedString(forbidWords))
+                    .addConstraintViolation();
+        } else {
+            log.warn(msg);
+        }
+        return false;
     }
 
 }

@@ -858,4 +858,46 @@ public class CollectionUtils {
         return result;
     }
 
+    /**
+     * 将集合元素通过映射函数转换后收集到 Set。
+     * <p>自动跳过 null 元素，返回可变 HashSet，永不为 null。
+     *
+     * @param source 源集合，可为 null
+     * @param mapper 元素映射函数，不可为 null
+     * @return 可变 HashSet，永不为 null
+     */
+    public static <V, R> Set<R> convertToSet(Collection<V> source, Function<V, R> mapper) {
+        if (isEmpty(source)) {
+            return Sets.newHashSetWithExpectedSize(0);
+        }
+        Set<R> result = Sets.newHashSetWithExpectedSize(source.size());
+        for (V item : source) {
+            if (item != null) {
+                result.add(mapper.apply(item));
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 将集合元素通过映射函数转换后收集到 List。
+     * <p>自动跳过 null 元素，返回可变 ArrayList，永不为 null。
+     *
+     * @param source 源集合，可为 null
+     * @param mapper 元素映射函数，不可为 null
+     * @return 可变 ArrayList，永不为 null
+     */
+    public static <V, R> List<R> convertToList(Collection<V> source, Function<V, R> mapper) {
+        if (isEmpty(source)) {
+            return Collections.emptyList();
+        }
+        List<R> result = new ArrayList<>(source.size());
+        for (V item : source) {
+            if (item != null) {
+                result.add(mapper.apply(item));
+            }
+        }
+        return result;
+    }
+
 }
