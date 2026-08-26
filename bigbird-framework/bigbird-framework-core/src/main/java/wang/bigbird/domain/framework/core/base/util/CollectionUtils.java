@@ -20,6 +20,7 @@ import wang.bigbird.domain.framework.core.base.tool.Assert;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 
 /**
@@ -712,16 +713,9 @@ public class CollectionUtils {
      */
     public static <E> List<E> convertStringToList(String str, Function<String, E> converter) {
         if (StringUtils.isBlank(str)) {
-            return null;
+            return Collections.emptyList();
         }
-        return Arrays.stream(str.split(CommonConstants.COMMA))
-                // 去除每个元素首尾空格
-                .map(String::trim)
-                // 过滤分割后的空字符串
-                .filter(s -> !s.isEmpty())
-                // 通用类型转换（由传入的函数决定）
-                .map(converter)
-                .collect(Collectors.toList());
+        return doConvertStringToCollection(str, converter, ArrayList::new);
     }
 
     /**
@@ -734,16 +728,36 @@ public class CollectionUtils {
      */
     public static <E> Set<E> convertStringToSet(String str, Function<String, E> converter) {
         if (StringUtils.isBlank(str)) {
-            return null;
+            return Collections.emptySet();
         }
-        return Arrays.stream(str.split(CommonConstants.COMMA))
-                // 去除每个元素首尾空格
-                .map(String::trim)
-                // 过滤分割后的空字符串
-                .filter(s -> !s.isEmpty())
-                // 通用类型转换（由传入的函数决定）
-                .map(converter)
-                .collect(Collectors.toSet());
+        return doConvertStringToCollection(str, converter, Sets::newHashSetWithExpectedSize);
+    }
+
+    /**
+     * 字符串转集合的公共实现
+     *
+     * @param str               逗号分隔的字符串（已确保非空）
+     * @param converter         类型转换函数
+     * @param collectionFactory 指定初始容量的集合工厂（ArrayList::new / Sets::newHashSetWithExpectedSize）
+     * @param <E>               目标元素类型
+     * @param <C>               集合类型
+     * @return 转换后的集合
+     */
+    private static <E, C extends Collection<E>> C doConvertStringToCollection(
+            String str, Function<String, E> converter, IntFunction<C> collectionFactory) {
+        String[] parts = str.split(CommonConstants.COMMA);
+        C result = collectionFactory.apply(parts.length);
+        for (String part : parts) {
+            String trimmed = part.trim();
+            if (trimmed.isEmpty()) {
+                continue;
+            }
+            E element = converter.apply(trimmed);
+            if (element != null) {
+                result.add(element);
+            }
+        }
+        return result;
     }
 
     /**
@@ -756,7 +770,7 @@ public class CollectionUtils {
      */
     public static <K, V> Set<V> mergeValuesToSet(Map<K, ? extends Collection<V>> map) {
         if (isEmpty(map)) {
-            return Sets.newHashSetWithExpectedSize(0);
+            return Collections.emptySet();
         }
         // 预估容量：所有 collection size 之和，避免多次扩容
         int expected = 0;
@@ -765,7 +779,7 @@ public class CollectionUtils {
                 expected += c.size();
             }
         }
-        Set<V> result = new HashSet<>((int) (expected / 0.75f) + 1);
+        Set<V> result = Sets.newHashSetWithExpectedSize(expected);
         for (Collection<V> c : map.values()) {
             if (isNotEmpty(c)) {
                 result.addAll(c);
@@ -786,7 +800,7 @@ public class CollectionUtils {
      */
     public static <K, V> Map<K, V> toMap(List<V> list, Function<V, K> keyExtractor) {
         if (isEmpty(list)) {
-            return Maps.newHashMapWithExpectedSize(0);
+            return Collections.emptyMap();
         }
         Map<K, V> map = Maps.newHashMapWithExpectedSize(list.size());
         for (V item : list) {
@@ -814,7 +828,7 @@ public class CollectionUtils {
      */
     public static <K, V> Map<K, List<V>> groupBy(List<V> list, Function<V, K> keyExtractor) {
         if (isEmpty(list)) {
-            return Maps.newHashMapWithExpectedSize(0);
+            return Collections.emptyMap();
         }
         Map<K, List<V>> map = Maps.newHashMapWithExpectedSize(list.size());
         for (V item : list) {
@@ -842,9 +856,9 @@ public class CollectionUtils {
      */
     public static <V, F> Set<F> extractFieldToSet(List<V> list, Function<V, F> fieldExtractor) {
         if (CollectionUtils.isEmpty(list)) {
-            return Sets.newHashSetWithExpectedSize(0);
+            return Collections.emptySet();
         }
-        Set<F> result = new HashSet<>(list.size());
+        Set<F> result = Sets.newHashSetWithExpectedSize(list.size());
         for (V item : list) {
             if (item == null) {
                 continue;
@@ -868,7 +882,7 @@ public class CollectionUtils {
      */
     public static <V, R> Set<R> convertToSet(Collection<V> source, Function<V, R> mapper) {
         if (isEmpty(source)) {
-            return Sets.newHashSetWithExpectedSize(0);
+            return Collections.emptySet();
         }
         Set<R> result = Sets.newHashSetWithExpectedSize(source.size());
         for (V item : source) {
