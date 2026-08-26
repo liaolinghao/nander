@@ -654,8 +654,15 @@ public class CollectionUtils {
      * @return 按批量分配后的多个批次
      */
     public static <E> List<List<E>> batchSplit(List<E> list, int batchSize) {
-        List<List<E>> result = new ArrayList<>();
+        if (batchSize <= 0) {
+            throw new IllegalArgumentException("batchSize must be positive: " + batchSize);
+        }
+        if (isEmpty(list)) {
+            return Collections.emptyList();
+        }
+        // 预估批次数量
         int size = list.size();
+        List<List<E>> result = new ArrayList<>((size + batchSize - 1) / batchSize);
         for (int i = 0; i < size; i += batchSize) {
             int end = Math.min(size, i + batchSize);
             result.add(list.subList(i, end));
