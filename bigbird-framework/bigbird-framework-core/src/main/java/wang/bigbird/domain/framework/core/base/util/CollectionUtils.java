@@ -921,4 +921,23 @@ public class CollectionUtils {
         return result;
     }
 
+    /**
+     * 按 keys 顺序从 map 批量取值，未命中的 key 对应位置填充 null。
+     * 返回 List 长度与 keys 完全一致（索引对齐语义），适合 @CacheAsMulti 等场景。
+     *
+     * @param keys 查询键列表，可为 null
+     * @param map  目标映射，可为 null（视为全部未命中，整体填充 null）
+     * @return 与 keys 顺序一致的 List，永不为 null
+     */
+    public static <K, V> List<V> batchMapGet(List<K> keys, Map<K, V> map) {
+        if (CollectionUtils.isEmpty(keys)) {
+            return Collections.emptyList();
+        }
+        List<V> result = new ArrayList<>(keys.size());
+        for (K key : keys) {
+            result.add(map == null ? null : map.get(key));
+        }
+        return result;
+    }
+
 }
