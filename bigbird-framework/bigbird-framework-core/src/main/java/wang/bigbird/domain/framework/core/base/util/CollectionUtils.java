@@ -21,6 +21,7 @@ import wang.bigbird.domain.framework.core.base.tool.Assert;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.IntFunction;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -862,7 +863,7 @@ public class CollectionUtils {
      * @return 提取后的 Set，永远不为 null
      */
     public static <V, F> Set<F> extractFieldToSet(List<V> list, Function<V, F> fieldExtractor) {
-        if (CollectionUtils.isEmpty(list)) {
+        if (isEmpty(list)) {
             return Collections.emptySet();
         }
         Set<F> result = Sets.newHashSetWithExpectedSize(list.size());
@@ -930,7 +931,7 @@ public class CollectionUtils {
      * @return 与 keys 顺序一致的 List，永不为 null
      */
     public static <K, V> List<V> getByKeysInOrder(List<K> keys, Map<K, V> map) {
-        if (CollectionUtils.isEmpty(keys)) {
+        if (isEmpty(keys)) {
             return Collections.emptyList();
         }
         List<V> result = new ArrayList<>(keys.size());
@@ -949,7 +950,7 @@ public class CollectionUtils {
      * @return 非 null 元素的有序 List，永不为 null
      */
     public static <T> List<T> filterNonNullToList(Collection<T> source) {
-        if (CollectionUtils.isEmpty(source)) {
+        if (isEmpty(source)) {
             return Collections.emptyList();
         }
         List<T> result = new ArrayList<>(source.size());
@@ -969,7 +970,7 @@ public class CollectionUtils {
      * @return 非 null 元素的 Set，永不为 null
      */
     public static <T> Set<T> filterNonNullToSet(Collection<T> source) {
-        if (CollectionUtils.isEmpty(source)) {
+        if (isEmpty(source)) {
             return Collections.emptySet();
         }
         Set<T> result = Sets.newHashSetWithExpectedSize(source.size());
@@ -979,6 +980,47 @@ public class CollectionUtils {
             }
         }
         return result;
+    }
+
+    /**
+     * 按谓词过滤集合，返回匹配元素的 List。
+     *
+     * @param source    源集合，可为 null
+     * @param predicate 过滤谓词
+     * @param <T>       元素类型
+     * @return 匹配元素的有序 List，永不为 null
+     */
+    public static <T> List<T> filterToList(Collection<T> source, Predicate<T> predicate) {
+        if (isEmpty(source)) {
+            return Collections.emptyList();
+        }
+        List<T> result = new ArrayList<>(source.size());
+        for (T item : source) {
+            if (predicate.test(item)) {
+                result.add(item);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 判断集合中是否存在匹配谓词的元素，找到即返回（短路）。
+     *
+     * @param source    源集合，可为 null
+     * @param predicate 匹配谓词
+     * @param <T>       元素类型
+     * @return 存在匹配元素返回 true，否则 false
+     */
+    public static <T> boolean anyMatch(Collection<T> source, Predicate<T> predicate) {
+        if (isEmpty(source)) {
+            return false;
+        }
+        for (T item : source) {
+            if (predicate.test(item)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
