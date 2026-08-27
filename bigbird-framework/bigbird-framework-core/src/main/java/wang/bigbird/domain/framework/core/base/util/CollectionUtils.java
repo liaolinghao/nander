@@ -929,7 +929,7 @@ public class CollectionUtils {
      * @param map  目标映射，可为 null（视为全部未命中，整体填充 null）
      * @return 与 keys 顺序一致的 List，永不为 null
      */
-    public static <K, V> List<V> batchMapGet(List<K> keys, Map<K, V> map) {
+    public static <K, V> List<V> getByKeysInOrder(List<K> keys, Map<K, V> map) {
         if (CollectionUtils.isEmpty(keys)) {
             return Collections.emptyList();
         }
