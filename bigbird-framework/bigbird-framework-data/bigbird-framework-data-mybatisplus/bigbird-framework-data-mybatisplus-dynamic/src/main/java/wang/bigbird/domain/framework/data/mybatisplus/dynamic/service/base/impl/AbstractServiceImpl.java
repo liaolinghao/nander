@@ -70,7 +70,7 @@ public abstract class AbstractServiceImpl<M extends BaseMapper<T>, T> extends MP
             Function<Set<Long>, List<T>> batchQueryFunc
     ) {
         if (CollectionUtils.isEmpty(idSet)) {
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
         // Set 转 List 分片
         List<Long> idList = new ArrayList<>(idSet);
