@@ -74,7 +74,7 @@ public abstract class AbstractServiceImpl<M extends BaseMapper<T>, T> extends MP
         }
         // Set 转 List 分片
         List<Long> idList = new ArrayList<>(idSet);
-        List<List<Long>> batchGroups = Lists.partition(idList, batchSize);
+        List<List<Long>> batchGroups = CollectionUtils.batchSplit(idList, batchSize);
         // 小顶堆：分数升序，堆顶是当前最低分
         PriorityQueue<T> topQueue = new PriorityQueue<>(
                 Comparator.comparingDouble(scoreExtractor)
