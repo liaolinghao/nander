@@ -940,4 +940,45 @@ public class CollectionUtils {
         return result;
     }
 
+    /**
+     * 过滤集合中的 null 元素，返回非 null 元素的列表。
+     * 保留原集合顺序，未命中占位 null 被剔除。
+     *
+     * @param source 源集合，可为 null
+     * @param <T>    元素类型
+     * @return 非 null 元素的有序 List，永不为 null
+     */
+    public static <T> List<T> filterNonNullToList(Collection<T> source) {
+        if (CollectionUtils.isEmpty(source)) {
+            return Collections.emptyList();
+        }
+        List<T> result = new ArrayList<>(source.size());
+        for (T item : source) {
+            if (item != null) {
+                result.add(item);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 过滤集合中的 null 元素，返回非 null 元素的 Set。
+     *
+     * @param source 源集合，可为 null
+     * @param <T>    元素类型
+     * @return 非 null 元素的 Set，永不为 null
+     */
+    public static <T> Set<T> filterNonNullToSet(Collection<T> source) {
+        if (CollectionUtils.isEmpty(source)) {
+            return Collections.emptySet();
+        }
+        Set<T> result = Sets.newHashSetWithExpectedSize(source.size());
+        for (T item : source) {
+            if (item != null) {
+                result.add(item);
+            }
+        }
+        return result;
+    }
+
 }
