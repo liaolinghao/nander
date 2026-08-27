@@ -957,15 +957,81 @@ public class CollectionUtils {
      * @param map  目标映射，可为 null（视为全部未命中，整体填充 null）
      * @return 与 keys 顺序一致的 List，永不为 null
      */
-    public static <K, V> List<V> getByKeysInOrder(List<K> keys, Map<K, V> map) {
+    public static <K, V> List<V> fillByKeysToList(List<K> keys, Map<K, V> map) {
+        return fillByKeysToList(keys, map, null);
+    }
+
+    /**
+     * 按 keys 顺序从 map 批量取值，未命中的 key 对应位置填充 null。
+     * 返回 List 长度与 keys 完全一致（索引对齐语义），适合 @CacheAsMulti 等场景。
+     *
+     * @param keys         查询键列表，可为 null
+     * @param map          目标映射，可为 null（视为全部未命中，整体填充 null）
+     * @param defaultValue 占位默认值
+     * @return 与 keys 顺序一致的 List，永不为 null
+     */
+    public static <K, V> List<V> fillByKeysToList(List<K> keys, Map<K, V> map, V defaultValue) {
         if (isEmpty(keys)) {
             return Collections.emptyList();
         }
         List<V> result = new ArrayList<>(keys.size());
         for (K key : keys) {
-            result.add(map == null ? null : map.get(key));
+            V value = (map == null) ? defaultValue : map.get(key);
+            result.add(value == null ? defaultValue : value);
         }
         return result;
+    }
+
+    /**
+     * 构建全覆盖的 key → value 映射。
+     * 保证入参 keys 中每个 key 都存在于返回 Map，缺失的用默认值占位，
+     * 查询结果中有效数据（key 存在且集合非空）覆盖占位值，适合 @CacheAsMulti 等场景。
+     *
+     * @param keys 入参 key 列表
+     * @param map  查询方法返回的映射，可能只包含部分 key
+     * @param <K>  key 类型
+     * @param <V>  value 类型
+     * @return 覆盖所有入参 key 的 Map，永不为 null
+     */
+    public static <K, V> Map<K, V> fillByKeysToMap(
+            List<K> keys, Map<K, V> map) {
+        return fillByKeysToMap(keys, map, null);
+    }
+
+    /**
+     * 构建全覆盖的 key → value 映射。
+     * 保证入参 keys 中每个 key 都存在于返回 Map，缺失的用默认值占位，
+     * 查询结果中有效数据（key 存在且集合非空）覆盖占位值，适合 @CacheAsMulti 等场景。
+     *
+     * @param keys         入参 key 列表
+     * @param map          查询方法返回的映射，可能只包含部分 key
+     * @param defaultValue 占位默认值（如 Collections::emptySet）
+     * @param <K>          key 类型
+     * @param <V>          value 类型
+     * @return 覆盖所有入参 key 的 Map，永不为 null
+     */
+    public static <K, V> Map<K, V> fillByKeysToMap(
+            List<K> keys, Map<K, V> map, V defaultValue) {
+        if (isEmpty(keys)) {
+            return Collections.emptyMap();
+        }
+        Map<K, V> resultMap = Maps.newHashMapWithExpectedSize(keys.size());
+        // 预先填充所有 key，保证入参一定存在 key
+        for (K key : keys) {
+            resultMap.put(key, defaultValue);
+        }
+        if (isEmpty(map)) {
+            return resultMap;
+        }
+        // 遍历返回数据，仅有效数据覆盖
+        for (Map.Entry<K, V> entry : map.entrySet()) {
+            K key = entry.getKey();
+            V value = entry.getValue();
+            if (keys.contains(key)) {
+                resultMap.put(key, value == null ? defaultValue : value);
+            }
+        }
+        return resultMap;
     }
 
     /**
