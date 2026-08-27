@@ -797,6 +797,33 @@ public class CollectionUtils {
     }
 
     /**
+     * 将嵌套集合展平为一个 Set，跳过 null 元素和 null/空子集合。
+     *
+     * @param source 源集合（集合的集合），可为 null
+     * @param <T>    元素类型
+     * @return 展平后的 Set，永不为 null
+     */
+    public static <T> Set<T> flattenToSet(Collection<? extends Collection<T>> source) {
+        if (isEmpty(source)) {
+            return Collections.emptySet();
+        }
+        // 预估容量：所有 collection size 之和，避免多次扩容
+        int expected = 0;
+        for (Collection<T> c : source) {
+            if (c != null) {
+                expected += c.size();
+            }
+        }
+        Set<T> result = Sets.newHashSetWithExpectedSize(expected);
+        for (Collection<T> c : source) {
+            if (isNotEmpty(c)) {
+                result.addAll(c);
+            }
+        }
+        return result;
+    }
+
+    /**
      * 将 List 按 keyExtractor 提取的 key 转换为 Map。
      * 自动跳过 null 元素和 null key；重复 key 保留第一个。
      *
