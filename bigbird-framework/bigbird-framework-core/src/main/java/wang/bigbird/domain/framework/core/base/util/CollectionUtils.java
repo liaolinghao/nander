@@ -1109,6 +1109,9 @@ public class CollectionUtils {
             return false;
         }
         for (T item : source) {
+            if (item == null) {
+                continue;
+            }
             if (predicate.test(item)) {
                 return true;
             }
