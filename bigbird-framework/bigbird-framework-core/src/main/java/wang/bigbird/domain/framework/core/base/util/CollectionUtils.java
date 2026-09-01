@@ -824,21 +824,21 @@ public class CollectionUtils {
     }
 
     /**
-     * 将 List 按 keyExtractor 提取的 key 转换为 Map。
+     * 将集合按 keyExtractor 提取的 key 转换为 Map。
      * 自动跳过 null 元素和 null key；重复 key 保留第一个。
      *
-     * @param list         源列表，可为 null 或空
+     * @param collection   源集合，可为 null 或空
      * @param keyExtractor key 提取函数，如：Integer::valueOf
      * @param <K>          key 类型
      * @param <V>          元素类型
      * @return 转换后的 Map，永远不为 null
      */
-    public static <K, V> Map<K, V> toMap(List<V> list, Function<V, K> keyExtractor) {
-        if (isEmpty(list)) {
+    public static <K, V> Map<K, V> toMapByKey(Collection<V> collection, Function<V, K> keyExtractor) {
+        if (isEmpty(collection)) {
             return Collections.emptyMap();
         }
-        Map<K, V> map = Maps.newHashMapWithExpectedSize(list.size());
-        for (V item : list) {
+        Map<K, V> map = Maps.newHashMapWithExpectedSize(collection.size());
+        for (V item : collection) {
             if (item == null) {
                 continue;
             }
@@ -852,21 +852,44 @@ public class CollectionUtils {
     }
 
     /**
-     * 将 List 按 keyExtractor 分组，返回 Map<key, List<元素>>。
+     * 以集合元素为 key，通过 valueMapper 计算每个 key 对应的 value，组装为 Map。
+     * 集合允许重复元素：默认后者覆盖前者。
+     *
+     * @param collection  源集合（null/空 返回空 Map）
+     * @param valueMapper key -> value 的映射函数
+     */
+    public static <K, V> Map<K, V> toMapWithValue(
+            Collection<K> collection,
+            Function<K, V> valueMapper) {
+        if (isEmpty(collection)) {
+            return Collections.emptyMap();
+        }
+        Map<K, V> resultMap = Maps.newHashMapWithExpectedSize(collection.size());
+        for (K key : collection) {
+            if (key == null) {
+                continue;
+            }
+            resultMap.put(key, valueMapper.apply(key));
+        }
+        return resultMap;
+    }
+
+    /**
+     * 将集合按 keyExtractor 分组，返回 Map<key, List<元素>>。
      * 自动跳过 null 元素和 null key；返回可变 HashMap，永远不为 null。
      *
-     * @param list         源列表，可为 null 或空
+     * @param collection   源列表，可为 null 或空
      * @param keyExtractor 分组 key 提取函数，如：Integer::valueOf
      * @param <K>          key 类型
      * @param <V>          元素类型
      * @return 分组后的 Map，永远不为 null
      */
-    public static <K, V> Map<K, List<V>> groupBy(List<V> list, Function<V, K> keyExtractor) {
-        if (isEmpty(list)) {
+    public static <K, V> Map<K, List<V>> groupBy(Collection<V> collection, Function<V, K> keyExtractor) {
+        if (isEmpty(collection)) {
             return Collections.emptyMap();
         }
-        Map<K, List<V>> map = Maps.newHashMapWithExpectedSize(list.size());
-        for (V item : list) {
+        Map<K, List<V>> map = Maps.newHashMapWithExpectedSize(collection.size());
+        for (V item : collection) {
             if (item == null) {
                 continue;
             }
@@ -880,21 +903,21 @@ public class CollectionUtils {
     }
 
     /**
-     * 从 List 中提取每个元素的指定字段到 Set 中，自动去重。
+     * 从集合中提取每个元素的指定字段到 Set 中，自动去重。
      * 自动跳过 null 元素和 null 字段值；返回可变 HashSet，永远不为 null。
      *
-     * @param list           源列表，可为 null 或空
+     * @param collection     源列表，可为 null 或空
      * @param fieldExtractor 字段提取函数，如：Integer::valueOf
      * @param <V>            元素类型
      * @param <F>            字段类型
      * @return 提取后的 Set，永远不为 null
      */
-    public static <V, F> Set<F> extractFieldToSet(List<V> list, Function<V, F> fieldExtractor) {
-        if (isEmpty(list)) {
+    public static <V, F> Set<F> extractFieldToSet(Collection<V> collection, Function<V, F> fieldExtractor) {
+        if (isEmpty(collection)) {
             return Collections.emptySet();
         }
-        Set<F> result = Sets.newHashSetWithExpectedSize(list.size());
-        for (V item : list) {
+        Set<F> result = Sets.newHashSetWithExpectedSize(collection.size());
+        for (V item : collection) {
             if (item == null) {
                 continue;
             }
@@ -957,7 +980,7 @@ public class CollectionUtils {
      * @param map  目标映射，可为 null（视为全部未命中，整体填充 null）
      * @return 与 keys 顺序一致的 List，永不为 null
      */
-    public static <K, V> List<V> fillByKeysToList(List<K> keys, Map<K, V> map) {
+    public static <K, V> List<V> fillByKeysToList(Collection<K> keys, Map<K, V> map) {
         return fillByKeysToList(keys, map, null);
     }
 
@@ -970,7 +993,7 @@ public class CollectionUtils {
      * @param defaultValue 占位默认值
      * @return 与 keys 顺序一致的 List，永不为 null
      */
-    public static <K, V> List<V> fillByKeysToList(List<K> keys, Map<K, V> map, V defaultValue) {
+    public static <K, V> List<V> fillByKeysToList(Collection<K> keys, Map<K, V> map, V defaultValue) {
         if (isEmpty(keys)) {
             return Collections.emptyList();
         }
@@ -994,7 +1017,7 @@ public class CollectionUtils {
      * @return 覆盖所有入参 key 的 Map，永不为 null
      */
     public static <K, V> Map<K, V> fillByKeysToMap(
-            List<K> keys, Map<K, V> map) {
+            Collection<K> keys, Map<K, V> map) {
         return fillByKeysToMap(keys, map, null);
     }
 
@@ -1011,7 +1034,7 @@ public class CollectionUtils {
      * @return 覆盖所有入参 key 的 Map，永不为 null
      */
     public static <K, V> Map<K, V> fillByKeysToMap(
-            List<K> keys, Map<K, V> map, V defaultValue) {
+            Collection<K> keys, Map<K, V> map, V defaultValue) {
         if (isEmpty(keys)) {
             return Collections.emptyMap();
         }
