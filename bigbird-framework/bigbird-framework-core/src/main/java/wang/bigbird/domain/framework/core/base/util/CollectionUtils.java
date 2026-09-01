@@ -985,11 +985,7 @@ public class CollectionUtils {
             return Collections.emptySet();
         }
         Set<R> result = Sets.newHashSetWithExpectedSize(source.size());
-        for (V item : source) {
-            if (item != null) {
-                result.add(mapper.apply(item));
-            }
-        }
+        collectMapped(source, mapper, result);
         return result;
     }
 
@@ -1006,12 +1002,28 @@ public class CollectionUtils {
             return Collections.emptyList();
         }
         List<R> result = new ArrayList<>(source.size());
-        for (V item : source) {
-            if (item != null) {
-                result.add(mapper.apply(item));
-            }
-        }
+        collectMapped(source, mapper, result);
         return result;
+    }
+
+    /**
+     * 遍历源集合，跳过 null 元素与 null 映射结果，逐个加入目标容器。
+     *
+     * @param source 源集合，调用方保证非 null 且非空
+     * @param mapper 元素映射函数，不可为 null
+     * @param sink   结果收集容器，由调用方创建并负责容量预估
+     */
+    public static <V, R> void collectMapped(Collection<V> source, Function<V, R> mapper, Collection<R> sink) {
+        for (V item : source) {
+            if (item == null) {
+                continue;
+            }
+            R r = mapper.apply(item);
+            if (r == null) {
+                continue;
+            }
+            sink.add(r);
+        }
     }
 
     /**
