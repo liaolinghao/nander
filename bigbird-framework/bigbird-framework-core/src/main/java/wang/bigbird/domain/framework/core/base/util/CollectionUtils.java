@@ -797,6 +797,48 @@ public class CollectionUtils {
     }
 
     /**
+     * 对每个 key 通过 resolver 解析出值，将所有值合并为一个 Set。
+     * resolver 返回值可以是单个对象或集合：
+     * - 集合：展平后逐个加入
+     * - 单个对象：直接加入
+     * 自动跳过 null key、null 返回值和 null 元素。
+     *
+     * @param keys     key 集合（null/空 返回空 Set）
+     * @param resolver key -> 值（单个对象或集合）的解析函数
+     * @param <K>      key 类型
+     * @param <T>      元素类型
+     * @return 合并后的 Set，永远不为 null
+     */
+    @SuppressWarnings("unchecked")
+    public static <K, T> Set<T> mergeValuesToSet(
+            Collection<K> keys,
+            Function<K, ?> resolver) {
+        if (isEmpty(keys)) {
+            return Collections.emptySet();
+        }
+        Set<T> result = Sets.newHashSetWithExpectedSize(keys.size());
+        for (K key : keys) {
+            if (key == null) {
+                continue;
+            }
+            Object value = resolver.apply(key);
+            if (value == null) {
+                continue;
+            }
+            if (value instanceof Collection) {
+                for (Object item : (Collection<?>) value) {
+                    if (item != null) {
+                        result.add((T) item);
+                    }
+                }
+            } else {
+                result.add((T) value);
+            }
+        }
+        return result;
+    }
+
+    /**
      * 将嵌套集合展平为一个 Set，跳过 null 元素和 null/空子集合。
      *
      * @param source 源集合（集合的集合），可为 null
