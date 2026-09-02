@@ -1174,6 +1174,27 @@ public class CollectionUtils {
     }
 
     /**
+     * 按谓词过滤集合，返回匹配元素的 Set。
+     *
+     * @param source    源集合，可为 null
+     * @param predicate 过滤谓词
+     * @param <T>       元素类型
+     * @return 匹配元素的 Set，永不为 null
+     */
+    public static <T> Set<T> filterToSet(Collection<T> source, Predicate<T> predicate) {
+        if (isEmpty(source)) {
+            return Collections.emptySet();
+        }
+        Set<T> result = Sets.newHashSetWithExpectedSize(source.size());
+        for (T item : source) {
+            if (predicate.test(item)) {
+                result.add(item);
+            }
+        }
+        return result;
+    }
+
+    /**
      * 判断集合中是否存在匹配谓词的元素，找到即返回（短路）。
      *
      * @param source    源集合，可为 null
