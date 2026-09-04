@@ -19,6 +19,7 @@ import wang.bigbird.domain.framework.core.base.constant.CommonConstants;
 import wang.bigbird.domain.framework.core.base.tool.Assert;
 
 import java.util.*;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
@@ -914,6 +915,84 @@ public class CollectionUtils {
             resultMap.put(key, valueMapper.apply(key));
         }
         return resultMap;
+    }
+
+    /**
+     * 将集合转为 Map：从每个元素中提取 key 与 value。
+     *
+     * <p>规则：</p>
+     * <ul>
+     *   <li>跳过 null 元素与 null key；</li>
+     *   <li>value 不做判空，按原样放入（HashMap 允许 null value）；</li>
+     *   <li>重复 key 默认后者覆盖，需要自定义策略时用带 mergeFunction 的重载。</li>
+     * </ul>
+     *
+     * @param collection     源集合
+     * @param keyExtractor   key 提取函数
+     * @param valueExtractor value 提取函数
+     * @param <T>            元素类型
+     * @param <K>            key 类型
+     * @param <V>            value 类型
+     * @return Map；集合为空时返回 {@link Collections#emptyMap()}
+     */
+    public static <T, K, V> Map<K, V> toMap(Collection<T> collection,
+                                            Function<? super T, ? extends K> keyExtractor,
+                                            Function<? super T, ? extends V> valueExtractor) {
+        if (isEmpty(collection)) {
+            return Collections.emptyMap();
+        }
+        Map<K, V> map = Maps.newHashMapWithExpectedSize(collection.size());
+        for (T item : collection) {
+            if (item == null) {
+                continue;
+            }
+            K key = keyExtractor.apply(item);
+            if (key == null) {
+                continue;
+            }
+            map.put(key, valueExtractor.apply(item));
+        }
+        return map;
+    }
+
+    /**
+     * 将集合转为 Map：从每个元素中提取 key 与 value。
+     *
+     * <p>规则：</p>
+     * <ul>
+     *   <li>跳过 null 元素与 null key；</li>
+     *   <li>value 不做判空，按原样放入（HashMap 允许 null value）；</li>
+     *   <li>重复 key 默认后者覆盖，需要自定义策略时用带 mergeFunction 的重载。</li>
+     * </ul>
+     *
+     * @param collection     源集合
+     * @param keyExtractor   key 提取函数
+     * @param valueExtractor value 提取函数
+     * @param mergeFunction  带合并策略的重载，对应 Collectors.toMap(keyExtractor, valueExtractor, mergeFunction)，mergeFunction 参数顺序为 (旧值, 新值)，仅 key 冲突时触发。
+     * @param <T>            元素类型
+     * @param <K>            key 类型
+     * @param <V>            value 类型
+     * @return Map；集合为空时返回 {@link Collections#emptyMap()}
+     */
+    public static <T, K, V> Map<K, V> toMap(Collection<T> collection,
+                                            Function<? super T, ? extends K> keyExtractor,
+                                            Function<? super T, ? extends V> valueExtractor,
+                                            BinaryOperator<V> mergeFunction) {
+        if (isEmpty(collection)) {
+            return Collections.emptyMap();
+        }
+        Map<K, V> map = Maps.newHashMapWithExpectedSize(collection.size());
+        for (T item : collection) {
+            if (item == null) {
+                continue;
+            }
+            K key = keyExtractor.apply(item);
+            if (key == null) {
+                continue;
+            }
+            map.merge(key, valueExtractor.apply(item), mergeFunction);
+        }
+        return map;
     }
 
     /**
