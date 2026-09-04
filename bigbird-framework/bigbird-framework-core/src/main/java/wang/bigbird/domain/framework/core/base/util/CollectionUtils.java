@@ -962,7 +962,6 @@ public class CollectionUtils {
      * <ul>
      *   <li>跳过 null 元素与 null key；</li>
      *   <li>value 不做判空，按原样放入（HashMap 允许 null value）；</li>
-     *   <li>重复 key 默认后者覆盖，需要自定义策略时用带 mergeFunction 的重载。</li>
      * </ul>
      *
      * @param collection     源集合
