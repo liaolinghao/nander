@@ -718,7 +718,7 @@ public class CollectionUtils {
      * @param str       逗号分隔的字符串
      * @param converter 类型转换函数（如：Integer::valueOf、Double::valueOf）
      * @param <E>       目标类型（Integer/Long/Double等）
-     * @return 转换后的List
+     * @return 转换后的List，注意：如果为空，返回不可修改的空集合
      */
     public static <E> List<E> convertStringToList(String str, Function<String, E> converter) {
         if (StringUtils.isBlank(str)) {
@@ -733,7 +733,7 @@ public class CollectionUtils {
      * @param str       逗号分隔的字符串
      * @param converter 类型转换函数（如：Integer::valueOf、Double::valueOf）
      * @param <E>       目标类型（Integer/Long/Double等）
-     * @return 转换后的Set
+     * @return 转换后的Set，注意：如果为空，返回不可修改的空集合
      */
     public static <E> Set<E> convertStringToSet(String str, Function<String, E> converter) {
         if (StringUtils.isBlank(str)) {
@@ -775,7 +775,7 @@ public class CollectionUtils {
      * @param map 源 Map，value 为 Collection；可为 null 或空
      * @param <K> Map key 类型
      * @param <V> Collection 元素类型
-     * @return 合并后的 Set，永远不为 null
+     * @return 合并后的 Set，永远不为 null，注意：如果为空，返回不可修改的空集合
      */
     public static <K, V> Set<V> mergeValuesToSet(Map<K, ? extends Collection<V>> map) {
         if (isEmpty(map)) {
@@ -808,7 +808,7 @@ public class CollectionUtils {
      * @param resolver key -> 值（单个对象或集合）的解析函数
      * @param <K>      key 类型
      * @param <T>      元素类型
-     * @return 合并后的 Set，永远不为 null
+     * @return 合并后的 Set，永远不为 null，注意：如果为空，返回不可修改的空集合
      */
     @SuppressWarnings("unchecked")
     public static <K, T> Set<T> mergeValuesToSet(
@@ -844,7 +844,7 @@ public class CollectionUtils {
      *
      * @param source 源集合（集合的集合），可为 null
      * @param <T>    元素类型
-     * @return 展平后的 Set，永不为 null
+     * @return 展平后的 Set，永不为 null，注意：如果为空，返回不可修改的空集合
      */
     public static <T> Set<T> flattenToSet(Collection<? extends Collection<T>> source) {
         if (isEmpty(source)) {
@@ -874,7 +874,7 @@ public class CollectionUtils {
      * @param keyExtractor key 提取函数，如：Integer::valueOf
      * @param <K>          key 类型
      * @param <V>          元素类型
-     * @return 转换后的 Map，永远不为 null
+     * @return 转换后的 Map，永远不为 null，注意：如果为空，返回不可修改的空集合
      */
     public static <K, V> Map<K, V> toMapByKey(Collection<V> collection, Function<V, K> keyExtractor) {
         if (isEmpty(collection)) {
@@ -900,6 +900,7 @@ public class CollectionUtils {
      *
      * @param collection  源集合（null/空 返回空 Map）
      * @param valueMapper key -> value 的映射函数
+     * @return 转换后的 Map，永远不为 null，注意：如果为空，返回不可修改的空集合
      */
     public static <K, V> Map<K, V> toMapWithValue(
             Collection<K> collection,
@@ -933,7 +934,7 @@ public class CollectionUtils {
      * @param <T>            元素类型
      * @param <K>            key 类型
      * @param <V>            value 类型
-     * @return Map；集合为空时返回 {@link Collections#emptyMap()}
+     * @return 转换后的 Map，永远不为 null，注意：如果为空，返回不可修改的空集合
      */
     public static <T, K, V> Map<K, V> toMap(Collection<T> collection,
                                             Function<? super T, ? extends K> keyExtractor,
@@ -971,7 +972,7 @@ public class CollectionUtils {
      * @param <T>            元素类型
      * @param <K>            key 类型
      * @param <V>            value 类型
-     * @return Map；集合为空时返回 {@link Collections#emptyMap()}
+     * @return 转换后的 Map，永远不为 null，注意：如果为空，返回不可修改的空集合
      */
     public static <T, K, V> Map<K, V> toMap(Collection<T> collection,
                                             Function<? super T, ? extends K> keyExtractor,
@@ -1002,7 +1003,7 @@ public class CollectionUtils {
      * @param keyExtractor 分组 key 提取函数，如：Integer::valueOf
      * @param <K>          key 类型
      * @param <V>          元素类型
-     * @return 分组后的 Map，永远不为 null
+     * @return 分组后的 Map，永远不为 null，注意：如果为空，返回不可修改的空集合
      */
     public static <K, V> Map<K, List<V>> groupBy(Collection<V> collection, Function<V, K> keyExtractor) {
         if (isEmpty(collection)) {
@@ -1030,7 +1031,7 @@ public class CollectionUtils {
      * @param fieldExtractor 字段提取函数，如：Integer::valueOf
      * @param <V>            元素类型
      * @param <F>            字段类型
-     * @return 提取后的 Set，永远不为 null
+     * @return 提取后的 Set，永远不为 null，注意：如果为空，返回不可修改的空集合
      */
     public static <V, F> Set<F> extractFieldToSet(Collection<V> collection, Function<V, F> fieldExtractor) {
         if (isEmpty(collection)) {
@@ -1056,7 +1057,7 @@ public class CollectionUtils {
      *
      * @param source 源集合，可为 null
      * @param mapper 元素映射函数，不可为 null
-     * @return 可变 HashSet，永不为 null
+     * @return 转换后的 Set，永不为 null，注意：如果为空，返回不可修改的空集合
      */
     public static <V, R> Set<R> convertToSet(Collection<V> source, Function<V, R> mapper) {
         if (isEmpty(source)) {
@@ -1073,7 +1074,7 @@ public class CollectionUtils {
      *
      * @param source 源集合，可为 null
      * @param mapper 元素映射函数，不可为 null
-     * @return 可变 ArrayList，永不为 null
+     * @return 转换后的 List，永不为 null，注意：如果为空，返回不可修改的空集合
      */
     public static <V, R> List<R> convertToList(Collection<V> source, Function<V, R> mapper) {
         if (isEmpty(source)) {
@@ -1110,7 +1111,7 @@ public class CollectionUtils {
      *
      * @param keys 查询键列表，可为 null
      * @param map  目标映射，可为 null（视为全部未命中，整体填充 null）
-     * @return 与 keys 顺序一致的 List，永不为 null
+     * @return 与 keys 顺序一致的 List，永不为 null，注意：如果为空，返回不可修改的空集合
      */
     public static <K, V> List<V> fillByKeysToList(Collection<K> keys, Map<K, V> map) {
         return fillByKeysToList(keys, map, null);
@@ -1123,7 +1124,7 @@ public class CollectionUtils {
      * @param keys         查询键列表，可为 null
      * @param map          目标映射，可为 null（视为全部未命中，整体填充 null）
      * @param defaultValue 占位默认值
-     * @return 与 keys 顺序一致的 List，永不为 null
+     * @return 与 keys 顺序一致的 List，永不为 null，注意：如果为空，返回不可修改的空集合
      */
     public static <K, V> List<V> fillByKeysToList(Collection<K> keys, Map<K, V> map, V defaultValue) {
         if (isEmpty(keys)) {
@@ -1146,7 +1147,7 @@ public class CollectionUtils {
      * @param map  查询方法返回的映射，可能只包含部分 key
      * @param <K>  key 类型
      * @param <V>  value 类型
-     * @return 覆盖所有入参 key 的 Map，永不为 null
+     * @return 覆盖所有入参 key 的 Map，永不为 null，注意：如果为空，返回不可修改的空集合
      */
     public static <K, V> Map<K, V> fillByKeysToMap(
             Collection<K> keys, Map<K, V> map) {
@@ -1163,7 +1164,7 @@ public class CollectionUtils {
      * @param defaultValue 占位默认值（如 Collections::emptySet）
      * @param <K>          key 类型
      * @param <V>          value 类型
-     * @return 覆盖所有入参 key 的 Map，永不为 null
+     * @return 覆盖所有入参 key 的 Map，永不为 null，注意：如果为空，返回不可修改的空集合
      */
     public static <K, V> Map<K, V> fillByKeysToMap(
             Collection<K> keys, Map<K, V> map, V defaultValue) {
@@ -1195,7 +1196,7 @@ public class CollectionUtils {
      *
      * @param source 源集合，可为 null
      * @param <T>    元素类型
-     * @return 非 null 元素的有序 List，永不为 null
+     * @return 非 null 元素的有序 List，永不为 null，注意：如果为空，返回不可修改的空集合
      */
     public static <T> List<T> filterNonNullToList(Collection<T> source) {
         if (isEmpty(source)) {
@@ -1215,7 +1216,7 @@ public class CollectionUtils {
      *
      * @param source 源集合，可为 null
      * @param <T>    元素类型
-     * @return 非 null 元素的 Set，永不为 null
+     * @return 非 null 元素的 Set，永不为 null，注意：如果为空，返回不可修改的空集合
      */
     public static <T> Set<T> filterNonNullToSet(Collection<T> source) {
         if (isEmpty(source)) {
@@ -1236,7 +1237,7 @@ public class CollectionUtils {
      * @param source    源集合，可为 null
      * @param predicate 过滤谓词
      * @param <T>       元素类型
-     * @return 匹配元素的有序 List，永不为 null
+     * @return 匹配元素的有序 List，永不为 null，注意：如果为空，返回不可修改的空集合
      */
     public static <T> List<T> filterToList(Collection<T> source, Predicate<T> predicate) {
         if (isEmpty(source)) {
@@ -1257,7 +1258,7 @@ public class CollectionUtils {
      * @param source    源集合，可为 null
      * @param predicate 过滤谓词
      * @param <T>       元素类型
-     * @return 匹配元素的 Set，永不为 null
+     * @return 匹配元素的 Set，永不为 null，注意：如果为空，返回不可修改的空集合
      */
     public static <T> Set<T> filterToSet(Collection<T> source, Predicate<T> predicate) {
         if (isEmpty(source)) {

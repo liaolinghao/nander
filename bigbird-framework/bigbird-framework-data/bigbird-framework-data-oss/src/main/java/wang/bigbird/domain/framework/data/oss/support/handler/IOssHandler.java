@@ -51,7 +51,7 @@ public interface IOssHandler {
      *                    腾讯云不支持检查桶是否存在以及主动创建桶的方法，在使用时一定要检查在云对象里面是否提前创建好桶了
      *                    FTP不支持桶，采用FTP时该值会被忽略
      *                    DFS不支持桶，实现上将桶赋予分组的含义，必须是FastDFS服务器端预先部署并配置好的Storage组名称（如 group1、group2），无法自定义不存在的Group名称
-     * @param inputStream 文件输入流
+     * @param inputStream 文件输入流，调用方负责关闭传入的 InputStream
      * @param fileName    原文件名（设置元数据）
      * @param fileSize    文件大小（设置元数据，字节数）
      * @param remotePath  远程文件地址
