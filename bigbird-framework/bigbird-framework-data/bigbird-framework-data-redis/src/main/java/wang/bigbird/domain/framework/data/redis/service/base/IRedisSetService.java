@@ -80,6 +80,17 @@ public interface IRedisSetService {
     boolean srem(String key, Object value);
 
     /**
+     * SREM
+     * <p>
+     * 将一批 member 元素从集合 key 中移除，不存在的元素会被忽略。
+     *
+     * @param key  键
+     * @param objs 值
+     * @return 移除是否成功
+     */
+    boolean srem(String key, Set<?> objs);
+
+    /**
      * SMOVE
      * <p>
      * 将 member 元素从 source 集合移动到 destination 集合。

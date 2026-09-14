@@ -12,18 +12,17 @@
  */
 package wang.bigbird.domain.framework.data.redis.service.base.impl;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.redisson.api.RSet;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import wang.bigbird.domain.framework.core.base.util.CollectionUtils;
 import wang.bigbird.domain.framework.core.base.util.JsonUtils;
 import wang.bigbird.domain.framework.data.redis.service.base.IRedisSetService;
 
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * redis set 服务
@@ -46,9 +45,7 @@ public class RedisSetServiceImpl implements IRedisSetService {
     @Override
     public boolean sadd(String key, Set<?> objs) {
         RSet<String> set = redissonClient.getSet(key);
-        Set<String> jsonList = objs.stream()
-                .map(JsonUtils::object2Json)
-                .collect(Collectors.toSet());
+        Set<String> jsonList = CollectionUtils.convertToSet(objs, JsonUtils::object2Json);
         return set.addAll(jsonList);
     }
 
@@ -74,6 +71,13 @@ public class RedisSetServiceImpl implements IRedisSetService {
     }
 
     @Override
+    public boolean srem(String key, Set<?> objs) {
+        RSet<String> set = redissonClient.getSet(key);
+        Set<String> jsonList = CollectionUtils.convertToSet(objs, JsonUtils::object2Json);
+        return set.removeAll(jsonList);
+    }
+
+    @Override
     public boolean smove(String key, String destKey, Object value) {
         RSet<String> set = redissonClient.getSet(key);
         String jsonString = JsonUtils.object2Json(value);
@@ -96,7 +100,7 @@ public class RedisSetServiceImpl implements IRedisSetService {
     @Override
     public <T> Set<T> sinter(List<String> keys, Class<T> clazz) {
         if (CollectionUtils.isEmpty(keys)) {
-            return new HashSet<>(2);
+            return Collections.emptySet();
         }
         String firstKey = keys.get(0);
         if (keys.size() == 1) {
@@ -111,7 +115,7 @@ public class RedisSetServiceImpl implements IRedisSetService {
     @Override
     public <T> Set<T> sunion(List<String> keys, Class<T> clazz) {
         if (CollectionUtils.isEmpty(keys)) {
-            return new HashSet<>(2);
+            return Collections.emptySet();
         }
         String firstKey = keys.get(0);
         if (keys.size() == 1) {
@@ -126,7 +130,7 @@ public class RedisSetServiceImpl implements IRedisSetService {
     @Override
     public <T> Set<T> sdiff(List<String> keys, Class<T> clazz) {
         if (CollectionUtils.isEmpty(keys)) {
-            return new HashSet<>(2);
+            return Collections.emptySet();
         }
         String firstKey = keys.get(0);
         if (keys.size() == 1) {
@@ -147,11 +151,9 @@ public class RedisSetServiceImpl implements IRedisSetService {
      */
     private <T> Set<T> convertJsonToObjects(Set<String> jsonStrings, Class<T> clazz) {
         if (CollectionUtils.isEmpty(jsonStrings)) {
-            return new HashSet<>(0);
+            return Collections.emptySet();
         }
-        return jsonStrings.stream()
-                .map(jsonString -> JsonUtils.json2Object(jsonString, clazz))
-                .collect(Collectors.toSet());
+        return CollectionUtils.convertToSet(jsonStrings, jsonString -> JsonUtils.json2Object(jsonString, clazz));
     }
 
 }
