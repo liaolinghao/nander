@@ -14,7 +14,6 @@ package wang.bigbird.domain.framework.data.mybatisplus.dynamic.service.base.impl
 
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.github.yulichang.base.MPJBaseServiceImpl;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.apache.ibatis.annotations.Param;
 import wang.bigbird.domain.framework.core.base.util.CollectionUtils;
@@ -53,35 +52,35 @@ public abstract class AbstractServiceImpl<M extends BaseMapper<T>, T> extends MP
     }
 
     /**
-     * 分批查询ID集合，通过内存小顶堆聚合算法按分数降序取 TopN
+     * 分批查询集合，通过内存小顶堆聚合算法按分数降序取 TopN
      *
-     * @param idSet          待查询ID集合
+     * @param keySet         待查询集合
      * @param batchSize      每批查询数量
      * @param topNum         需要保留前N条
      * @param scoreExtractor 实体获取分数方法引用：Entity::getScore
-     * @param batchQueryFunc 单批ID查询回调：传入一批ID集合，返回该批数据
+     * @param batchQueryFunc 单批查询回调：传入一批条件集合，返回该批数据
      * @return 按分数降序取 TopN 列表
      */
-    public static <T> List<T> batchQueryTopByScore(
-            Set<Long> idSet,
+    public static <I, T> List<T> batchQueryTopByScore(
+            Set<I> keySet,
             int batchSize,
             int topNum,
             ToDoubleFunction<T> scoreExtractor,
-            Function<Set<Long>, List<T>> batchQueryFunc
+            Function<Set<I>, List<T>> batchQueryFunc
     ) {
-        if (CollectionUtils.isEmpty(idSet)) {
+        if (CollectionUtils.isEmpty(keySet)) {
             return Collections.emptyList();
         }
         // Set 转 List 分片
-        List<Long> idList = new ArrayList<>(idSet);
-        List<List<Long>> batchGroups = CollectionUtils.batchSplit(idList, batchSize);
+        List<I> keyList = new ArrayList<>(keySet);
+        List<List<I>> batchGroups = CollectionUtils.batchSplit(keyList, batchSize);
         // 小顶堆：分数升序，堆顶是当前最低分
         PriorityQueue<T> topQueue = new PriorityQueue<>(
                 Comparator.comparingDouble(scoreExtractor)
         );
-        for (List<Long> batchIds : batchGroups) {
-            Set<Long> batchIdSet = Sets.newHashSet(batchIds);
-            List<T> batchDataList = batchQueryFunc.apply(batchIdSet);
+        for (List<I> batchKeys : batchGroups) {
+            Set<I> batchKeySet = Sets.newHashSet(batchKeys);
+            List<T> batchDataList = batchQueryFunc.apply(batchKeySet);
             if (CollectionUtils.isEmpty(batchDataList)) {
                 continue;
             }
@@ -102,25 +101,25 @@ public abstract class AbstractServiceImpl<M extends BaseMapper<T>, T> extends MP
     }
 
     /**
-     * 分批查询ID集合后再合并，为配合批量缓存查询方法，要求ID集合为List类型
+     * 分批查询集合后再合并，为配合批量缓存查询方法，要求集合为List类型
      *
-     * @param idList         待查询ID集合
+     * @param keyList        待查询集合
      * @param batchSize      每批查询数量
-     * @param batchQueryFunc 单批ID查询回调：传入一批ID集合，返回该批数据
+     * @param batchQueryFunc 单批查询回调：传入一批条件集合，返回该批数据
      * @return 数据集
      */
-    public static <T> List<T> batchQuery(
-            List<Long> idList,
+    public static <I, T> List<T> batchQuery(
+            List<I> keyList,
             int batchSize,
-            Function<List<Long>, List<T>> batchQueryFunc
+            Function<List<I>, List<T>> batchQueryFunc
     ) {
-        if (CollectionUtils.isEmpty(idList)) {
-            return new ArrayList<>();
+        if (CollectionUtils.isEmpty(keyList)) {
+            return Collections.emptyList();
         }
-        List<List<Long>> batchGroups = Lists.partition(idList, batchSize);
-        List<T> result = new ArrayList<>(idList.size());
-        for (List<Long> batchIds : batchGroups) {
-            List<T> batchDataList = batchQueryFunc.apply(batchIds);
+        List<List<I>> batchGroups = CollectionUtils.batchSplit(keyList, batchSize);
+        List<T> result = new ArrayList<>(keyList.size());
+        for (List<I> batchKeys : batchGroups) {
+            List<T> batchDataList = batchQueryFunc.apply(batchKeys);
             if (CollectionUtils.isEmpty(batchDataList)) {
                 continue;
             }
