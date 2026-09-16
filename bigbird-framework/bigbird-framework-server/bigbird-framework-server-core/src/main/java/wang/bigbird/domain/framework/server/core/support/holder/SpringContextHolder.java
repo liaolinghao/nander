@@ -123,6 +123,20 @@ public class SpringContextHolder implements ApplicationContextAware {
     }
 
     /**
+     * 读取配置值并转换类型
+     *
+     * @param key          配置键
+     * @param type         数据类型
+     * @param defaultValue 默认值
+     * @param <T>
+     * @return 配置数据对象
+     */
+    public static <T> T getConfigValue(String key, Class<T> type, T defaultValue) {
+        assertApplicationContext();
+        return applicationContext.getEnvironment().getProperty(key, type, defaultValue);
+    }
+
+    /**
      * 根据配置前缀，批量读取一组配置转为Map
      *
      * @param prefix 配置前缀，例：encrypt.config
