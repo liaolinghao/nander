@@ -12,6 +12,7 @@
  */
 package wang.bigbird.domain.framework.cache.support.redission;
 
+import lombok.Data;
 import org.redisson.api.RLock;
 import org.redisson.api.RMap;
 import org.redisson.api.RMapCache;
@@ -27,19 +28,41 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * 该类基本参照RedissonCache原样拷贝过来，
- * 原因为RedissonCache对于过期时间设置无效，该类仅在put方法处增加了使过期时间生效的设置
+ * 原因：为支持缓存批量操作，需要将其中字段的可见范围进行修正
  *
  * @author Bigbird
  */
+@Data
 public class CustomizedRedissonCache implements Cache {
 
+    /**
+     * 带单元素 TTL、最大空闲、淘汰策略的 Map
+     */
     private RMapCache<Object, Object> mapCache;
+    /**
+     * 基础 Redis Map，**整个 Hash 无单个 field 过期能力**
+     */
     private final RMap<Object, Object> map;
+    /**
+     * 缓存配置：TTL、maxIdleTime、maxSize，空值是否允许
+     */
     private CacheConfig config;
+    /**
+     * 是否允许缓存 null（Redisson 用`NullValue.INSTANCE`占位存储 null）
+     */
     private final boolean allowNullValues;
-    private final AtomicLong hits;
-    private final AtomicLong puts;
-    private final AtomicLong misses;
+    /**
+     * 命中统计计数器
+     */
+    private final AtomicLong hits = new AtomicLong();
+    /**
+     * 写入统计计数器
+     */
+    private final AtomicLong puts = new AtomicLong();
+    /**
+     * 未命中统计计数器
+     */
+    private final AtomicLong misses = new AtomicLong();
 
     public CustomizedRedissonCache(RMapCache<Object, Object> mapCache, CacheConfig config, boolean allowNullValues) {
         this(mapCache, allowNullValues);
@@ -48,193 +71,217 @@ public class CustomizedRedissonCache implements Cache {
     }
 
     public CustomizedRedissonCache(RMap<Object, Object> map, boolean allowNullValues) {
-        this.hits = new AtomicLong();
-        this.puts = new AtomicLong();
-        this.misses = new AtomicLong();
         this.map = map;
         this.allowNullValues = allowNullValues;
     }
 
     @Override
     public String getName() {
-        return this.map.getName();
+        return map.getName();
     }
 
     @Override
-    public RMap<?, ?> getNativeCache() {
-        return this.map;
+    public RMap<Object, Object> getNativeCache() {
+        return map;
     }
 
     @Override
     public ValueWrapper get(Object key) {
         Object value;
-        if (this.mapCache != null && this.config.getMaxIdleTime() == 0L && this.config.getMaxSize() == 0) {
-            value = this.mapCache.getWithTTLOnly(key);
+        if (mapCache != null && config.getMaxIdleTime() == 0 && config.getMaxSize() == 0) {
+            // config.getMaxIdleTime() == 0 → 没有配置 idle 过期，不需要维护 idle ZSET
+            // config.getMaxSize() == 0 → 没有配置 maxSize 淘汰，不需要淘汰簿记
+            // 只查 TTL 过期 ZSET，命中则返回	不更新 idle 追踪 ZSET，不写入
+            // 走 getWithTTLOnly 省掉一次 Redis 写操作
+            value = mapCache.getWithTTLOnly(key);
         } else {
-            value = this.map.get(key);
+            // 需要 idle 追踪/maxSize 淘汰，必须每次读都刷新 idle 时间戳
+            value = map.get(key);
         }
         if (value == null) {
-            this.addCacheMiss();
+            addCacheMiss();
         } else {
-            this.addCacheHit();
+            addCacheHit();
         }
-        return this.toValueWrapper(value);
+        return toValueWrapper(value);
     }
 
     @Override
     public <T> T get(Object key, Class<T> type) {
         Object value;
-        if (this.mapCache != null && this.config.getMaxIdleTime() == 0L && this.config.getMaxSize() == 0) {
-            value = this.mapCache.getWithTTLOnly(key);
+        if (mapCache != null && config.getMaxIdleTime() == 0 && config.getMaxSize() == 0) {
+            // config.getMaxIdleTime() == 0 → 没有配置 idle 过期，不需要维护 idle ZSET
+            // config.getMaxSize() == 0 → 没有配置 maxSize 淘汰，不需要淘汰簿记
+            // 只查 TTL 过期 ZSET，命中则返回	不更新 idle 追踪 ZSET，不写入
+            // 走 getWithTTLOnly 省掉一次 Redis 写操作
+            value = mapCache.getWithTTLOnly(key);
         } else {
-            value = this.map.get(key);
+            // 需要 idle 追踪/maxSize 淘汰，必须每次读都刷新 idle 时间戳
+            value = map.get(key);
         }
         if (value == null) {
-            this.addCacheMiss();
+            addCacheMiss();
         } else {
-            this.addCacheHit();
+            addCacheHit();
             if (value.getClass().getName().equals(NullValue.class.getName())) {
                 return null;
             }
-
             if (type != null && !type.isInstance(value)) {
                 throw new IllegalStateException("Cached value is not of required type [" + type.getName() + "]: " + value);
             }
         }
-        return (T) this.fromStoreValue(value);
+        return (T) fromStoreValue(value);
     }
 
     @Override
     public void put(Object key, Object value) {
-        if (!this.allowNullValues && value == null) {
-            this.map.remove(key);
-        } else {
-            value = this.toStoreValue(value);
-            if (this.mapCache != null) {
-                this.mapCache.fastPut(key, value, this.config.getTTL(), TimeUnit.MILLISECONDS, this.config.getMaxIdleTime(), TimeUnit.MILLISECONDS);
-                // 需要进行以下设置，过期时间才能生效
-                this.mapCache.expire(config.getTTL(), TimeUnit.MILLISECONDS);
-            } else {
-                this.map.fastPut(key, value);
-            }
-            this.addCachePut();
+        if (!allowNullValues && value == null) {
+            map.remove(key);
+            return;
         }
+        value = toStoreValue(value);
+        if (mapCache != null) {
+            mapCache.fastPut(key, value, config.getTTL(), TimeUnit.MILLISECONDS, config.getMaxIdleTime(), TimeUnit.MILLISECONDS);
+        } else {
+            map.fastPut(key, value);
+        }
+        addCachePut();
     }
 
     @Override
     public ValueWrapper putIfAbsent(Object key, Object value) {
         Object prevValue;
-        if (!this.allowNullValues && value == null) {
-            prevValue = this.map.get(key);
+        if (!allowNullValues && value == null) {
+            prevValue = map.get(key);
         } else {
-            value = this.toStoreValue(value);
-            if (this.mapCache != null) {
-                prevValue = this.mapCache.putIfAbsent(key, value, this.config.getTTL(), TimeUnit.MILLISECONDS, this.config.getMaxIdleTime(), TimeUnit.MILLISECONDS);
-                // 需要进行以下设置，过期时间才能生效
-                this.mapCache.expire(config.getTTL(), TimeUnit.MILLISECONDS);
+            value = toStoreValue(value);
+            if (mapCache != null) {
+                prevValue = mapCache.putIfAbsent(key, value, config.getTTL(), TimeUnit.MILLISECONDS, config.getMaxIdleTime(), TimeUnit.MILLISECONDS);
             } else {
-                prevValue = this.map.putIfAbsent(key, value);
+                prevValue = map.putIfAbsent(key, value);
             }
             if (prevValue == null) {
-                this.addCachePut();
+                addCachePut();
             }
         }
-        return this.toValueWrapper(prevValue);
+        return toValueWrapper(prevValue);
     }
 
     @Override
     public void evict(Object key) {
-        this.map.fastRemove(new Object[]{key});
+        map.fastRemove(key);
     }
 
     @Override
     public void clear() {
-        this.map.clear();
+        map.clear();
     }
 
-    private ValueWrapper toValueWrapper(Object value) {
+    protected ValueWrapper toValueWrapper(Object value) {
         if (value == null) {
             return null;
-        } else {
-            return (ValueWrapper) (value.getClass().getName().equals(NullValue.class.getName()) ? NullValue.INSTANCE : new SimpleValueWrapper(value));
         }
+        if (value.getClass().getName().equals(NullValue.class.getName())) {
+            return NullValue.INSTANCE;
+        }
+        return new SimpleValueWrapper(value);
     }
 
     @Override
     public <T> T get(Object key, Callable<T> valueLoader) {
         Object value;
-        if (this.mapCache != null && this.config.getMaxIdleTime() == 0L && this.config.getMaxSize() == 0) {
-            value = this.mapCache.getWithTTLOnly(key);
+        if (mapCache != null && config.getMaxIdleTime() == 0 && config.getMaxSize() == 0) {
+            // config.getMaxIdleTime() == 0 → 没有配置 idle 过期，不需要维护 idle ZSET
+            // config.getMaxSize() == 0 → 没有配置 maxSize 淘汰，不需要淘汰簿记
+            // 只查 TTL 过期 ZSET，命中则返回	不更新 idle 追踪 ZSET，不写入
+            // 走 getWithTTLOnly 省掉一次 Redis 写操作
+            value = mapCache.getWithTTLOnly(key);
         } else {
-            value = this.map.get(key);
+            // 需要 idle 追踪/maxSize 淘汰，必须每次读都刷新 idle 时间戳
+            value = map.get(key);
         }
         if (value == null) {
-            this.addCacheMiss();
-            RLock lock = this.map.getLock(key);
+            addCacheMiss();
+            RLock lock = map.getLock(key);
             lock.lock();
             try {
-                value = this.map.get(key);
+                value = map.get(key);
                 if (value == null) {
-                    value = this.putValue(key, valueLoader, value);
+                    value = putValue(key, valueLoader, value);
                 }
             } finally {
                 lock.unlock();
             }
         } else {
-            this.addCacheHit();
+            addCacheHit();
         }
-        return (T) this.fromStoreValue(value);
+        return (T) fromStoreValue(value);
     }
 
     private <T> Object putValue(Object key, Callable<T> valueLoader, Object value) {
         try {
             value = valueLoader.call();
-        } catch (Exception var9) {
-            Exception ex = var9;
+        } catch (Exception ex) {
             RuntimeException exception;
             try {
                 Class<?> c = Class.forName("org.springframework.cache.Cache$ValueRetrievalException");
                 Constructor<?> constructor = c.getConstructor(Object.class, Callable.class, Throwable.class);
                 exception = (RuntimeException) constructor.newInstance(key, valueLoader, ex);
-            } catch (Exception var8) {
-                throw new IllegalStateException(var8);
+            } catch (Exception e) {
+                throw new IllegalStateException(e);
             }
             throw exception;
         }
-        this.put(key, value);
+        put(key, value);
         return value;
     }
 
     protected Object fromStoreValue(Object storeValue) {
-        return storeValue instanceof NullValue ? null : storeValue;
+        if (storeValue instanceof NullValue) {
+            return null;
+        }
+        return storeValue;
     }
 
     protected Object toStoreValue(Object userValue) {
-        return userValue == null ? NullValue.INSTANCE : userValue;
+        if (userValue == null) {
+            return NullValue.INSTANCE;
+        }
+        return userValue;
     }
 
-    public long getCacheHits() {
-        return this.hits.get();
+    /**
+     * The number of get requests that were satisfied by the cache.
+     *
+     * @return the number of hits
+     */
+    protected long getCacheHits() {
+        return hits.get();
     }
 
-    public long getCacheMisses() {
-        return this.misses.get();
+    /**
+     * A miss is a get request that is not satisfied.
+     *
+     * @return the number of misses
+     */
+    protected long getCacheMisses() {
+        return misses.get();
     }
 
-    public long getCachePuts() {
-        return this.puts.get();
+    protected long getCachePuts() {
+        return puts.get();
     }
 
-    private void addCachePut() {
-        this.puts.incrementAndGet();
+    protected void addCachePut() {
+        puts.incrementAndGet();
     }
 
-    private void addCacheHit() {
-        this.hits.incrementAndGet();
+    protected void addCacheHit() {
+        hits.incrementAndGet();
     }
 
-    private void addCacheMiss() {
-        this.misses.incrementAndGet();
+    protected void addCacheMiss() {
+        misses.incrementAndGet();
     }
 
 }

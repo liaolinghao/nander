@@ -41,6 +41,7 @@ public class EnhancedCacheConversionService extends GenericConversionService imp
     private static final String CONCURRENT_MAP_CACHE_CLASS_NAME = "org.springframework.cache.concurrent.ConcurrentMapCache";
     private static final String EHCACHE_CLASS_NAME = "net.sf.ehcache.Ehcache";
     private static final String CAFFEINE_CACHE_CLASS_NAME = "com.github.benmanes.caffeine.cache.Cache";
+    private static final String CUSTOMIZED_REDISSON_CACHE_CLASS_NAME = "wang.bigbird.domain.framework.cache.support.redission.CustomizedRedissonCache";
 
     public EnhancedCacheConversionService(Collection<EnhancedCacheConverter<?>> converters) {
         ClassLoader classLoader = CachingConfigurationSelector.class.getClassLoader();
@@ -55,6 +56,9 @@ public class EnhancedCacheConversionService extends GenericConversionService imp
         }
         if (ClassUtils.isPresent(CAFFEINE_CACHE_CLASS_NAME, classLoader)) {
             addConverter(new CaffeineEnhancedCacheConverter());
+        }
+        if (ClassUtils.isPresent(CUSTOMIZED_REDISSON_CACHE_CLASS_NAME, classLoader)) {
+            addConverter(new CustomizedRedissonEnhancedCacheConverter());
         }
         converters.forEach(this::addConverter);
         if (log.isDebugEnabled()) {
@@ -77,7 +81,7 @@ public class EnhancedCacheConversionService extends GenericConversionService imp
      * 对Spring的{@link Cache}进行包装，变为{@link EnhancedCache}
      * 只是作为兜底，尽量不要直接使用
      *
-     * @author zhumengshuai
+     * @author Bigbird
      */
     @RequiredArgsConstructor
     static class EnhancedCacheAdapter implements EnhancedCache {
