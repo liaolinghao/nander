@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * 该类基本参照RedissonCache原样拷贝过来，
- * 原因：为支持缓存批量操作，需要将其中字段的可见范围进行修正
+ * 原因：为支持缓存批量操作，需要将其中方法的可见范围进行修正
  *
  * @author Bigbird
  */
