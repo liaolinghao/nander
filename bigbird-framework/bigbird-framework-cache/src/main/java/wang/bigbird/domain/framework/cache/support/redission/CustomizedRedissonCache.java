@@ -40,7 +40,7 @@ public class CustomizedRedissonCache implements Cache {
      */
     private RMapCache<Object, Object> mapCache;
     /**
-     * 基础 Redis Map，**整个 Hash 无单个 field 过期能力**
+     * 基础 Redis Map，整个 Hash 无单个 field 过期能力
      */
     private final RMap<Object, Object> map;
     /**
