@@ -16,6 +16,7 @@ import lombok.Data;
 import org.redisson.api.RLock;
 import org.redisson.api.RMap;
 import org.redisson.api.RMapCache;
+import org.redisson.api.RedissonClient;
 import org.redisson.spring.cache.CacheConfig;
 import org.redisson.spring.cache.NullValue;
 import org.springframework.cache.Cache;
@@ -63,16 +64,22 @@ public class CustomizedRedissonCache implements Cache {
      * 未命中统计计数器
      */
     private final AtomicLong misses = new AtomicLong();
+    /**
+     * Redisson 客户端，用于创建 RBatch 执行批量命令。
+     * 纯 RMap 形态可为 null；RMapCache 形态建议非 null 以支持批量写入。
+     */
+    private final RedissonClient redissonClient;
 
-    public CustomizedRedissonCache(RMapCache<Object, Object> mapCache, CacheConfig config, boolean allowNullValues) {
-        this(mapCache, allowNullValues);
+    public CustomizedRedissonCache(RMapCache<Object, Object> mapCache, CacheConfig config, boolean allowNullValues, RedissonClient redissonClient) {
+        this(mapCache, allowNullValues, redissonClient);
         this.mapCache = mapCache;
         this.config = config;
     }
 
-    public CustomizedRedissonCache(RMap<Object, Object> map, boolean allowNullValues) {
+    public CustomizedRedissonCache(RMap<Object, Object> map, boolean allowNullValues, RedissonClient redissonClient) {
         this.map = map;
         this.allowNullValues = allowNullValues;
+        this.redissonClient = redissonClient;
     }
 
     @Override

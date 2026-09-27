@@ -14,16 +14,15 @@ package wang.bigbird.domain.framework.cache.support.cacheasmulti.cache.convert.c
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import lombok.SneakyThrows;
-import org.redisson.api.RFuture;
-import org.redisson.api.RMap;
-import org.redisson.api.RMapCache;
+import org.redisson.api.*;
 import org.redisson.spring.cache.CacheConfig;
 import wang.bigbird.domain.framework.cache.support.cacheasmulti.cache.EnhancedCache;
 import wang.bigbird.domain.framework.cache.support.redission.CustomizedRedissonCache;
-import wang.bigbird.domain.framework.core.base.util.CollectionUtils;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -50,19 +49,23 @@ public class CustomizedRedissonEnhancedCacheConverter implements EnhancedCacheCo
     public EnhancedCache convert(CustomizedRedissonCache source) {
         RMapCache<Object, Object> mapCache = source.getMapCache();
         if (mapCache != null) {
-            return new CustomizedRedissonEnhancedCache(mapCache, source.getConfig(), source.isAllowNullValues());
+            return new CustomizedRedissonEnhancedCache(mapCache, source.getConfig(), source.isAllowNullValues(), source.getRedissonClient());
         }
-        return new CustomizedRedissonEnhancedCache(source.getNativeCache(), source.isAllowNullValues());
+        return new CustomizedRedissonEnhancedCache(source.getNativeCache(), source.isAllowNullValues(), source.getRedissonClient());
     }
 
     static class CustomizedRedissonEnhancedCache extends CustomizedRedissonCache implements EnhancedCache {
 
-        CustomizedRedissonEnhancedCache(RMapCache<Object, Object> mapCache, CacheConfig config, boolean allowNullValues) {
-            super(mapCache, config, allowNullValues);
+        private final RedissonClient redissonClient;
+
+        CustomizedRedissonEnhancedCache(RMapCache<Object, Object> mapCache, CacheConfig config, boolean allowNullValues, RedissonClient redissonClient) {
+            super(mapCache, config, allowNullValues, redissonClient);
+            this.redissonClient = redissonClient;
         }
 
-        CustomizedRedissonEnhancedCache(RMap<?, ?> map, boolean allowNullValues) {
-            super((RMap<Object, Object>) map, allowNullValues);
+        CustomizedRedissonEnhancedCache(RMap<?, ?> map, boolean allowNullValues, RedissonClient redissonClient) {
+            super((RMap<Object, Object>) map, allowNullValues, redissonClient);
+            this.redissonClient = redissonClient;
         }
 
         @Override
@@ -71,16 +74,22 @@ public class CustomizedRedissonEnhancedCacheConverter implements EnhancedCacheCo
                 return Collections.emptyMap();
             }
             // getAll 参数是 Set；HashSet 去重，重复 key 的返回值不受影响（同一个映射值）
-            Map<Object, Object> values = getNativeCache().getAll(Sets.newHashSet(keys));
-            Map<Object, ValueWrapper> result = CollectionUtils.toMapWithValue((Collection<Object>) keys, key -> {
+            Set<Object> uniqueKeys = Sets.newHashSet(keys);
+            Map<Object, Object> values = getNativeCache().getAll(uniqueKeys);
+            Map<Object, ValueWrapper> result = Maps.newLinkedHashMapWithExpectedSize(uniqueKeys.size());
+            for (Object key : keys) {
+                if (result.containsKey(key)) {
+                    // 重复 key，已统计过
+                    continue;
+                }
                 Object value = values.get(key);
                 if (value != null) {
                     addCacheHit();
                 } else {
                     addCacheMiss();
                 }
-                return toValueWrapper(value);
-            });
+                result.put(key, toValueWrapper(value));
+            }
             return result;
         }
 
@@ -116,18 +125,22 @@ public class CustomizedRedissonEnhancedCacheConverter implements EnhancedCacheCo
                 // 正常不会走到：mapCache 形态只能由携带 CacheConfig 的构造器创建
                 throw new IllegalStateException("RMapCache instance must be created with CacheConfig");
             }
-            List<RFuture<?>> futures = new ArrayList<>(map.size());
+            RBatch batch = redissonClient.createBatch(BatchOptions.defaults().executionMode(BatchOptions.ExecutionMode.IN_MEMORY));
+            RMapCacheAsync<Object, Object> asyncMap = batch.getMapCache(getName(), mapCache.getCodec());
             for (Map.Entry<?, ?> entry : map.entrySet()) {
                 if (entry.getValue() == null && !isAllowNullValues()) {
                     // 与单 key put 语义一致：不缓存 null，同时删除已有旧值
-                    futures.add(mapCache.fastRemoveAsync(entry.getKey()));
+                    // 在 RBatch 上下文里，此处可以逐条删除，不需要收集起来再一次性删除
+                    asyncMap.fastRemoveAsync(entry.getKey());
                     continue;
                 }
-                futures.add(mapCache.fastPutAsync(entry.getKey(), toStoreValue(entry.getValue()),
+                asyncMap.fastPutAsync(entry.getKey(), toStoreValue(entry.getValue()),
                         config.getTTL(), TimeUnit.MILLISECONDS,
-                        config.getMaxIdleTime(), TimeUnit.MILLISECONDS));
+                        config.getMaxIdleTime(), TimeUnit.MILLISECONDS);
+                addCachePut();
             }
-            awaitFutures(futures);
+            // 一次往返执行全部命令
+            batch.execute();
         }
 
         /**
@@ -148,24 +161,6 @@ public class CustomizedRedissonEnhancedCacheConverter implements EnhancedCacheCo
             }
             if (!toPut.isEmpty()) {
                 nativeCache.putAll(toPut);
-            }
-        }
-
-        /**
-         * 3.17.x 的 RFuture 无 syncAwait()，用 await() 同步等待；
-         * 失败时优先抛出原始 cause，与同步 fastPut 直接抛 RedisException 的行为对齐
-         */
-        @SneakyThrows
-        private void awaitFutures(List<RFuture<?>> futures) {
-            for (RFuture<?> future : futures) {
-                future.await();
-                if (!future.isSuccess()) {
-                    Throwable cause = future.cause();
-                    if (cause instanceof RuntimeException) {
-                        throw (RuntimeException) cause;
-                    }
-                    throw new IllegalStateException("multiPut to RMapCache failed", cause);
-                }
             }
         }
 

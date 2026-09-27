@@ -83,7 +83,7 @@ public class CustomizedRedissonCacheManager extends CustomizedCacheManager {
      */
     private Cache createMap(String name) {
         RMap<Object, Object> map = getMap(name);
-        Cache cache = new CustomizedRedissonCache(map, allowNullValues);
+        Cache cache = new CustomizedRedissonCache(map, allowNullValues, redisson);
         Cache oldCache = instanceMap.putIfAbsent(name, cache);
         if (oldCache != null) {
             cache = oldCache;
@@ -104,7 +104,7 @@ public class CustomizedRedissonCacheManager extends CustomizedCacheManager {
      */
     private Cache createMapCache(String name, CacheConfig config) {
         RMapCache<Object, Object> map = getMapCache(name);
-        Cache cache = new CustomizedRedissonCache(map, config, allowNullValues);
+        Cache cache = new CustomizedRedissonCache(map, config, allowNullValues, redisson);
         Cache oldCache = instanceMap.putIfAbsent(name, cache);
         if (oldCache != null) {
             cache = oldCache;
