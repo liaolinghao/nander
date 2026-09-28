@@ -12,7 +12,6 @@
  */
 package wang.bigbird.domain.framework.cache.support.redission;
 
-import lombok.Data;
 import org.redisson.api.RLock;
 import org.redisson.api.RMap;
 import org.redisson.api.RMapCache;
@@ -33,7 +32,6 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * @author Bigbird
  */
-@Data
 public class CustomizedRedissonCache implements Cache {
 
     /**
@@ -262,7 +260,7 @@ public class CustomizedRedissonCache implements Cache {
      *
      * @return the number of hits
      */
-    protected long getCacheHits() {
+    public long getCacheHits() {
         return hits.get();
     }
 
@@ -271,11 +269,11 @@ public class CustomizedRedissonCache implements Cache {
      *
      * @return the number of misses
      */
-    protected long getCacheMisses() {
+    public long getCacheMisses() {
         return misses.get();
     }
 
-    protected long getCachePuts() {
+    public long getCachePuts() {
         return puts.get();
     }
 
@@ -289,6 +287,22 @@ public class CustomizedRedissonCache implements Cache {
 
     protected void addCacheMiss() {
         misses.incrementAndGet();
+    }
+
+    public CacheConfig getConfig() {
+        return config;
+    }
+
+    public RMapCache<Object, Object> getMapCache() {
+        return mapCache;
+    }
+
+    public boolean isAllowNullValues() {
+        return allowNullValues;
+    }
+
+    public RedissonClient getRedissonClient() {
+        return redissonClient;
     }
 
 }
