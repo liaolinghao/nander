@@ -23,16 +23,15 @@ import java.util.Set;
  */
 public class CilinSimilarity extends AbstractWordSimilarity {
 
-    private static CilinSimilarity instance = null;
-
-    public static CilinSimilarity getInstance() {
-        if (instance == null) {
-            instance = new CilinSimilarity();
-        }
-        return instance;
+    private CilinSimilarity() {
     }
 
-    private CilinSimilarity() {
+    private static class Holder {
+        private static final CilinSimilarity INSTANCE = new CilinSimilarity();
+    }
+
+    public static CilinSimilarity getInstance() {
+        return Holder.INSTANCE;
     }
 
     @Override
