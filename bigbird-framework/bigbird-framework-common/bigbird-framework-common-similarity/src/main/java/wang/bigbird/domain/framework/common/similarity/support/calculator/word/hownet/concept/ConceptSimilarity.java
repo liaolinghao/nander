@@ -39,21 +39,29 @@ public class ConceptSimilarity extends AbstractConceptParser {
      */
     private static final int MAX_COMBINED_COUNT = 12;
 
-    private static ConceptSimilarity instance = null;
-
-    public static ConceptSimilarity getInstance() {
-        if (instance == null) {
-            try {
-                instance = new ConceptSimilarity();
-            } catch (IOException e) {
-                log.error("GetInstance:{}", e.getMessage(), e);
-            }
-        }
-        return instance;
-    }
-
     private ConceptSimilarity() throws IOException {
         super(new SememeSimilarity());
+    }
+
+    /**
+     * 类加载器保证线程安全，且仅在首次访问时初始化（延迟加载）。
+     * 若初始化失败，JVM 会抛出 ExceptionInInitializerError，
+     * 后续访问直接抛 NoClassDefFoundError，避免返回 null 造成 NPE。
+     */
+    private static class Holder {
+        private static final ConceptSimilarity INSTANCE;
+
+        static {
+            try {
+                INSTANCE = new ConceptSimilarity();
+            } catch (IOException e) {
+                throw new ExceptionInInitializerError(e);
+            }
+        }
+    }
+
+    public static ConceptSimilarity getInstance() {
+        return Holder.INSTANCE;
     }
 
     @Override

@@ -25,6 +25,9 @@ public class CilinCode {
 
     public static double[] WEIGHT = new double[]{1.2, 1.2, 1.0, 1.0, 0.8, 0.4};
 
+    /**
+     * 上述权重总和
+     */
     public static double TOTAL_WEIGHT = 5.6;
 
     /**
