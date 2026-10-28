@@ -31,6 +31,7 @@ import wang.bigbird.domain.framework.core.base.util.JsonUtils;
 import wang.bigbird.domain.framework.core.base.util.StringUtils;
 import wang.bigbird.domain.framework.data.kafka.config.property.KafkaConsumerProperties;
 import wang.bigbird.domain.framework.data.kafka.domain.pojo.DeadLetterRecord;
+import wang.bigbird.domain.framework.data.kafka.exception.BatchNotFullyHandledException;
 import wang.bigbird.domain.framework.data.kafka.service.base.IKafkaConsumerService;
 import wang.bigbird.domain.framework.data.kafka.support.handler.KafkaConsumerHandler;
 import wang.bigbird.domain.framework.data.kafka.support.handler.KafkaDeadLetterHandler;
@@ -47,7 +48,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * <p>
  * 重要约束：
  * 1. 同一个 groupId 不要订阅多个不同topic，会发生跨topic rebalance
- * 2. 本实现：handler抛出异常 = 整批重试；反序列化异常单条丢弃，不污染同批次正常消息
+ * 2. 本实现：handler抛出异常 或 返回 false = 整批重试；反序列化异常单条丢弃，不污染同批次正常消息
  * 3. 语义：至少一次 at-least-once，业务必须幂等
  * 4. 失败消息交由死信处理器处理，无论结果如何不影响已有消费流程
  *
@@ -265,7 +266,19 @@ public class KafkaConsumerServiceImpl implements IKafkaConsumerService {
                         values.add(record.value());
                     }
                     // 传入上下文，业务长任务可感知shutdown
-                    doHandle(messageClass, handler, values, consumerContext);
+                    boolean allHandled = doHandle(messageClass, handler, values, consumerContext);
+                    if (!allHandled) {
+                        if (!consumerContext.isRunning()) {
+                            // shutdown 信号已到达，业务主动放弃本批：不提交，未提交的 offset 下次启动重拉
+                            log.info("consumer shutting down, abandon current batch without commit. topic={}, batchSize={}",
+                                    worker.topic, records.count());
+                            break;
+                        }
+                        // 运行中 handler 声明未完整处理：seek 回本批起点，按失败重试（限流 + 超限投死信）
+                        exceptionHandle(worker, records, messageClass, failCount,
+                                new BatchNotFullyHandledException("handler returned false, batch not fully handled"));
+                        continue;
+                    }
                     try {
                         // 消息处理成功，提交失败，不进入死信处理器，由于 offset 未提交，下次 poll 自然重拉重消费
                         consumer.commitSync(Duration.ofSeconds(COMMIT_SYNC_TIMEOUT_SEC));
@@ -298,12 +311,6 @@ public class KafkaConsumerServiceImpl implements IKafkaConsumerService {
         } finally {
             consumerContext.setRunning(false);
             try {
-                // 关闭前最后提交一次，手动模式下尽量把已处理 offset 落地
-                try {
-                    consumer.commitSync(Duration.ofSeconds(CLOSE_COMMIT_TIMEOUT_SEC));
-                } catch (Exception e) {
-                    log.warn("commit before close failed. topic: {}", worker.topic, e);
-                }
                 consumer.close(Duration.ofSeconds(CONSUMER_CLOSE_TIMEOUT_SEC));
             } catch (Exception e) {
                 log.warn("close kafka consumer error. topic: {}", worker.topic, e);
@@ -352,15 +359,17 @@ public class KafkaConsumerServiceImpl implements IKafkaConsumerService {
     }
 
     /**
-     * 消息处理：反序列化失败的消息不再返回 null，而是记录日志并跳过。
+     * 消息处理：反序列化失败的消息记录日志并跳过（视为已消费）。
+     *
+     * @return true 表示本批全部处理成功；false 表示业务未完整处理（如 shutdown 主动放弃），
+     * 框架据此不提交当前 offset，避免未处理消息被跳过
      */
     @SuppressWarnings("unchecked")
-    private <T> void doHandle(Class<T> messageClass,
-                              KafkaConsumerHandler<T> handler,
-                              List<byte[]> values, KafkaConsumerHandler.ConsumerContext consumerContext) {
+    private <T> boolean doHandle(Class<T> messageClass,
+                                 KafkaConsumerHandler<T> handler,
+                                 List<byte[]> values, KafkaConsumerHandler.ConsumerContext consumerContext) {
         if (byte[].class.equals(messageClass)) {
-            handler.handle((List<T>) values, consumerContext);
-            return;
+            return handler.handle((List<T>) values, consumerContext);
         }
         List<T> valuesObjs = CollectionUtils.convertToList(values, value -> {
             if (value == null || value.length == 0) {
@@ -376,8 +385,9 @@ public class KafkaConsumerServiceImpl implements IKafkaConsumerService {
             }
         });
         if (!valuesObjs.isEmpty()) {
-            handler.handle(valuesObjs, consumerContext);
+            return handler.handle(valuesObjs, consumerContext);
         }
+        return true;
     }
 
     /**
@@ -389,7 +399,12 @@ public class KafkaConsumerServiceImpl implements IKafkaConsumerService {
                                      AtomicInteger failCount,
                                      Exception e) {
         int count = failCount.incrementAndGet();
-        log.error("consume msg exception. topic: {}, fail count: {}", worker.topic, count, e);
+        if (e instanceof BatchNotFullyHandledException) {
+            log.warn("batch not fully handled by handler. topic: {}, fail count: {}, message: {}",
+                    worker.topic, count, e.getMessage());
+        } else {
+            log.error("consume msg exception. topic: {}, fail count: {}", worker.topic, count, e);
+        }
         if (records == null || records.isEmpty()) {
             sleepBackoff(count, worker);
             return;

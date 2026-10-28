@@ -23,21 +23,13 @@ import java.util.List;
 public interface KafkaConsumerHandler<T> {
 
     /**
-     * 消息处理
-     *
-     * @param msgs 消息集合
-     */
-    default void handle(List<T> msgs) {
-        handle(msgs, null);
-    }
-
-    /**
      * 带消费上下文，可判断是否需要停止
      *
      * @param msgs 消息列表
      * @param ctx  消费上下文
+     * @return 是否全部处理完
      */
-    void handle(List<T> msgs, ConsumerContext ctx);
+    boolean handle(List<T> msgs, ConsumerContext ctx);
 
     /**
      * 消费上下文，用于业务判断shutdown信号
