@@ -60,7 +60,6 @@ public class KafkaConsumerServiceImpl implements IKafkaConsumerService {
 
     private static final int POLL_TIMEOUT_MS = 1000;
     private static final int COMMIT_SYNC_TIMEOUT_SEC = 3;
-    private static final int CLOSE_COMMIT_TIMEOUT_SEC = 5;
     private static final int CONSUMER_CLOSE_TIMEOUT_SEC = 10;
     private static final long DESTROY_JOIN_TIMEOUT_MS = 10000L;
 
