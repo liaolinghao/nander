@@ -25,7 +25,34 @@ public interface KafkaConsumerHandler<T> {
     /**
      * 消息处理
      *
-     * @param msg 消息集合
+     * @param msgs 消息集合
      */
-    void handle(List<T> msg);
+    default void handle(List<T> msgs) {
+        handle(msgs, null);
+    }
+
+    /**
+     * 带消费上下文，可判断是否需要停止
+     *
+     * @param msgs 消息列表
+     * @param ctx  消费上下文
+     */
+    void handle(List<T> msgs, ConsumerContext ctx);
+
+    /**
+     * 消费上下文，用于业务判断shutdown信号
+     */
+    class ConsumerContext {
+
+        private volatile boolean running;
+
+        public boolean isRunning() {
+            return running;
+        }
+
+        public void setRunning(boolean running) {
+            this.running = running;
+        }
+    }
+
 }

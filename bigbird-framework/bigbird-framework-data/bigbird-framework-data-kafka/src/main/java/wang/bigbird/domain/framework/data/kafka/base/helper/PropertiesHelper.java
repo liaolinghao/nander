@@ -51,8 +51,6 @@ public class PropertiesHelper {
         kafkaProducerProperties.setTransactionIdPrefix(loadTransactionIdPrefix(kafkaProducerProperties, springKafkaProperties));
 
         kafkaConsumerProperties.setAddresses(loadAddresses(kafkaConsumerProperties, springKafkaProperties));
-        kafkaConsumerProperties.setEnableAutoCommit(loadEnableAutoCommit(kafkaConsumerProperties, springKafkaProperties));
-        kafkaConsumerProperties.setAutoCommitInterval(loadAutoCommitInterval(kafkaConsumerProperties, springKafkaProperties));
         kafkaConsumerProperties.setAutoOffsetReset(loadAutoOffsetReset(kafkaConsumerProperties, springKafkaProperties));
         kafkaConsumerProperties.setMaxPollRecords(loadMaxPollRecords(kafkaConsumerProperties, springKafkaProperties));
         kafkaConsumerProperties.setFetchMaxWait(loadFetchMaxWait(kafkaConsumerProperties, springKafkaProperties));
@@ -113,28 +111,6 @@ public class PropertiesHelper {
             return kafkaConsumerProperties.getAutoOffsetReset();
         }
         return "latest";
-    }
-
-    private static Integer loadAutoCommitInterval(KafkaConsumerProperties kafkaConsumerProperties, KafkaProperties springKafkaProperties) {
-        if (kafkaConsumerProperties.getAutoCommitInterval() == null) {
-            if (springKafkaProperties.getConsumer().getAutoCommitInterval() != null) {
-                return Long.valueOf(springKafkaProperties.getConsumer().getAutoCommitInterval().toMillis()).intValue();
-            }
-        } else {
-            return kafkaConsumerProperties.getAutoCommitInterval();
-        }
-        return 5000;
-    }
-
-    private static Boolean loadEnableAutoCommit(KafkaConsumerProperties kafkaConsumerProperties, KafkaProperties springKafkaProperties) {
-        if (kafkaConsumerProperties.getEnableAutoCommit() == null) {
-            if (springKafkaProperties.getConsumer().getEnableAutoCommit() != null) {
-                return springKafkaProperties.getConsumer().getEnableAutoCommit();
-            }
-        } else {
-            return kafkaConsumerProperties.getEnableAutoCommit();
-        }
-        return true;
     }
 
     private static String loadAddresses(KafkaConsumerProperties kafkaConsumerProperties, KafkaProperties springKafkaProperties) {

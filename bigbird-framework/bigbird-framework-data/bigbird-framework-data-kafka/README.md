@@ -50,13 +50,15 @@ bigbird:
         transaction: # 是否开启事务，默认false，一旦开启，则生产者服务只能调用其中的事务性执行方法，否则会报错
       consumer:
         addresses: # kafka集群地址，多个地址用,分开
-        enableAutoCommit: # 消费者的消费记录offset是否后台自动提交，默认true
-        autoCommitInterval: # 当消费者的消费记录offset后台自动提交时，多长时间自动提交一次，单位毫秒，默认5000
         autoOffsetReset: # 当Kafka中没有初始偏移量或服务器上不再存在当前偏移量时的处理策略，可选值"earliest"，"latest"，"none"，"exception"，默认"latest"
         maxPollRecords: # 一次调用poll返回的最大记录数，默认100条
+        maxPollIntervalMs: # 最大poll间隔，需大于handler最大处理耗时，否则会触发rebalance，默认5分钟
         fetchMaxWait: # 消费者拉取消息时的最长等待时间（单位：毫秒），默认5000毫秒
         fetchMinSize: # 返回消息给消费者的最小字节数阈值（以字节为单位），默认1字节
         heartbeatInterval: # 消费者协调员之间的心跳频率（单位是毫秒），默认3000毫秒
+        maxRetry: # 异常重试最大次数，超过后跳过当前批次，避免毒消息阻塞消费，默认3次
+        maxPartitionFetchBytes: # 每个分区返回的最大数据量，默认8MB
+        sessionTimeoutMs: # 判定一个消费者仍然存活的最长等待时间，默认60秒
 ```
 
 ## 后续待完善事项

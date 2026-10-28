@@ -31,14 +31,6 @@ public class KafkaConsumerProperties {
      */
     private String addresses;
     /**
-     * 消费者的消费记录offset是否后台自动提交
-     */
-    private Boolean enableAutoCommit;
-    /**
-     * 当消费者的消费记录offset后台自动提交时，多长时间自动提交一次，单位毫秒
-     */
-    private Integer autoCommitInterval;
-    /**
      * 当Kafka中没有初始偏移量或服务器上不再存在当前偏移量时的处理策略
      * earliest：自动将偏移量重置为最早的偏移量；
      * latest：自动将偏移量重置为最迟的偏移量；
@@ -49,7 +41,11 @@ public class KafkaConsumerProperties {
     /**
      * 一次调用poll返回的最大记录数
      */
-    private Integer maxPollRecords;
+    private Integer maxPollRecords = 100;
+    /**
+     * 最大poll间隔，需大于handler最大处理耗时，否则会触发rebalance
+     */
+    private Long maxPollIntervalMs = 300000L;
     /**
      * 消费者拉取消息时的最长等待时间（单位：毫秒）
      */
@@ -62,5 +58,17 @@ public class KafkaConsumerProperties {
      * 消费者协调员之间的心跳频率（单位是毫秒）
      */
     private Integer heartbeatInterval;
+    /**
+     * 异常重试最大次数，超过后跳过当前批次，避免毒消息阻塞消费
+     */
+    private Integer maxRetry = 3;
+    /**
+     * 每个分区返回的最大数据量
+     */
+    private Integer maxPartitionFetchBytes = 8 * 1024 * 1024;
+    /**
+     * 判定一个消费者仍然存活的最长等待时间
+     */
+    private Integer sessionTimeoutMs = 60000;
 
 }
