@@ -45,7 +45,7 @@ public class KafkaConsumerProperties {
     /**
      * 最大poll间隔，需大于handler最大处理耗时，否则会触发rebalance
      */
-    private Long maxPollIntervalMs = 300000L;
+    private Integer maxPollIntervalMs = 300000;
     /**
      * 消费者拉取消息时的最长等待时间（单位：毫秒）
      */
