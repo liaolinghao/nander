@@ -19,7 +19,7 @@ import wang.bigbird.domain.framework.core.base.util.DataUtils;
 import java.util.Set;
 
 /**
- * 拼音计算两个词相似度，拼音用编辑距离表示相似程度
+ * 根据拼音计算两个词相似度，拼音用编辑距离表示相似程度
  * <p>
  * 算法：
  * <ol>

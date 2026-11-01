@@ -13,11 +13,8 @@
 package wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.trigram;
 
 import wang.bigbird.domain.framework.common.similarity.base.enums.PhraseSimilarityAlgorithmEnum;
-import wang.bigbird.domain.framework.common.similarity.base.util.Utils;
+import wang.bigbird.domain.framework.common.similarity.support.calculator.phrase.trigram.TrigramJaccardSimilarity;
 import wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.ISimilarityStrategy;
-import wang.bigbird.domain.framework.core.base.util.CollectionUtils;
-
-import java.util.Set;
 
 /**
  * Trigram 杰卡德相似度策略
@@ -38,9 +35,7 @@ public class TrigramJaccardSimilarityStrategy implements ISimilarityStrategy {
 
     @Override
     public double calculate(String targetPhrase, String candidatePhrase) {
-        Set<String> set1 = Utils.generateTrigramSet(targetPhrase);
-        Set<String> set2 = Utils.generateTrigramSet(candidatePhrase);
-        return (double) CollectionUtils.intersect(set1, set2).size() / CollectionUtils.union(set1, set2).size();
+        return TrigramJaccardSimilarity.getInstance().calculate(targetPhrase, candidatePhrase);
     }
 
 }

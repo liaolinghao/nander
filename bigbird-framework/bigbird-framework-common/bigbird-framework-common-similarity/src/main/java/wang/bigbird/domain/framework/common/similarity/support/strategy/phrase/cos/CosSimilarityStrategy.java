@@ -12,16 +12,9 @@
  */
 package wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.cos;
 
-import com.hankcs.hanlp.HanLP;
-import com.hankcs.hanlp.seg.common.Term;
 import wang.bigbird.domain.framework.common.similarity.base.enums.PhraseSimilarityAlgorithmEnum;
+import wang.bigbird.domain.framework.common.similarity.support.calculator.phrase.cos.CosSimilarity;
 import wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.ISimilarityStrategy;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * 余弦相似度策略
@@ -38,8 +31,6 @@ import java.util.stream.Collectors;
  */
 public class CosSimilarityStrategy implements ISimilarityStrategy {
 
-
-
     @Override
     public PhraseSimilarityAlgorithmEnum getAlgorithm() {
         return PhraseSimilarityAlgorithmEnum.Cosine;
@@ -47,7 +38,7 @@ public class CosSimilarityStrategy implements ISimilarityStrategy {
 
     @Override
     public double calculate(String targetPhrase, String candidatePhrase) {
-        return 0;
+        return CosSimilarity.getInstance().calculate(targetPhrase, candidatePhrase);
     }
 
 

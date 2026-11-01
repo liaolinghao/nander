@@ -12,15 +12,15 @@
  */
 package wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.distance;
 
-import org.apache.commons.text.similarity.LevenshteinDistance;
 import wang.bigbird.domain.framework.common.similarity.base.enums.PhraseSimilarityAlgorithmEnum;
+import wang.bigbird.domain.framework.common.similarity.support.calculator.phrase.distance.LevenshteinDistanceSimilarity;
 import wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.ISimilarityStrategy;
 
 /**
  * 莱文斯坦归一化相似度策略
  * <p>
  * 计算从一个字符串转换到另一个字符串，最少需要多少次“单字符编辑操作”，
- * 精确量化了两个短语之间的”绝对修改代价”。
+ * 精确量化了两个短语之间的“绝对修改代价”。
  * 公平、严谨，是所有文本相似度算法中最基础的“度量衡”。
  *
  * </p>
@@ -29,8 +29,6 @@ import wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.I
  */
 public class LevenshteinDistanceSimilarityStrategy implements ISimilarityStrategy {
 
-    private static final LevenshteinDistance LEV_DIST = new LevenshteinDistance();
-
     @Override
     public PhraseSimilarityAlgorithmEnum getAlgorithm() {
         return PhraseSimilarityAlgorithmEnum.LevenshteinDistance;
@@ -38,9 +36,7 @@ public class LevenshteinDistanceSimilarityStrategy implements ISimilarityStrateg
 
     @Override
     public double calculate(String targetPhrase, String candidatePhrase) {
-        int dist = LEV_DIST.apply(candidatePhrase, targetPhrase);
-        int maxLen = Math.max(targetPhrase.length(), candidatePhrase.length());
-        return 1.0 - (double) dist / maxLen;
+        return LevenshteinDistanceSimilarity.getInstance().calculate(targetPhrase, candidatePhrase);
     }
 
 }
