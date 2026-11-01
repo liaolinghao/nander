@@ -14,8 +14,16 @@ package wang.bigbird.domain.framework.common.similarity.base.util;
 
 import com.hankcs.hanlp.HanLP;
 import com.hankcs.hanlp.seg.common.Term;
+import lombok.extern.slf4j.Slf4j;
+import wang.bigbird.domain.framework.common.similarity.config.property.SimilarityProperties;
+import wang.bigbird.domain.framework.core.base.constant.CommonConstants;
+import wang.bigbird.domain.framework.core.base.tool.Coder;
+import wang.bigbird.domain.framework.core.base.util.FileUtils;
 import wang.bigbird.domain.framework.core.base.util.StringUtils;
+import wang.bigbird.domain.framework.core.base.util.event.TraverseEvent;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 /**
@@ -23,6 +31,7 @@ import java.util.*;
  *
  * @author Bigbird
  */
+@Slf4j
 public class Utils {
 
     /**
@@ -36,17 +45,26 @@ public class Utils {
 
     static {
         // 加载resources/stopword.txt，失败则加载内置兜底停用词
-        STOP_WORDS = loadStopWordFile("/stop.txt");
+        STOP_WORDS = loadWordFile(SimilarityProperties.StopWordPath);
         // IT行业单字白名单，不会被过滤
-        WHITE_WORDS = loadWhiteWordFile("/white.txt");
+        WHITE_WORDS = loadWordFile(SimilarityProperties.WhiteWordPath);
     }
 
-    private static Set<String> loadWhiteWordFile(String s) {
-        return Collections.EMPTY_SET;
-    }
-
-    private static Set<String> loadStopWordFile(String s) {
-        return Collections.EMPTY_SET;
+    private static Set<String> loadWordFile(String wordPath) {
+        Set<String> set = new HashSet<>();
+        try (InputStream inputStream = Utils.class.getClassLoader().getResourceAsStream(wordPath)) {
+            // 解析词库
+            TraverseEvent<String> event = line -> {
+                if (StringUtils.isNotBlank(line)) {
+                    set.add(line.trim());
+                }
+                return true;
+            };
+            FileUtils.traverseLines(inputStream, Coder.DEFAULT_ENCODING, event);
+        } catch (IOException e) {
+            log.error("LoadWordFile:", e);
+        }
+        return set;
     }
 
     /**
@@ -56,10 +74,10 @@ public class Utils {
      * @return 有效关键词列表
      */
     public static List<String> segClean(String text) {
-        List<String> res = new ArrayList<>();
         if (StringUtils.isBlank(text)) {
-            return res;
+            return Collections.EMPTY_LIST;
         }
+        List<String> res = new ArrayList<>();
         List<Term> termList = HanLP.segment(text);
         for (Term term : termList) {
             String word = term.word.trim();
@@ -94,7 +112,7 @@ public class Utils {
      */
     public static String normalizeText(String text) {
         if (text == null) {
-            return "";
+            return CommonConstants.EMPTY;
         }
         return text.replaceAll("[^a-zA-Z0-9\u4e00-\u9fa5]", "")
                 .toLowerCase();
@@ -120,26 +138,6 @@ public class Utils {
             trigramSet.add(tri);
         }
         return trigramSet;
-    }
-
-    /**
-     * 生成三元组计数Map（重复片段计数，用于余弦相似度）
-     *
-     * @param text 原始文本
-     * @return 三元组计数Map
-     */
-    public static Map<String, Integer> generateTrigramMap(String text) {
-        Map<String, Integer> map = new TreeMap<>();
-        if (StringUtils.isBlank(text)) {
-            return map;
-        }
-        String padded = " " + text.trim() + " ";
-        int len = padded.length();
-        for (int i = 0; i <= len - 3; i++) {
-            String tri = padded.substring(i, i + 3);
-            map.put(tri, map.getOrDefault(tri, 0) + 1);
-        }
-        return map;
     }
 
     /**

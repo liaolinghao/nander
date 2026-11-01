@@ -15,6 +15,7 @@ package wang.bigbird.domain.framework.common.similarity.support.calculator.word.
 import lombok.extern.slf4j.Slf4j;
 import wang.bigbird.domain.framework.common.similarity.config.property.SimilarityProperties;
 import wang.bigbird.domain.framework.core.base.tool.Coder;
+import wang.bigbird.domain.framework.core.base.tool.SystemClock;
 import wang.bigbird.domain.framework.core.base.util.FileUtils;
 import wang.bigbird.domain.framework.core.base.util.event.TraverseEvent;
 
@@ -66,9 +67,9 @@ public class PinyinDictionary {
             return true;
         };
         log.info("loading dictionary...");
-        long start = System.currentTimeMillis();
+        long start = SystemClock.now();
         FileUtils.traverseLines(inputStream, Coder.DEFAULT_ENCODING, event);
-        log.info("loading dictionary complete! time spend:{}ms", System.currentTimeMillis() - start);
+        log.info("loading dictionary complete! time spend:{}ms", SystemClock.now() - start);
     }
 
     /**
