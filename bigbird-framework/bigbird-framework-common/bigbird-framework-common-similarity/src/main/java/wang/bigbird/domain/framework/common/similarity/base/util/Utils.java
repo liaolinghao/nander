@@ -42,11 +42,11 @@ public class Utils {
     }
 
     private static Set<String> loadWhiteWordFile(String s) {
-        return null;
+        return Collections.EMPTY_SET;
     }
 
     private static Set<String> loadStopWordFile(String s) {
-        return null;
+        return Collections.EMPTY_SET;
     }
 
     /**
@@ -140,6 +140,31 @@ public class Utils {
             map.put(tri, map.getOrDefault(tri, 0) + 1);
         }
         return map;
+    }
+
+    /**
+     * 通用向量余弦计算：适用于TF-IDF向量、Embedding句向量
+     *
+     * @param vecA 向量A
+     * @param vecB 向量B
+     * @return 余弦相似度
+     */
+    public static double cosineSimilarity(double[] vecA, double[] vecB) {
+        if (vecA == null || vecB == null || vecA.length != vecB.length) {
+            return 0.0;
+        }
+        double dot = 0.0;
+        double normA = 0.0;
+        double normB = 0.0;
+        for (int i = 0; i < vecA.length; i++) {
+            dot += vecA[i] * vecB[i];
+            normA += vecA[i] * vecA[i];
+            normB += vecB[i] * vecB[i];
+        }
+        if (normA == 0 || normB == 0) {
+            return 0.0;
+        }
+        return dot / (Math.sqrt(normA) * Math.sqrt(normB));
     }
 
 }
