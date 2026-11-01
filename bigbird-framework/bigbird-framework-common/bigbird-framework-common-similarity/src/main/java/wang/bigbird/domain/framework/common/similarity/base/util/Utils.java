@@ -107,10 +107,10 @@ public class Utils {
      * @return 不重复三元片段集合
      */
     public static Set<String> generateTrigramSet(String text) {
-        Set<String> trigramSet = new HashSet<>();
         if (StringUtils.isBlank(text)) {
-            return trigramSet;
+            return Collections.EMPTY_SET;
         }
+        Set<String> trigramSet = new HashSet<>();
         // 标准填充：前后各补一个空格
         String padded = " " + text.trim() + " ";
         int len = padded.length();
