@@ -14,7 +14,7 @@ package wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.
 
 import wang.bigbird.domain.framework.common.similarity.base.enums.PhraseSimilarityAlgorithmEnum;
 import wang.bigbird.domain.framework.common.similarity.support.calculator.phrase.distance.LevenshteinDistanceSimilarity;
-import wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.ISimilarityStrategy;
+import wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.IPhraseSimilarityStrategy;
 
 /**
  * 莱文斯坦归一化相似度策略
@@ -27,7 +27,7 @@ import wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.I
  *
  * @author Bigbird
  */
-public class LevenshteinDistanceSimilarityStrategy implements ISimilarityStrategy {
+public class LevenshteinDistanceSimilarityStrategy implements IPhraseSimilarityStrategy {
 
     @Override
     public PhraseSimilarityAlgorithmEnum getAlgorithm() {

@@ -19,7 +19,7 @@ import wang.bigbird.domain.framework.common.similarity.base.enums.WordSimilarity
  *
  * @author Bigbird
  */
-public interface ISimilarityStrategy {
+public interface IWordSimilarityStrategy {
 
     /**
      * 获取策略对应的算法类型

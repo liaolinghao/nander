@@ -18,13 +18,19 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import wang.bigbird.domain.framework.common.similarity.service.base.IPhraseSimilarityService;
+import wang.bigbird.domain.framework.common.similarity.service.base.ISentenceSimilarityService;
 import wang.bigbird.domain.framework.common.similarity.service.base.IWordSimilarityService;
 import wang.bigbird.domain.framework.common.similarity.service.base.impl.PhraseSimilarityServiceImpl;
+import wang.bigbird.domain.framework.common.similarity.service.base.impl.SentenceSimilarityServiceImpl;
 import wang.bigbird.domain.framework.common.similarity.service.base.impl.WordSimilarityServiceImpl;
+import wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.IPhraseSimilarityStrategy;
 import wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.cos.CosSimilarityStrategy;
 import wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.distance.JaroWinklerDistanceSimilarityStrategy;
 import wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.distance.LevenshteinDistanceSimilarityStrategy;
 import wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.trigram.TrigramJaccardSimilarityStrategy;
+import wang.bigbird.domain.framework.common.similarity.support.strategy.sentence.ISentenceSimilarityStrategy;
+import wang.bigbird.domain.framework.common.similarity.support.strategy.sentence.semantic.SemanticSimilarityStrategy;
+import wang.bigbird.domain.framework.common.similarity.support.strategy.word.IWordSimilarityStrategy;
 import wang.bigbird.domain.framework.common.similarity.support.strategy.word.character.CharacterSimilarityStrategy;
 import wang.bigbird.domain.framework.common.similarity.support.strategy.word.cilin.CilinSimilarityStrategy;
 import wang.bigbird.domain.framework.common.similarity.support.strategy.word.concept.ConceptSimilarityStrategy;
@@ -95,7 +101,7 @@ public class SimilarityConfiguration {
             PinyinSimilarityStrategy pinyinStrategy,
             ConceptSimilarityStrategy conceptStrategy,
             CharacterSimilarityStrategy characterSimilarityStrategy) {
-        List<wang.bigbird.domain.framework.common.similarity.support.strategy.word.ISimilarityStrategy> strategies = Arrays.asList(
+        List<IWordSimilarityStrategy> strategies = Arrays.asList(
                 cilinStrategy,
                 conceptStrategy,
                 pinyinStrategy,
@@ -150,13 +156,35 @@ public class SimilarityConfiguration {
             JaroWinklerDistanceSimilarityStrategy jaroWinklerDistanceSimilarityStrategy,
             TrigramJaccardSimilarityStrategy trigramJaccardSimilarityStrategy,
             CosSimilarityStrategy cosSimilarityStrategy) {
-        List<wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.ISimilarityStrategy> strategies = Arrays.asList(
+        List<IPhraseSimilarityStrategy> strategies = Arrays.asList(
                 levenshteinDistanceSimilarityStrategy,
                 jaroWinklerDistanceSimilarityStrategy,
                 trigramJaccardSimilarityStrategy,
                 cosSimilarityStrategy
         );
         return new PhraseSimilarityServiceImpl(strategies);
+    }
+
+    /**
+     * 语义相似度策略
+     */
+    @Bean
+    @ConditionalOnMissingBean(SemanticSimilarityStrategy.class)
+    public SemanticSimilarityStrategy semanticSimilarityStrategy() {
+        return new SemanticSimilarityStrategy();
+    }
+
+    /**
+     * 注册相似度服务
+     */
+    @Bean
+    @ConditionalOnMissingBean(ISentenceSimilarityService.class)
+    public ISentenceSimilarityService sentenceSimilarityService(
+            SemanticSimilarityStrategy semanticSimilarityStrategy) {
+        List<ISentenceSimilarityStrategy> strategies = Arrays.asList(
+                semanticSimilarityStrategy
+        );
+        return new SentenceSimilarityServiceImpl(strategies);
     }
 
 

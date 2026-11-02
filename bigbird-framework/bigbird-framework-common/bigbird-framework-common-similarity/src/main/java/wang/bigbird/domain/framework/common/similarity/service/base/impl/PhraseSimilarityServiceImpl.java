@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import wang.bigbird.domain.framework.common.similarity.base.enums.PhraseSimilarityAlgorithmEnum;
 import wang.bigbird.domain.framework.common.similarity.exception.SimilarityException;
 import wang.bigbird.domain.framework.common.similarity.service.base.IPhraseSimilarityService;
-import wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.ISimilarityStrategy;
+import wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.IPhraseSimilarityStrategy;
 
 import java.util.HashMap;
 import java.util.List;
@@ -33,11 +33,11 @@ public class PhraseSimilarityServiceImpl implements IPhraseSimilarityService {
     /**
      * 策略映射表
      */
-    private final Map<PhraseSimilarityAlgorithmEnum, ISimilarityStrategy> strategies;
+    private final Map<PhraseSimilarityAlgorithmEnum, IPhraseSimilarityStrategy> strategies;
 
-    public PhraseSimilarityServiceImpl(List<ISimilarityStrategy> strategyList) {
+    public PhraseSimilarityServiceImpl(List<IPhraseSimilarityStrategy> strategyList) {
         this.strategies = new HashMap<>();
-        for (ISimilarityStrategy strategy : strategyList) {
+        for (IPhraseSimilarityStrategy strategy : strategyList) {
             this.strategies.put(strategy.getAlgorithm(), strategy);
         }
         log.info("PhraseSimilarity service initialized, {} algorithms registered", strategies.size());
@@ -57,7 +57,7 @@ public class PhraseSimilarityServiceImpl implements IPhraseSimilarityService {
         if (algorithm == null) {
             throw new SimilarityException("Algorithm strategy not set");
         }
-        ISimilarityStrategy strategy = strategies.get(algorithm);
+        IPhraseSimilarityStrategy strategy = strategies.get(algorithm);
         if (strategy == null) {
             throw new SimilarityException("Algorithm strategy not found: " + algorithm);
         }

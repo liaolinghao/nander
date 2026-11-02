@@ -14,7 +14,7 @@ package wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.
 
 import wang.bigbird.domain.framework.common.similarity.base.enums.PhraseSimilarityAlgorithmEnum;
 import wang.bigbird.domain.framework.common.similarity.support.calculator.phrase.cos.CosSimilarity;
-import wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.ISimilarityStrategy;
+import wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.IPhraseSimilarityStrategy;
 
 /**
  * 余弦相似度策略
@@ -29,7 +29,7 @@ import wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.I
  *
  * @author Bigbird
  */
-public class CosSimilarityStrategy implements ISimilarityStrategy {
+public class CosSimilarityStrategy implements IPhraseSimilarityStrategy {
 
     @Override
     public PhraseSimilarityAlgorithmEnum getAlgorithm() {

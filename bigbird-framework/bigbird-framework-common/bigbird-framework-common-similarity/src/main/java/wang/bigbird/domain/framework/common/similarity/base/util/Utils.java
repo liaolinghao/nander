@@ -81,16 +81,16 @@ public class Utils {
         List<Term> termList = HanLP.segment(text);
         for (Term term : termList) {
             String word = term.word.trim();
-            String nature = term.nature.toString();
+            String nature = term.nature != null ? term.nature.toString() : "";
             // 过滤规则：标点w、数字m、停用词、无效单字（白名单放行）
             if (word.isBlank()) {
                 continue;
             }
-            if ("w".equals(nature) || "m".equals(nature)) {
+            if (nature.startsWith("w") || nature.startsWith("m")) {
                 continue;
             }
             if (WHITE_WORDS.contains(word)) {
-                res.add(word);
+                res.add(word.toLowerCase());
                 continue;
             }
             if (word.length() <= 1) {
@@ -99,7 +99,7 @@ public class Utils {
             if (STOP_WORDS.contains(word)) {
                 continue;
             }
-            res.add(word);
+            res.add(word.toLowerCase());
         }
         return res;
     }

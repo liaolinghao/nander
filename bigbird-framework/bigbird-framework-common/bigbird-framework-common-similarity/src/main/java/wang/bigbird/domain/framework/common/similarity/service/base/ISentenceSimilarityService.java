@@ -10,31 +10,27 @@
  * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  * See the Mulan PSL v2 for more details.
  */
-package wang.bigbird.domain.framework.common.similarity.support.strategy.phrase;
+package wang.bigbird.domain.framework.common.similarity.service.base;
 
-import wang.bigbird.domain.framework.common.similarity.base.enums.PhraseSimilarityAlgorithmEnum;
+import wang.bigbird.domain.framework.common.similarity.base.enums.SentenceSimilarityAlgorithmEnum;
 
 /**
- * 短语相似度计算策略
+ * 语句相似度服务
  *
  * @author Bigbird
  */
-public interface ISimilarityStrategy {
+public interface ISentenceSimilarityService {
+
 
     /**
-     * 获取策略对应的算法类型
+     * 使用指定算法计算语句相似度
      *
-     * @return 算法类型枚举
-     */
-    PhraseSimilarityAlgorithmEnum getAlgorithm();
-
-    /**
-     * 计算两个短语的相似度
-     *
-     * @param targetPhrase    目标短语
-     * @param candidatePhrase 候选短语
+     * @param targetSentence    目标语句
+     * @param candidateSentence 候选语句
+     * @param algorithm         算法类型
      * @return 相似度值（0.0 - 1.0）
      */
-    double calculate(String targetPhrase, String candidatePhrase);
+    double calculate(String targetSentence, String candidateSentence, SentenceSimilarityAlgorithmEnum algorithm);
+
 
 }

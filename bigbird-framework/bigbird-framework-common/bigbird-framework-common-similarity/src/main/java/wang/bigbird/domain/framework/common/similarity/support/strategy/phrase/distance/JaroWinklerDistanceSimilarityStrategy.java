@@ -14,7 +14,7 @@ package wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.
 
 import wang.bigbird.domain.framework.common.similarity.base.enums.PhraseSimilarityAlgorithmEnum;
 import wang.bigbird.domain.framework.common.similarity.support.calculator.phrase.distance.JaroWinklerDistanceSimilarity;
-import wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.ISimilarityStrategy;
+import wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.IPhraseSimilarityStrategy;
 
 /**
  * JaroWinkler 短字符串优化相似度策略
@@ -24,7 +24,7 @@ import wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.I
  *
  * @author Bigbird
  */
-public class JaroWinklerDistanceSimilarityStrategy implements ISimilarityStrategy {
+public class JaroWinklerDistanceSimilarityStrategy implements IPhraseSimilarityStrategy {
 
     @Override
     public PhraseSimilarityAlgorithmEnum getAlgorithm() {

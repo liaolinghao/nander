@@ -17,7 +17,7 @@ import wang.bigbird.domain.framework.common.similarity.base.enums.WordSimilarity
 import wang.bigbird.domain.framework.common.similarity.domain.bo.WordSimilarityBO;
 import wang.bigbird.domain.framework.common.similarity.exception.SimilarityException;
 import wang.bigbird.domain.framework.common.similarity.service.base.IWordSimilarityService;
-import wang.bigbird.domain.framework.common.similarity.support.strategy.word.ISimilarityStrategy;
+import wang.bigbird.domain.framework.common.similarity.support.strategy.word.IWordSimilarityStrategy;
 import wang.bigbird.domain.framework.core.base.util.CollectionUtils;
 import wang.bigbird.domain.framework.core.base.util.SortUtils;
 
@@ -37,11 +37,11 @@ public class WordSimilarityServiceImpl implements IWordSimilarityService {
     /**
      * 策略映射表
      */
-    private final Map<WordSimilarityAlgorithmEnum, ISimilarityStrategy> strategies;
+    private final Map<WordSimilarityAlgorithmEnum, IWordSimilarityStrategy> strategies;
 
-    public WordSimilarityServiceImpl(List<ISimilarityStrategy> strategyList) {
+    public WordSimilarityServiceImpl(List<IWordSimilarityStrategy> strategyList) {
         this.strategies = new HashMap<>();
-        for (ISimilarityStrategy strategy : strategyList) {
+        for (IWordSimilarityStrategy strategy : strategyList) {
             this.strategies.put(strategy.getAlgorithm(), strategy);
         }
         log.info("WordSimilarity service initialized, {} algorithms registered", strategies.size());
@@ -61,7 +61,7 @@ public class WordSimilarityServiceImpl implements IWordSimilarityService {
         if (algorithm == null) {
             throw new SimilarityException("Algorithm strategy not set");
         }
-        ISimilarityStrategy strategy = strategies.get(algorithm);
+        IWordSimilarityStrategy strategy = strategies.get(algorithm);
         if (strategy == null) {
             throw new SimilarityException("Algorithm strategy not found: " + algorithm);
         }
@@ -73,7 +73,7 @@ public class WordSimilarityServiceImpl implements IWordSimilarityService {
         if (targetWord == null || CollectionUtils.isEmpty(candidateWords)) {
             throw new SimilarityException("Words cannot be null");
         }
-        ISimilarityStrategy strategy = strategies.get(algorithm);
+        IWordSimilarityStrategy strategy = strategies.get(algorithm);
         if (strategy == null) {
             throw new SimilarityException("Algorithm strategy not found: " + algorithm);
         }

@@ -14,7 +14,7 @@ package wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.
 
 import wang.bigbird.domain.framework.common.similarity.base.enums.PhraseSimilarityAlgorithmEnum;
 import wang.bigbird.domain.framework.common.similarity.support.calculator.phrase.trigram.TrigramJaccardSimilarity;
-import wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.ISimilarityStrategy;
+import wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.IPhraseSimilarityStrategy;
 
 /**
  * Trigram 杰卡德相似度策略
@@ -26,7 +26,7 @@ import wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.I
  *
  * @author Bigbird
  */
-public class TrigramJaccardSimilarityStrategy implements ISimilarityStrategy {
+public class TrigramJaccardSimilarityStrategy implements IPhraseSimilarityStrategy {
 
     @Override
     public PhraseSimilarityAlgorithmEnum getAlgorithm() {
