@@ -131,6 +131,9 @@ Trigram 杰卡德相似度策略采用以下计算方式：
 @Autowired
 private IWordSimilarityService wordSimilarityService;
 
+// 短语相似度计算服务
+@Autowired
+private IPhraseSimilarityService phraseSimilarityService;
 
 
 

@@ -17,9 +17,14 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import wang.bigbird.domain.framework.common.similarity.service.base.IPhraseSimilarityService;
 import wang.bigbird.domain.framework.common.similarity.service.base.IWordSimilarityService;
+import wang.bigbird.domain.framework.common.similarity.service.base.impl.PhraseSimilarityServiceImpl;
 import wang.bigbird.domain.framework.common.similarity.service.base.impl.WordSimilarityServiceImpl;
-import wang.bigbird.domain.framework.common.similarity.support.strategy.word.ISimilarityStrategy;
+import wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.cos.CosSimilarityStrategy;
+import wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.distance.JaroWinklerDistanceSimilarityStrategy;
+import wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.distance.LevenshteinDistanceSimilarityStrategy;
+import wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.trigram.TrigramJaccardSimilarityStrategy;
 import wang.bigbird.domain.framework.common.similarity.support.strategy.word.character.CharacterSimilarityStrategy;
 import wang.bigbird.domain.framework.common.similarity.support.strategy.word.cilin.CilinSimilarityStrategy;
 import wang.bigbird.domain.framework.common.similarity.support.strategy.word.concept.ConceptSimilarityStrategy;
@@ -90,7 +95,7 @@ public class SimilarityConfiguration {
             PinyinSimilarityStrategy pinyinStrategy,
             ConceptSimilarityStrategy conceptStrategy,
             CharacterSimilarityStrategy characterSimilarityStrategy) {
-        List<ISimilarityStrategy> strategies = Arrays.asList(
+        List<wang.bigbird.domain.framework.common.similarity.support.strategy.word.ISimilarityStrategy> strategies = Arrays.asList(
                 cilinStrategy,
                 conceptStrategy,
                 pinyinStrategy,
@@ -98,5 +103,61 @@ public class SimilarityConfiguration {
         );
         return new WordSimilarityServiceImpl(strategies);
     }
+
+    /**
+     * 莱文斯坦归一化相似度策略
+     */
+    @Bean
+    @ConditionalOnMissingBean(LevenshteinDistanceSimilarityStrategy.class)
+    public LevenshteinDistanceSimilarityStrategy levenshteinDistanceSimilarityStrategy() {
+        return new LevenshteinDistanceSimilarityStrategy();
+    }
+
+    /**
+     * JaroWinkler 短字符串优化相似度策略
+     */
+    @Bean
+    @ConditionalOnMissingBean(JaroWinklerDistanceSimilarityStrategy.class)
+    public JaroWinklerDistanceSimilarityStrategy jaroWinklerDistanceSimilarityStrategy() {
+        return new JaroWinklerDistanceSimilarityStrategy();
+    }
+
+    /**
+     * Trigram 杰卡德相似度策略
+     */
+    @Bean
+    @ConditionalOnMissingBean(TrigramJaccardSimilarityStrategy.class)
+    public TrigramJaccardSimilarityStrategy trigramJaccardSimilarityStrategy() {
+        return new TrigramJaccardSimilarityStrategy();
+    }
+
+    /**
+     * 余弦相似度策略
+     */
+    @Bean
+    @ConditionalOnMissingBean(CosSimilarityStrategy.class)
+    public CosSimilarityStrategy cosSimilarityStrategy() {
+        return new CosSimilarityStrategy();
+    }
+
+    /**
+     * 注册相似度服务
+     */
+    @Bean
+    @ConditionalOnMissingBean(IPhraseSimilarityService.class)
+    public IPhraseSimilarityService phraseSimilarityService(
+            LevenshteinDistanceSimilarityStrategy levenshteinDistanceSimilarityStrategy,
+            JaroWinklerDistanceSimilarityStrategy jaroWinklerDistanceSimilarityStrategy,
+            TrigramJaccardSimilarityStrategy trigramJaccardSimilarityStrategy,
+            CosSimilarityStrategy cosSimilarityStrategy) {
+        List<wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.ISimilarityStrategy> strategies = Arrays.asList(
+                levenshteinDistanceSimilarityStrategy,
+                jaroWinklerDistanceSimilarityStrategy,
+                trigramJaccardSimilarityStrategy,
+                cosSimilarityStrategy
+        );
+        return new PhraseSimilarityServiceImpl(strategies);
+    }
+
 
 }
