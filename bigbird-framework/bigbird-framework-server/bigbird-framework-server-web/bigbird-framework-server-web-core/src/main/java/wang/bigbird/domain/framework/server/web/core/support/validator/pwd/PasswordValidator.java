@@ -91,14 +91,13 @@ public class PasswordValidator implements InitializingBean {
     /**
      * 验证密码是否符合安全校验规范
      *
-     * @param ownerId    密码拥有者标识
-     * @param password   密码
-     * @param account    账户名
-     * @param policy     校验策略
-     * @param operatorId 操作者标识
+     * @param ownerId  密码拥有者标识
+     * @param password 密码
+     * @param account  账户名
+     * @param policy   校验策略
      * @return 校验结果
      */
-    public Result validate(String ownerId, String password, String account, PasswordPolicy policy, String operatorId) {
+    public Result validate(String ownerId, String password, String account, PasswordPolicy policy) {
         List<String> errors = new ArrayList<>();
         // 基础校验
         checkLength(password, policy.getMinLength(), policy.getMaxLength(), errors);
@@ -117,7 +116,7 @@ public class PasswordValidator implements InitializingBean {
             checkAccountSimilarity(password, account, errors);
         }
         if (policy.isCheckHistory()) {
-            checkPasswordHistory(ownerId, password, operatorId, errors);
+            checkPasswordHistory(ownerId, password, errors);
         }
         if (policy.isCheckWeakPassword()) {
             checkWeakPassword(password, errors);
@@ -189,10 +188,10 @@ public class PasswordValidator implements InitializingBean {
         }
     }
 
-    private void checkPasswordHistory(String ownerId, String password, String operatorId,
+    private void checkPasswordHistory(String ownerId, String password,
                                       List<String> errors) {
         if (pwdValidateService != null) {
-            if (pwdValidateService.isHistoryPwd(ownerId, password, operatorId)) {
+            if (pwdValidateService.isHistoryPwd(ownerId, password)) {
                 errors.add("不能使用最近使用过的密码。");
             }
         }
