@@ -95,10 +95,10 @@ public class PasswordValidator implements InitializingBean {
      * @param password   密码
      * @param account    账户名
      * @param policy     校验策略
-     * @param operatorId 操作者ID
+     * @param operatorId 操作者标识
      * @return 校验结果
      */
-    public Result validate(String ownerId, String password, String account, PasswordPolicy policy, Long operatorId) {
+    public Result validate(String ownerId, String password, String account, PasswordPolicy policy, String operatorId) {
         List<String> errors = new ArrayList<>();
         // 基础校验
         checkLength(password, policy.getMinLength(), policy.getMaxLength(), errors);
@@ -189,7 +189,7 @@ public class PasswordValidator implements InitializingBean {
         }
     }
 
-    private void checkPasswordHistory(String ownerId, String password, Long operatorId,
+    private void checkPasswordHistory(String ownerId, String password, String operatorId,
                                       List<String> errors) {
         if (pwdValidateService != null) {
             if (pwdValidateService.isHistoryPwd(ownerId, password, operatorId)) {

@@ -32,9 +32,9 @@ public interface IPwdValidateService {
      *
      * @param ownerId    密码拥有者标识
      * @param pwd        密码
-     * @param operatorId 操作者ID
+     * @param operatorId 操作者标识
      * @return 是否历史密码
      */
-    boolean isHistoryPwd(String ownerId, String pwd, Long operatorId);
+    boolean isHistoryPwd(String ownerId, String pwd, String operatorId);
 
 }
