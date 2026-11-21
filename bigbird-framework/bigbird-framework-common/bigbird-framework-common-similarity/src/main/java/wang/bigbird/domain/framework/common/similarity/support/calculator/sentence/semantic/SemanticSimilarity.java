@@ -1,7 +1,18 @@
+/*
+ * Copyright (c) 2026 廖凌浩 / 鸟域
+ *
+ * Licensed under the Mulan PSL v2.
+ * You can use this software according to the terms and conditions of the Mulan PSL v2.
+ * You may obtain a copy of Mulan PSL v2 at:
+ *          http://license.coscl.org.cn/MulanPSL2
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * See the Mulan PSL v2 for more details.
+ */
 package wang.bigbird.domain.framework.common.similarity.support.calculator.sentence.semantic;
 
 import lombok.extern.slf4j.Slf4j;
-import wang.bigbird.domain.framework.common.similarity.base.util.Utils;
 import wang.bigbird.domain.framework.common.similarity.support.calculator.ISimilarity;
 import wang.bigbird.domain.framework.common.similarity.support.calculator.sentence.AbstractSentenceSimilarity;
 import wang.bigbird.domain.framework.common.similarity.support.calculator.word.hownet.concept.ConceptSimilarity;
@@ -53,24 +64,7 @@ public class SemanticSimilarity extends AbstractSentenceSimilarity {
     }
 
     @Override
-    protected double doCalculate(String target, String candidate) {
-        // 分词与清洗，后续所有计算都只在"承载语义的词"上进行
-        List<String> targetWords = Utils.segClean(target);
-        List<String> candidateWords = Utils.segClean(candidate);
-        if (targetWords.size() == 0 || candidateWords.size() == 0) {
-            return 0D;
-        }
-        return calculate(targetWords.toArray(new String[targetWords.size()]), candidateWords.toArray(new String[candidateWords.size()]));
-    }
-
-    /**
-     * 获取两个集合的词形相似度，同时获取相对于第一个句子中的词语顺序，第二个句子词语的顺序变化次数
-     *
-     * @param targetWords
-     * @param candidateWords
-     * @return
-     */
-    public double calculate(String[] targetWords, String[] candidateWords) {
+    protected double doCalculateSentence(String[] targetWords, String[] candidateWords) {
         List<Cell> cells = buildPositiveScoreCells(targetWords, candidateWords);
         MatchResult matchResult = greedyMatch(cells, targetWords.length, candidateWords.length);
         double wordSim = 2D * matchResult.totalScore

@@ -15,7 +15,7 @@ package wang.bigbird.domain.framework.common.similarity.support.calculator.word;
 import wang.bigbird.domain.framework.common.similarity.support.calculator.AbstractSimilarity;
 
 /**
- * 处理词层面的相似度计算
+ * 处理词语层面的相似度计算
  *
  * @author Bigbird
  */
