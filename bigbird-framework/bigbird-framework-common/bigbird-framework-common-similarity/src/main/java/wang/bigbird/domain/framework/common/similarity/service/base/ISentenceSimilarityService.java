@@ -21,7 +21,6 @@ import wang.bigbird.domain.framework.common.similarity.base.enums.SentenceSimila
  */
 public interface ISentenceSimilarityService {
 
-
     /**
      * 使用指定算法计算语句相似度
      *
@@ -31,6 +30,5 @@ public interface ISentenceSimilarityService {
      * @return 相似度值（0.0 - 1.0）
      */
     double calculate(String targetSentence, String candidateSentence, SentenceSimilarityAlgorithmEnum algorithm);
-
 
 }

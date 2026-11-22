@@ -17,12 +17,16 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import wang.bigbird.domain.framework.common.similarity.service.base.IParagraphSimilarityService;
 import wang.bigbird.domain.framework.common.similarity.service.base.IPhraseSimilarityService;
 import wang.bigbird.domain.framework.common.similarity.service.base.ISentenceSimilarityService;
 import wang.bigbird.domain.framework.common.similarity.service.base.IWordSimilarityService;
+import wang.bigbird.domain.framework.common.similarity.service.base.impl.ParagraphSimilarityServiceImpl;
 import wang.bigbird.domain.framework.common.similarity.service.base.impl.PhraseSimilarityServiceImpl;
 import wang.bigbird.domain.framework.common.similarity.service.base.impl.SentenceSimilarityServiceImpl;
 import wang.bigbird.domain.framework.common.similarity.service.base.impl.WordSimilarityServiceImpl;
+import wang.bigbird.domain.framework.common.similarity.support.strategy.paragraph.IParagraphSimilarityStrategy;
+import wang.bigbird.domain.framework.common.similarity.support.strategy.paragraph.layered.LayeredAlignmentSimilarityStrategy;
 import wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.IPhraseSimilarityStrategy;
 import wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.cos.CosSimilarityStrategy;
 import wang.bigbird.domain.framework.common.similarity.support.strategy.phrase.distance.JaroWinklerDistanceSimilarityStrategy;
@@ -185,6 +189,28 @@ public class SimilarityConfiguration {
                 semanticSimilarityStrategy
         );
         return new SentenceSimilarityServiceImpl(strategies);
+    }
+
+    /**
+     * 分层对齐相似度策略
+     */
+    @Bean
+    @ConditionalOnMissingBean(LayeredAlignmentSimilarityStrategy.class)
+    public LayeredAlignmentSimilarityStrategy layeredAlignmentSimilarityStrategy() {
+        return new LayeredAlignmentSimilarityStrategy();
+    }
+
+    /**
+     * 注册相似度服务
+     */
+    @Bean
+    @ConditionalOnMissingBean(IParagraphSimilarityService.class)
+    public IParagraphSimilarityService paragraphSimilarityService(
+            LayeredAlignmentSimilarityStrategy layeredAlignmentSimilarityStrategy) {
+        List<IParagraphSimilarityStrategy> strategies = Arrays.asList(
+                layeredAlignmentSimilarityStrategy
+        );
+        return new ParagraphSimilarityServiceImpl(strategies);
     }
 
 

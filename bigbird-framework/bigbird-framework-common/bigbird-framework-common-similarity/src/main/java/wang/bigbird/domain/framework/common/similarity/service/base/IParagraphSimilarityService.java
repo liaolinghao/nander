@@ -12,6 +12,8 @@
  */
 package wang.bigbird.domain.framework.common.similarity.service.base;
 
+import wang.bigbird.domain.framework.common.similarity.base.enums.ParagraphSimilarityAlgorithmEnum;
+
 /**
  * 段落相似度服务
  *
@@ -19,5 +21,14 @@ package wang.bigbird.domain.framework.common.similarity.service.base;
  */
 public interface IParagraphSimilarityService {
 
+    /**
+     * 使用指定算法计算段落相似度
+     *
+     * @param targetParagraph    目标段落
+     * @param candidateParagraph 候选段落
+     * @param algorithm          算法类型
+     * @return 相似度值（0.0 - 1.0）
+     */
+    double calculate(String targetParagraph, String candidateParagraph, ParagraphSimilarityAlgorithmEnum algorithm);
 
 }
