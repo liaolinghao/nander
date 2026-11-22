@@ -23,8 +23,8 @@ import java.util.List;
 
 /**
  * 基于语义的相似度计算
- * 词形部分不再用"字符串相等"判定共同词，而是用知网（HowNet）概念相似度给每个词对打分；
- * 词序部分不再需要"完全相同的词"，而是把相似度 ≥ 阈值的词对当作"相同词"来考察顺序。
+ * 词形部分不再用“字符串相等”判定共同词，而是用知网（HowNet）概念相似度给每个词对打分；
+ * 词序部分不再需要”完全相同的词“，而是把相似度 ≥ 阈值的词对当作"相同词"来考察顺序。
  * Sim(A,B)=0.8×wordSim(A,B)+0.2×ordSim(A,B)
  *
  * @author Bigbird
@@ -60,7 +60,7 @@ public class SemanticSimilarity extends AbstractSentenceSimilarity {
     }
 
     public static SemanticSimilarity getInstance() {
-        return SemanticSimilarity.Holder.INSTANCE;
+        return Holder.INSTANCE;
     }
 
     @Override

@@ -24,7 +24,6 @@ import java.util.List;
  */
 public abstract class AbstractSentenceSimilarity extends AbstractSimilarity {
 
-
     @Override
     protected double doCalculate(String target, String candidate) {
         // 分词与清洗，后续所有计算都只在"承载语义的词"上进行
@@ -44,6 +43,5 @@ public abstract class AbstractSentenceSimilarity extends AbstractSimilarity {
      * @return 相似度值
      */
     protected abstract double doCalculateSentence(String[] targetWords, String[] candidateWords);
-
 
 }

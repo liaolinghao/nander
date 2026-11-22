@@ -44,9 +44,9 @@ public class Utils {
     private static final Set<String> WHITE_WORDS;
 
     static {
-        // 加载resources/stopword.txt，失败则加载内置兜底停用词
+        // 加载停用词：resources/stop-word.txt
         STOP_WORDS = loadWordFile(SimilarityProperties.StopWordPath);
-        // IT行业单字白名单，不会被过滤
+        // 加载业务白名单：resources/white-word.txt，不会被过滤
         WHITE_WORDS = loadWordFile(SimilarityProperties.WhiteWordPath);
     }
 
@@ -164,5 +164,6 @@ public class Utils {
         }
         return dot / (Math.sqrt(normA) * Math.sqrt(normB));
     }
+
 
 }
