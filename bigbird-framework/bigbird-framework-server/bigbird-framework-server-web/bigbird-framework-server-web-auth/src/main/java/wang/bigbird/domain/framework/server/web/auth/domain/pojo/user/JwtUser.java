@@ -52,6 +52,11 @@ public class JwtUser extends JwtAuthData {
     private List<JwtPermission> permissions;
 
     /**
+     * 用户功能点集合
+     */
+    private List<JwtFunction> functions;
+
+    /**
      * 用户所属组织集合
      */
     private List<JwtOrg> orgs;

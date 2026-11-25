@@ -436,6 +436,9 @@ public class JwtSecurityProcessor implements InitializingBean {
         if (CollectionUtils.isNotEmpty(jwtUser.getRoles())) {
             authorities.addAll(jwtUser.getRoles());
         }
+        if (CollectionUtils.isNotEmpty(jwtUser.getFunctions())) {
+            authorities.addAll(jwtUser.getFunctions());
+        }
         return new UsernamePasswordAuthenticationToken(authObject, StringUtils.joinStr(id, CommonConstants.SEPARATOR, jwtUser.getId(), CommonConstants.SEPARATOR, jwtUser.getTenantId()), authorities);
     }
 

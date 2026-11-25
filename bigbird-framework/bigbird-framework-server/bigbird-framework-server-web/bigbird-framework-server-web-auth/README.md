@@ -20,7 +20,7 @@
 
 操作名称：对应平台功能模块操作数据对象的动作类型的标识符，比如：删除动作标识为delete，查询动作标识为query。备注：该段可以省略。
 
-使用时，在对应接口上添加注解即可。如：@PreAuthorize("!@jwtSecurityUtils.isEnableJwtSecurity() or hasRole('ROLE_SUPER') or (hasRole('ROLE_ADMIN') and hasPermission('/role/view','admin:config:role'))")
+使用时，在对应接口上添加注解即可。如：@PreAuthorize("!@jwtSecurityProcessor.isEnableJwtSecurity() or hasRole('ROLE_SUPER') or hasAuthority('GIS') or (hasRole('ROLE_ADMIN') and hasPermission('/role/view','admin:config:role'))")
 
 备注：本构件实现了一套基于JWT执行权限验证的处理流程，同时提供了三个特殊的服务接口，用于支持其他方式的权限验证处理。具体说明如下：
 
@@ -31,6 +31,22 @@ IAppSecretLoaderService：可通过实现该接口的服务组件来完成应用
 IAppKeyAndSecretLoaderService：可通过实现该接口的服务组件来完成“应用键：应用秘钥”的动态获取以支持解析对应JWT并构建认证对象的过程。
 
 6、提供了用于Controller类方法上的审计日志注解@AuditLog(platform = "xxx", module = "xxx", description = "xxx", mode = x)，具体服务通过提供继承BaseAuditAop的自定义切面器并实现processAuditLog方法完成审计日志的处理。
+
+## 权限表达式说明
+
+```
+// 未开启JWT安全验证
+!@jwtSecurityProcessor.isEnableJwtSecurity()
+
+// 是否超级管理员角色
+hasRole('ROLE_SUPER')
+
+// 是否具备 GIS 功能点
+hasAuthority('GIS')
+
+// 是否具备 admin:config:role 权限
+hasPermission('/role/view','admin:config:role')
+```
 
 ## JWT格式
 
@@ -136,6 +152,16 @@ IAppKeyAndSecretLoaderService：可通过实现该接口的服务组件来完成
 		"id": 2,
 		"name": "数据分析",
 		"pattern": "admin:analysis:*"
+	}],
+	// 用户功能点列表
+	"functions": [{
+		"id": 1,
+		"name": "GIS",
+		"pattern": "GIS"
+	}, {
+		"id": 2,
+		"name": "音视频通话",
+		"pattern": "Call"
 	}],
 	// 用户所属组织列表
 	"orgs": [{

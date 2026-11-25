@@ -35,4 +35,5 @@ public class JwtRole implements GrantedAuthority {
     public String getAuthority() {
         return code;
     }
+
 }
